@@ -1,0 +1,260 @@
+/* ======================================
+   HEADER / NAVBAR
+   ====================================== */
+
+.navbar {
+  width: 100%;
+  min-height: 72px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 0 6%;
+
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+
+  box-sizing: border-box;
+}
+
+
+/* ======================================
+   LOGO
+   ====================================== */
+
+.navbar-logo {
+  color: #111827;
+
+  text-decoration: none;
+
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+
+  white-space: nowrap;
+}
+
+.navbar-logo:hover {
+  color: #2563eb;
+}
+
+
+/* ======================================
+   NAVIGATION
+   ====================================== */
+
+.navbar-links {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+.nav-link {
+  color: #4b5563;
+
+  text-decoration: none;
+
+  font-size: 0.95rem;
+  font-weight: 500;
+
+  transition:
+    color 0.2s ease,
+    opacity 0.2s ease;
+
+  white-space: nowrap;
+}
+
+.nav-link:hover {
+  color: #2563eb;
+}
+
+.nav-link.active {
+  color: #2563eb;
+  font-weight: 600;
+}
+
+
+/* ======================================
+   USER SECTION
+   ====================================== */
+
+.navbar-user {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+
+/* ======================================
+   LOGIN
+   ====================================== */
+
+.navbar-login {
+  color: #374151;
+
+  text-decoration: none;
+
+  font-size: 0.95rem;
+  font-weight: 600;
+
+  transition: color 0.2s ease;
+}
+
+.navbar-login:hover {
+  color: #2563eb;
+}
+
+
+/* ======================================
+   REGISTER
+   ====================================== */
+
+.navbar-register {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 40px;
+  padding: 0 18px;
+
+  background: #2563eb;
+  color: #ffffff;
+
+  border-radius: 8px;
+
+  text-decoration: none;
+
+  font-size: 0.9rem;
+  font-weight: 600;
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.navbar-register:hover {
+  background: #1d4ed8;
+  transform: translateY(-1px);
+}
+
+
+/* ======================================
+   LOGOUT
+   ====================================== */
+
+.navbar-logout {
+  min-height: 40px;
+
+  padding: 0 16px;
+
+  background: transparent;
+  color: #dc2626;
+
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.navbar-logout:hover {
+  background: #fef2f2;
+  border-color: #fca5a5;
+}
+
+
+/* ======================================
+   MOBILE
+   ====================================== */
+
+@media (max-width: 900px) {
+  .navbar {
+    padding: 0 4%;
+  }
+
+  .navbar-links {
+    gap: 16px;
+  }
+
+  .navbar-user {
+    gap: 8px;
+  }
+
+  .nav-link {
+    font-size: 0.88rem;
+  }
+}
+
+
+/* ======================================
+   SMALL MOBILE
+   ====================================== */
+
+@media (max-width: 700px) {
+  .navbar {
+    min-height: auto;
+
+    padding: 16px 5%;
+
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .navbar-links {
+    order: 3;
+
+    width: 100%;
+
+    justify-content: center;
+
+    padding-top: 4px;
+
+    overflow-x: auto;
+  }
+
+  .navbar-user {
+    margin-left: auto;
+  }
+}
+
+
+/* ======================================
+   VERY SMALL SCREENS
+   ====================================== */
+
+@media (max-width: 450px) {
+  .navbar {
+    padding: 14px 4%;
+  }
+
+  .navbar-logo {
+    font-size: 1.4rem;
+  }
+
+  .navbar-links {
+    gap: 18px;
+    justify-content: flex-start;
+  }
+
+  .navbar-user .nav-link {
+    display: none;
+  }
+
+  .navbar-register,
+  .navbar-logout {
+    min-height: 36px;
+    padding: 0 12px;
+  }
+}
