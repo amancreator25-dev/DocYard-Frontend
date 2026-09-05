@@ -1,17 +1,14 @@
 import {
   createContext,
-  useCallback,
+  useContext,
   useEffect,
   useState,
 } from "react";
 
 import {
-  registerUser,
-  loginUser,
-  logoutUser,
   getCurrentUser,
-  changePassword,
-  updateProfile,
+  logoutUser,
+  refreshAccessToken,
 } from "../services/auth.service.js";
 
 import {
@@ -24,56 +21,89 @@ import {
 // CREATE CONTEXT
 // ======================================
 
-export const AuthContext = createContext(null);
+const AuthContext = createContext(null);
 
 
 // ======================================
 // AUTH PROVIDER
 // ======================================
 
-export const AuthProvider = ({ children }) => {
+const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] =
+    useState(true);
 
   const [isAuthenticated, setIsAuthenticated] =
     useState(false);
 
 
-  // ======================================
-  // GET CURRENT USER
-  // ======================================
+  // ====================================
+  // LOAD CURRENT USER
+  // ====================================
 
-  const fetchCurrentUser = useCallback(
-    async () => {
+  const loadUser = async () => {
+    try {
+      setLoading(true);
+
+      const token = getToken();
+
+      if (!token) {
+        setUser(null);
+        setIsAuthenticated(false);
+        return;
+      }
+
+      const response =
+        await getCurrentUser();
+
+      const currentUser =
+        response?.data?.user ||
+        response?.data ||
+        response?.user;
+
+      if (currentUser) {
+        setUser(currentUser);
+        setIsAuthenticated(true);
+      } else {
+        setUser(null);
+        setIsAuthenticated(false);
+      }
+
+    } catch (error) {
+      console.error(
+        "Load User Error:",
+        error
+      );
+
+      // --------------------------------
+      // Try refreshing the token
+      // --------------------------------
+
       try {
-        const token = getToken();
+        await refreshAccessToken();
 
-        if (!token) {
-          setUser(null);
-          setIsAuthenticated(false);
-          return;
-        }
-
-        const response = await getCurrentUser();
+        const response =
+          await getCurrentUser();
 
         const currentUser =
           response?.data?.user ||
           response?.data ||
-          response?.user ||
-          null;
+          response?.user;
 
         if (currentUser) {
           setUser(currentUser);
           setIsAuthenticated(true);
         } else {
+          removeToken();
           setUser(null);
           setIsAuthenticated(false);
         }
-      } catch (error) {
+
+      } catch (refreshError) {
         console.error(
-          "Fetch Current User Error:",
-          error
+          "Refresh Token Error:",
+          refreshError
         );
 
         removeToken();
@@ -81,134 +111,95 @@ export const AuthProvider = ({ children }) => {
         setUser(null);
         setIsAuthenticated(false);
       }
-    },
-    []
-  );
 
-
-  // ======================================
-  // INITIAL AUTH CHECK
-  // ======================================
-
-  useEffect(() => {
-    const initializeAuth = async () => {
-      try {
-        await fetchCurrentUser();
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    initializeAuth();
-  }, [fetchCurrentUser]);
-
-
-  // ======================================
-  // REGISTER
-  // ======================================
-
-  const register = async (userData) => {
-    const response = await registerUser(userData);
-
-    return response;
+    } finally {
+      setLoading(false);
+    }
   };
 
 
-  // ======================================
+  // ====================================
   // LOGIN
-  // ======================================
+  // ====================================
 
-  const login = async (credentials) => {
-    const response = await loginUser(credentials);
-
-    const loggedInUser =
-      response?.data?.user ||
-      response?.user ||
-      null;
-
-    if (loggedInUser) {
-      setUser(loggedInUser);
+  const login = (userData) => {
+    if (!userData) {
+      return;
     }
 
+    setUser(userData);
     setIsAuthenticated(true);
-
-    return response;
   };
 
 
-  // ======================================
+  // ====================================
   // LOGOUT
-  // ======================================
+  // ====================================
 
   const logout = async () => {
     try {
       await logoutUser();
+    } catch (error) {
+      console.error(
+        "Logout Error:",
+        error
+      );
     } finally {
+      removeToken();
+
       setUser(null);
       setIsAuthenticated(false);
-      removeToken();
     }
   };
 
 
-  // ======================================
-  // CHANGE PASSWORD
-  // ======================================
+  // ====================================
+  // UPDATE USER
+  // ====================================
 
-  const updatePassword = async (passwordData) => {
-    const response =
-      await changePassword(passwordData);
-
-    return response;
-  };
-
-
-  // ======================================
-  // UPDATE PROFILE
-  // ======================================
-
-  const editProfile = async (profileData) => {
-    const response =
-      await updateProfile(profileData);
-
-    const updatedUser =
-      response?.data?.user ||
-      response?.user ||
-      null;
-
-    if (updatedUser) {
-      setUser(updatedUser);
+  const updateUser = (updatedUser) => {
+    if (!updatedUser) {
+      return;
     }
 
-    return response;
+    setUser((currentUser) => ({
+      ...currentUser,
+      ...updatedUser,
+    }));
   };
 
 
-  // ======================================
+  // ====================================
+  // INITIAL AUTH CHECK
+  // ====================================
+
+  useEffect(() => {
+    loadUser();
+  }, []);
+
+
+  // ====================================
   // CONTEXT VALUE
-  // ======================================
+  // ====================================
 
   const value = {
     user,
+
     setUser,
 
     loading,
+
     isAuthenticated,
 
-    register,
     login,
+
     logout,
 
-    updatePassword,
-    editProfile,
+    updateUser,
 
-    fetchCurrentUser,
+    loadUser,
   };
 
-
-  // ======================================
-  // PROVIDER
-  // ======================================
 
   return (
     <AuthContext.Provider value={value}>
@@ -216,3 +207,33 @@ export const AuthProvider = ({ children }) => {
     </AuthContext.Provider>
   );
 };
+
+
+// ======================================
+// CUSTOM HOOK
+// ======================================
+
+const useAuth = () => {
+  const context =
+    useContext(AuthContext);
+
+  if (!context) {
+    throw new Error(
+      "useAuth must be used inside AuthProvider"
+    );
+  }
+
+  return context;
+};
+
+
+// ======================================
+// EXPORT
+// ======================================
+
+export {
+  AuthProvider,
+  useAuth,
+};
+
+export default AuthContext;

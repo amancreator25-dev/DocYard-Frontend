@@ -1,19 +1,18 @@
-import { Routes, Route } from "react-router-dom";
+import { AuthProvider } from "./context/AuthContext.jsx";
+import AppRouter from "./routes/AppRouter.jsx";
 
-function App() {
+
+// ======================================
+// APP
+// ======================================
+
+const App = () => {
   return (
-    <Routes>
-      <Route
-        path="/"
-        element={
-          <div>
-            <h1>DocYard</h1>
-            <p>Document management platform</p>
-          </div>
-        }
-      />
-    </Routes>
+    <AuthProvider>
+      <AppRouter />
+    </AuthProvider>
   );
-}
+};
+
 
 export default App;
