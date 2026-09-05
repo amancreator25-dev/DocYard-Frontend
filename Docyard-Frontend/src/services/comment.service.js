@@ -1,4 +1,4 @@
-import api from "./api.service";
+import api from "./axios.js";
 
 const addComment = async (documentId, commentData) => {
   const response = await api.post(

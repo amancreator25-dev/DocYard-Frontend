@@ -1,4 +1,4 @@
-import api from "./api.service";
+import api from "./axios.js";
 
 const addBookmark = async (documentId) => {
   const response = await api.post(

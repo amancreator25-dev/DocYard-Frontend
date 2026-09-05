@@ -1,4 +1,4 @@
-import api from "./api.service";
+import api from "./axios.js";
 
 const getAllDocuments = async (params = {}) => {
   const response = await api.get("/documents", {
@@ -25,12 +25,7 @@ const getMyDocuments = async () => {
 const createDocument = async (documentData) => {
   const response = await api.post(
     "/documents",
-    documentData,
-    {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    }
+    documentData
   );
 
   return response.data;
@@ -42,12 +37,7 @@ const updateDocument = async (
 ) => {
   const response = await api.patch(
     `/documents/${documentId}`,
-    documentData,
-    {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    }
+    documentData
   );
 
   return response.data;

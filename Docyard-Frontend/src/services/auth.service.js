@@ -1,25 +1,20 @@
-import api from "./api.service";
+import api from "./axios.js";
 
 const registerUser = async (userData) => {
   const response = await api.post("/users/register", userData);
+
   return response.data;
 };
 
 const loginUser = async (credentials) => {
   const response = await api.post("/users/login", credentials);
 
-  if (response.data?.data?.accessToken) {
-    localStorage.setItem(
-      "accessToken",
-      response.data.data.accessToken
-    );
-  }
+  const accessToken =
+    response.data?.data?.accessToken ||
+    response.data?.accessToken;
 
-  if (response.data?.accessToken) {
-    localStorage.setItem(
-      "accessToken",
-      response.data.accessToken
-    );
+  if (accessToken) {
+    localStorage.setItem("accessToken", accessToken);
   }
 
   return response.data;
@@ -36,18 +31,12 @@ const logoutUser = async () => {
 const refreshAccessToken = async () => {
   const response = await api.post("/users/refresh-token");
 
-  if (response.data?.data?.accessToken) {
-    localStorage.setItem(
-      "accessToken",
-      response.data.data.accessToken
-    );
-  }
+  const accessToken =
+    response.data?.data?.accessToken ||
+    response.data?.accessToken;
 
-  if (response.data?.accessToken) {
-    localStorage.setItem(
-      "accessToken",
-      response.data.accessToken
-    );
+  if (accessToken) {
+    localStorage.setItem("accessToken", accessToken);
   }
 
   return response.data;
@@ -55,6 +44,7 @@ const refreshAccessToken = async () => {
 
 const getCurrentUser = async () => {
   const response = await api.get("/users/me");
+
   return response.data;
 };
 
