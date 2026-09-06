@@ -3,8 +3,6 @@ import { Link, useSearchParams } from "react-router-dom";
 
 import { getAllDocuments } from "../../services/document.service.js";
 
-import DocumentUploadForm from "../../components/Common/DocumentUploadForm.jsx";
-
 const Documents = () => {
   const [searchParams, setSearchParams] =
     useSearchParams();
@@ -21,6 +19,10 @@ const Documents = () => {
 
   const category =
     searchParams.get("category") || "";
+
+  // ==========================================
+  // LOAD DOCUMENTS
+  // ==========================================
 
   const loadDocuments = async (params = {}) => {
     setLoading(true);
@@ -51,6 +53,10 @@ const Documents = () => {
     }
   };
 
+  // ==========================================
+  // LOAD WHEN FILTERS CHANGE
+  // ==========================================
+
   useEffect(() => {
     const params = {};
 
@@ -64,6 +70,10 @@ const Documents = () => {
 
     loadDocuments(params);
   }, [initialSearch, category]);
+
+  // ==========================================
+  // SEARCH
+  // ==========================================
 
   const handleSearch = (event) => {
     event.preventDefault();
@@ -81,13 +91,23 @@ const Documents = () => {
     setSearchParams(params);
   };
 
+  // ==========================================
+  // CLEAR FILTERS
+  // ==========================================
+
   const clearFilters = () => {
     setSearch("");
     setSearchParams({});
   };
 
+  // ==========================================
+  // FORMAT DATE
+  // ==========================================
+
   const formatDate = (date) => {
-    if (!date) return "—";
+    if (!date) {
+      return "—";
+    }
 
     return new Date(date).toLocaleDateString(
       "en-US",
@@ -99,10 +119,16 @@ const Documents = () => {
     );
   };
 
+  // ==========================================
+  // RENDER
+  // ==========================================
+
   return (
     <main className="min-h-screen bg-paper text-ink">
 
-      {/* HEADER */}
+      {/* ======================================
+          HEADER
+      ====================================== */}
 
       <section className="border-b border-line px-6 py-14 md:px-12 md:py-20">
 
@@ -121,8 +147,9 @@ const Documents = () => {
             DocYard community.
           </p>
 
-
-          {/* SEARCH */}
+          {/* ==================================
+              SEARCH
+          ================================== */}
 
           <form
             onSubmit={handleSearch}
@@ -130,17 +157,26 @@ const Documents = () => {
           >
 
             <div className="flex-1">
-              <DocumentUploadForm
+
+              <label
+                htmlFor="document-search"
+                className="form-label"
+              >
+                Search
+              </label>
+
+              <input
                 id="document-search"
-                name="document-search"
+                name="search"
                 type="search"
-                label="Search"
                 value={search}
                 onChange={(event) =>
                   setSearch(event.target.value)
                 }
                 placeholder="Search documents..."
+                className="form-input"
               />
+
             </div>
 
             <button
@@ -156,14 +192,17 @@ const Documents = () => {
 
       </section>
 
-
-      {/* CONTENT */}
+      {/* ======================================
+          CONTENT
+      ====================================== */}
 
       <section className="px-6 py-10 md:px-12 md:py-14">
 
         <div className="mx-auto max-w-[1180px]">
 
-          {/* TOP BAR */}
+          {/* ==================================
+              TOP BAR
+          ================================== */}
 
           <div className="flex flex-col justify-between gap-4 border-b border-line pb-5 sm:flex-row sm:items-center">
 
@@ -189,17 +228,22 @@ const Documents = () => {
 
           </div>
 
-
-          {/* ERROR */}
+          {/* ==================================
+              ERROR
+          ================================== */}
 
           {error && (
-            <div className="mt-6 border border-line bg-paper-raised px-5 py-4 text-sm text-ink-soft">
+            <div
+              className="mt-6 border border-line bg-paper-raised px-5 py-4 text-sm text-ink-soft"
+              role="alert"
+            >
               {error}
             </div>
           )}
 
-
-          {/* LOADING */}
+          {/* ==================================
+              LOADING
+          ================================== */}
 
           {loading && (
             <div className="divide-y divide-line">
@@ -213,11 +257,13 @@ const Documents = () => {
                   <div className="h-[78px] w-[62px] bg-paper-raised" />
 
                   <div>
+
                     <div className="h-3 w-24 bg-paper-raised" />
 
                     <div className="mt-4 h-7 max-w-xl bg-paper-raised" />
 
                     <div className="mt-3 h-3 max-w-2xl bg-paper-raised" />
+
                   </div>
 
                 </div>
@@ -226,8 +272,9 @@ const Documents = () => {
             </div>
           )}
 
-
-          {/* EMPTY */}
+          {/* ==================================
+              EMPTY
+          ================================== */}
 
           {!loading &&
             !error &&
@@ -258,8 +305,9 @@ const Documents = () => {
               </div>
             )}
 
-
-          {/* DOCUMENTS */}
+          {/* ==================================
+              DOCUMENTS
+          ================================== */}
 
           {!loading &&
             documents.length > 0 && (
@@ -298,7 +346,6 @@ const Documents = () => {
 
                       </div>
 
-
                       {/* INFORMATION */}
 
                       <div className="min-w-0">
@@ -318,7 +365,6 @@ const Documents = () => {
 
                         </div>
 
-
                         <h2 className="mt-2 font-display text-2xl font-semibold leading-tight md:text-3xl">
 
                           <Link
@@ -331,12 +377,10 @@ const Documents = () => {
 
                         </h2>
 
-
                         <p className="mt-2 line-clamp-2 max-w-2xl text-sm leading-6 text-ink-soft">
                           {document.description ||
                             "No description available."}
                         </p>
-
 
                         <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2 font-mono text-[10px] text-ink-faint">
 
@@ -360,7 +404,6 @@ const Documents = () => {
                         </div>
 
                       </div>
-
 
                       {/* VIEW */}
 

@@ -16,6 +16,10 @@ const DocumentUploadForm = ({
 
   const [error, setError] = useState("");
 
+  // ==========================================
+  // HANDLE CHANGE
+  // ==========================================
+
   const handleChange = (event) => {
     const { name, value, files } = event.target;
 
@@ -23,10 +27,17 @@ const DocumentUploadForm = ({
       ...previous,
       [name]: files ? files[0] : value,
     }));
+
+    setError("");
   };
+
+  // ==========================================
+  // SUBMIT
+  // ==========================================
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+
     setError("");
 
     if (!formData.title.trim()) {
@@ -52,22 +63,44 @@ const DocumentUploadForm = ({
     try {
       const submitData = new FormData();
 
-      submitData.append("title", formData.title.trim());
+      submitData.append(
+        "title",
+        formData.title.trim()
+      );
+
       submitData.append(
         "description",
         formData.description.trim()
       );
-      submitData.append("category", formData.category);
-      submitData.append("language", formData.language);
+
+      submitData.append(
+        "category",
+        formData.category
+      );
+
+      submitData.append(
+        "language",
+        formData.language
+      );
 
       if (formData.tags.trim()) {
-        submitData.append("tags", formData.tags.trim());
+        submitData.append(
+          "tags",
+          formData.tags.trim()
+        );
       }
 
-      submitData.append("file", formData.file);
+      submitData.append(
+        "file",
+        formData.file
+      );
 
       const result = await onSubmit?.(submitData);
 
+      /*
+       * Only clear the form when the parent
+       * successfully handles the submission.
+       */
       if (result !== false) {
         setFormData({
           title: "",
@@ -93,12 +126,18 @@ const DocumentUploadForm = ({
     }
   };
 
+  // ==========================================
+  // RENDER
+  // ==========================================
+
   return (
     <form
       onSubmit={handleSubmit}
       className="border border-line bg-white p-6 md:p-8"
     >
-      {/* HEADER */}
+      {/* =====================================
+          HEADER
+      ===================================== */}
 
       <div className="mb-8 border-b border-line pb-5">
         <span className="page-eyebrow">
@@ -114,7 +153,9 @@ const DocumentUploadForm = ({
         </p>
       </div>
 
-      {/* ERROR */}
+      {/* =====================================
+          ERROR
+      ===================================== */}
 
       {error && (
         <div
@@ -125,7 +166,9 @@ const DocumentUploadForm = ({
         </div>
       )}
 
-      {/* TITLE */}
+      {/* =====================================
+          TITLE
+      ===================================== */}
 
       <div>
         <label
@@ -144,10 +187,13 @@ const DocumentUploadForm = ({
           placeholder="Document title"
           className="form-input"
           disabled={loading}
+          required
         />
       </div>
 
-      {/* DESCRIPTION */}
+      {/* =====================================
+          DESCRIPTION
+      ===================================== */}
 
       <div className="mt-6">
         <label
@@ -166,12 +212,17 @@ const DocumentUploadForm = ({
           rows={5}
           className="form-input min-h-[130px] resize-y"
           disabled={loading}
+          required
         />
       </div>
 
-      {/* CATEGORY + LANGUAGE */}
+      {/* =====================================
+          CATEGORY + LANGUAGE
+      ===================================== */}
 
       <div className="mt-6 grid gap-6 md:grid-cols-2">
+
+        {/* CATEGORY */}
 
         <div>
           <label
@@ -188,6 +239,7 @@ const DocumentUploadForm = ({
             onChange={handleChange}
             className="form-input"
             disabled={loading}
+            required
           >
             <option value="">
               Select category
@@ -218,6 +270,8 @@ const DocumentUploadForm = ({
             </option>
           </select>
         </div>
+
+        {/* LANGUAGE */}
 
         <div>
           <label
@@ -255,7 +309,9 @@ const DocumentUploadForm = ({
 
       </div>
 
-      {/* TAGS */}
+      {/* =====================================
+          TAGS
+      ===================================== */}
 
       <div className="mt-6">
         <label
@@ -281,7 +337,9 @@ const DocumentUploadForm = ({
         </p>
       </div>
 
-      {/* FILE */}
+      {/* =====================================
+          FILE
+      ===================================== */}
 
       <div className="mt-6">
         <label
@@ -299,10 +357,13 @@ const DocumentUploadForm = ({
           accept=".pdf,.doc,.docx,.ppt,.pptx,.txt"
           className="block w-full border border-line bg-paper px-4 py-3 text-sm file:mr-4 file:border-0 file:bg-ink file:px-4 file:py-2 file:font-mono file:text-[9px] file:uppercase file:text-white"
           disabled={loading}
+          required
         />
       </div>
 
-      {/* ACTION */}
+      {/* =====================================
+          ACTION
+      ===================================== */}
 
       <div className="mt-8 flex justify-end border-t border-line pt-6">
 

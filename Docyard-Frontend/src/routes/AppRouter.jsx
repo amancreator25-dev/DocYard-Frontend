@@ -31,7 +31,7 @@ import Documents from "../pages/Documents/Documents.jsx";
 import DocumentDetails from "../pages/Documents/DocumentDetails.jsx";
 import Profile from "../pages/Profile/Profile.jsx";
 import Contact from "../pages/Contact/Contact.jsx";
-import NotFound from "../pages/NotFound.jsx";
+import PageNotFound from "../pages/PageNotFound/PageNotFound.jsx";
 
 
 // ======================================
@@ -144,7 +144,7 @@ const AppRouter = () => {
 
           <Route
             path="*"
-            element={<NotFound />}
+            element={<PageNotFound />}
           />
 
         </Route>

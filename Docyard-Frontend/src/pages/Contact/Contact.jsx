@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
-import { createContact } from "../../services/contact.js";
+import { createContact } from "../../services/contact.service.js";
 
 import ContactForm from "../../components/Forms/ContactForm.jsx";
 

@@ -3,8 +3,6 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 
 import { loginUser } from "../../services/auth.service.js";
 
-import LoginForm from "../../components/Form/LoginForm.jsx";
-
 const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -20,6 +18,10 @@ const Login = () => {
   const from =
     location.state?.from?.pathname || "/";
 
+  // ==========================================
+  // HANDLE CHANGE
+  // ==========================================
+
   const handleChange = (event) => {
     const { name, value } = event.target;
 
@@ -29,6 +31,10 @@ const Login = () => {
     }));
   };
 
+  // ==========================================
+  // HANDLE SUBMIT
+  // ==========================================
+
   const handleSubmit = async (event) => {
     event.preventDefault();
 
@@ -36,9 +42,14 @@ const Login = () => {
     setError("");
 
     try {
-      await loginUser(formData);
+      await loginUser({
+        email: formData.email.trim(),
+        password: formData.password,
+      });
 
-      navigate(from, { replace: true });
+      navigate(from, {
+        replace: true,
+      });
     } catch (err) {
       setError(
         err?.response?.data?.message ||
@@ -53,9 +64,12 @@ const Login = () => {
     <main className="min-h-screen bg-paper text-ink">
       <div className="grid min-h-screen lg:grid-cols-2">
 
-        {/* BRAND PANEL */}
+        {/* ======================================
+            BRAND PANEL
+        ====================================== */}
 
         <section className="hidden border-r border-line bg-ink p-12 text-paper lg:flex lg:flex-col lg:justify-between">
+
           <Link
             to="/"
             className="font-display text-3xl font-semibold"
@@ -64,6 +78,7 @@ const Login = () => {
           </Link>
 
           <div className="max-w-xl">
+
             <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-paper/50">
               THE DOCUMENT ARCHIVE
             </span>
@@ -79,16 +94,22 @@ const Login = () => {
               contribute to the archive, and
               keep your research organized.
             </p>
+
           </div>
 
           <p className="font-mono text-[9px] uppercase tracking-wide text-paper/40">
             DOCYARD / 2026
           </p>
+
         </section>
 
-        {/* LOGIN PANEL */}
+
+        {/* ======================================
+            LOGIN PANEL
+        ====================================== */}
 
         <section className="flex min-h-screen items-center justify-center px-6 py-12 md:px-12">
+
           <div className="w-full max-w-[440px]">
 
             {/* MOBILE LOGO */}
@@ -100,9 +121,11 @@ const Login = () => {
               DocYard<span className="text-blue">.</span>
             </Link>
 
+
             {/* HEADING */}
 
             <div className="mt-12 lg:mt-0">
+
               <span className="page-eyebrow">
                 WELCOME BACK
               </span>
@@ -115,7 +138,9 @@ const Login = () => {
                 Sign in to continue to your
                 DocYard account.
               </p>
+
             </div>
+
 
             {/* ERROR */}
 
@@ -125,27 +150,48 @@ const Login = () => {
               </div>
             )}
 
-            {/* FORM */}
+
+            {/* ==================================
+                LOGIN FORM
+            ================================== */}
 
             <form
               onSubmit={handleSubmit}
-              className="mt-8"
+              className="mt-8 border border-line bg-white p-6 md:p-8"
             >
 
-              <LoginForm
-                id="email"
-                name="email"
-                type="email"
-                label="Email"
-                value={formData.email}
-                onChange={handleChange}
-                placeholder="you@example.com"
-                autoComplete="email"
-                required
-              />
+              {/* EMAIL */}
+
+              <div>
+
+                <label
+                  htmlFor="email"
+                  className="form-label"
+                >
+                  Email
+                </label>
+
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  placeholder="you@example.com"
+                  autoComplete="email"
+                  className="form-input"
+                  required
+                />
+
+              </div>
+
+
+              {/* PASSWORD */}
 
               <div className="mt-6">
+
                 <div className="mb-2 flex items-center justify-between">
+
                   <label
                     htmlFor="password"
                     className="form-label"
@@ -159,9 +205,10 @@ const Login = () => {
                   >
                     Forgot?
                   </Link>
+
                 </div>
 
-                <LoginForm
+                <input
                   id="password"
                   name="password"
                   type="password"
@@ -169,10 +216,12 @@ const Login = () => {
                   onChange={handleChange}
                   placeholder="Enter your password"
                   autoComplete="current-password"
+                  className="form-input"
                   required
-                  hideLabel
                 />
+
               </div>
+
 
               {/* SUBMIT */}
 
@@ -185,11 +234,14 @@ const Login = () => {
                   ? "Signing in..."
                   : "Sign in →"}
               </button>
+
             </form>
+
 
             {/* REGISTER */}
 
             <div className="mt-8 border-t border-line pt-7 text-center">
+
               <p className="text-sm text-ink-soft">
                 Don't have an account?
               </p>
@@ -200,10 +252,13 @@ const Login = () => {
               >
                 Create an account →
               </Link>
+
             </div>
 
           </div>
+
         </section>
+
       </div>
     </main>
   );

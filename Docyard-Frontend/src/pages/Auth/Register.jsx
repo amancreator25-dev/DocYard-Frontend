@@ -18,6 +18,10 @@ const Register = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  // ==========================================
+  // HANDLE CHANGE
+  // ==========================================
+
   const handleChange = (event) => {
     const { name, value } = event.target;
 
@@ -27,16 +31,36 @@ const Register = () => {
     }));
   };
 
+  // ==========================================
+  // SUBMIT
+  // ==========================================
+
   const handleSubmit = async (event) => {
     event.preventDefault();
 
     setError("");
 
-    if (
-      formData.password !==
-      formData.confirmPassword
-    ) {
+    // Password validation
+    if (formData.password !== formData.confirmPassword) {
       setError("Passwords do not match.");
+      return;
+    }
+
+    // Basic username validation
+    if (!formData.username.trim()) {
+      setError("Please enter a username.");
+      return;
+    }
+
+    // Basic email validation
+    if (!formData.email.trim()) {
+      setError("Please enter your email.");
+      return;
+    }
+
+    // Password validation
+    if (!formData.password) {
+      setError("Please enter a password.");
       return;
     }
 
@@ -44,8 +68,8 @@ const Register = () => {
 
     try {
       await registerUser({
-        username: formData.username,
-        email: formData.email,
+        username: formData.username.trim(),
+        email: formData.email.trim(),
         password: formData.password,
       });
 
@@ -53,6 +77,7 @@ const Register = () => {
     } catch (err) {
       setError(
         err?.response?.data?.message ||
+          err?.message ||
           "Unable to create your account."
       );
     } finally {
@@ -64,9 +89,14 @@ const Register = () => {
     <main className="min-h-screen bg-paper text-ink">
       <div className="grid min-h-screen lg:grid-cols-2">
 
-        {/* BRAND PANEL */}
+        {/* ==========================================
+            BRAND PANEL
+        ========================================== */}
 
         <section className="hidden border-r border-line bg-ink p-12 text-paper lg:flex lg:flex-col lg:justify-between">
+
+          {/* LOGO */}
+
           <Link
             to="/"
             className="font-display text-3xl font-semibold"
@@ -74,7 +104,11 @@ const Register = () => {
             DocYard<span className="text-blue">.</span>
           </Link>
 
+
+          {/* BRAND MESSAGE */}
+
           <div className="max-w-xl">
+
             <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-paper/50">
               JOIN THE ARCHIVE
             </span>
@@ -90,16 +124,25 @@ const Register = () => {
               part of the DocYard document
               community.
             </p>
+
           </div>
+
+
+          {/* FOOTER */}
 
           <p className="font-mono text-[9px] uppercase tracking-wide text-paper/40">
             DOCYARD / 2026
           </p>
+
         </section>
 
-        {/* REGISTER PANEL */}
+
+        {/* ==========================================
+            REGISTER PANEL
+        ========================================== */}
 
         <section className="flex min-h-screen items-center justify-center px-6 py-12 md:px-12">
+
           <div className="w-full max-w-[440px]">
 
             {/* MOBILE LOGO */}
@@ -111,9 +154,11 @@ const Register = () => {
               DocYard<span className="text-blue">.</span>
             </Link>
 
+
             {/* HEADING */}
 
             <div className="mt-12 lg:mt-0">
+
               <span className="page-eyebrow">
                 CREATE ACCOUNT
               </span>
@@ -126,9 +171,13 @@ const Register = () => {
                 Create an account to save,
                 share, and discover documents.
               </p>
+
             </div>
 
-            {/* ERROR */}
+
+            {/* ======================================
+                ERROR
+            ====================================== */}
 
             {error && (
               <div className="mt-7 border border-line bg-paper-raised px-4 py-3 text-sm text-ink-soft">
@@ -136,12 +185,22 @@ const Register = () => {
               </div>
             )}
 
-            {/* FORM */}
+
+            {/* ======================================
+                REGISTER FORM
+
+                IMPORTANT:
+                RegisterForm only renders inputs.
+                This is the ONLY <form> on this page.
+            ====================================== */}
 
             <form
               onSubmit={handleSubmit}
               className="mt-8"
             >
+
+              {/* USERNAME */}
+
               <RegisterForm
                 id="username"
                 name="username"
@@ -154,7 +213,11 @@ const Register = () => {
                 required
               />
 
+
+              {/* EMAIL */}
+
               <div className="mt-5">
+
                 <RegisterForm
                   id="email"
                   name="email"
@@ -166,9 +229,14 @@ const Register = () => {
                   autoComplete="email"
                   required
                 />
+
               </div>
 
+
+              {/* PASSWORD */}
+
               <div className="mt-5">
+
                 <RegisterForm
                   id="password"
                   name="password"
@@ -180,9 +248,14 @@ const Register = () => {
                   autoComplete="new-password"
                   required
                 />
+
               </div>
 
+
+              {/* CONFIRM PASSWORD */}
+
               <div className="mt-5">
+
                 <RegisterForm
                   id="confirmPassword"
                   name="confirmPassword"
@@ -194,7 +267,9 @@ const Register = () => {
                   autoComplete="new-password"
                   required
                 />
+
               </div>
+
 
               {/* SUBMIT */}
 
@@ -207,11 +282,16 @@ const Register = () => {
                   ? "Creating account..."
                   : "Create account →"}
               </button>
+
             </form>
 
-            {/* LOGIN */}
+
+            {/* ======================================
+                LOGIN LINK
+            ====================================== */}
 
             <div className="mt-8 border-t border-line pt-7 text-center">
+
               <p className="text-sm text-ink-soft">
                 Already have an account?
               </p>
@@ -222,10 +302,13 @@ const Register = () => {
               >
                 Sign in →
               </Link>
+
             </div>
 
           </div>
+
         </section>
+
       </div>
     </main>
   );

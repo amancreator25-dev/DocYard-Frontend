@@ -4,20 +4,20 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import {
   getDocumentBySlug,
   downloadDocument,
-} from "../services/document.service.js";
+} from "../../services/document.service.js";
 
 import {
   addBookmark,
   removeBookmark,
   checkBookmarkStatus,
-} from "../services/bookmark.service.js";
+} from "../../services/bookmark.service.js";
 
 import {
   likeDocument,
   unlikeDocument,
   checkLikeStatus,
   getLikeCount,
-} from "../services/like.service.js";
+} from "../../services/like.service.js";
 
 import {
   addComment,
