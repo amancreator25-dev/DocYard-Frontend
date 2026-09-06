@@ -1,42 +1,24 @@
 import { Outlet } from "react-router-dom";
+import Navbar from "../components/Navbar/Navbar.jsx";
+import Footer from "../components/footer/footer.jsx";
 
-import Navbar from "../components/Navbar.jsx";
-import Footer from "../components/Footer.jsx";
-
-
-// ======================================
-// MAIN LAYOUT
-// ======================================
-
-const MainLayout = () => {
+const MainLayout = ({ user, onLogout }) => {
   return (
-    <div className="app-layout">
+    <div className="flex min-h-screen flex-col bg-paper text-ink">
+      <Navbar
+        user={user}
+        onLogout={onLogout}
+      />
 
-      {/* ================================= */}
-      {/* NAVBAR                            */}
-      {/* ================================= */}
-
-      <Navbar />
-
-
-      {/* ================================= */}
-      {/* PAGE CONTENT                      */}
-      {/* ================================= */}
-
-      <main className="app-content">
-        <Outlet />
+      <main className="flex-1">
+        <div className="mx-auto w-full max-w-7xl px-5 py-8 md:px-8 md:py-12">
+          <Outlet />
+        </div>
       </main>
 
-
-      {/* ================================= */}
-      {/* FOOTER                            */}
-      {/* ================================= */}
-
       <Footer />
-
     </div>
   );
 };
-
 
 export default MainLayout;
