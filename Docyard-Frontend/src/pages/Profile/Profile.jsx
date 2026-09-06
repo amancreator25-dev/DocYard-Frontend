@@ -1,81 +1,65 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 import {
   getCurrentUser,
   updateProfile,
   changePassword,
-  logoutUser,
 } from "../services/auth.js";
 
-import useAuth from "../hooks/useAuth.js";
-
 const Profile = () => {
-  const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
-
   const [user, setUser] = useState(null);
 
   const [profile, setProfile] = useState({
     username: "",
-    fullName: "",
     email: "",
     bio: "",
   });
 
-  const [passwords, setPasswords] = useState({
+  const [password, setPassword] = useState({
     currentPassword: "",
     newPassword: "",
     confirmPassword: "",
   });
 
   const [loading, setLoading] = useState(true);
-  const [savingProfile, setSavingProfile] = useState(false);
-  const [changingPassword, setChangingPassword] =
+  const [savingProfile, setSavingProfile] =
     useState(false);
-  const [loggingOut, setLoggingOut] = useState(false);
+  const [savingPassword, setSavingPassword] =
+    useState(false);
 
-  const [profileMessage, setProfileMessage] = useState("");
-  const [passwordMessage, setPasswordMessage] =
-    useState("");
-
+  const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
-  // ======================================
+  // ==========================================
   // LOAD USER
-  // ======================================
+  // ==========================================
 
   useEffect(() => {
     const loadUser = async () => {
+      setLoading(true);
+
       try {
         const response = await getCurrentUser();
 
-        const currentUser =
+        const data =
           response?.data?.user ||
           response?.user ||
           response?.data ||
           null;
 
-        if (!currentUser) {
-          setError("Unable to load your profile.");
-          return;
+        if (data) {
+          setUser(data);
+
+          setProfile({
+            username: data.username || "",
+            email: data.email || "",
+            bio: data.bio || "",
+          });
         }
-
-        setUser(currentUser);
-
-        setProfile({
-          username: currentUser.username || "",
-          fullName:
-            currentUser.fullName ||
-            currentUser.name ||
-            "",
-          email: currentUser.email || "",
-          bio: currentUser.bio || "",
-        });
       } catch (err) {
         setError(
           err?.response?.data?.message ||
-            err?.message ||
             "Unable to load your profile."
         );
       } finally {
@@ -83,16 +67,12 @@ const Profile = () => {
       }
     };
 
-    if (isAuthenticated) {
-      loadUser();
-    } else {
-      setLoading(false);
-    }
-  }, [isAuthenticated]);
+    loadUser();
+  }, []);
 
-  // ======================================
-  // PROFILE INPUT
-  // ======================================
+  // ==========================================
+  // PROFILE CHANGE
+  // ==========================================
 
   const handleProfileChange = (event) => {
     const { name, value } = event.target;
@@ -101,43 +81,38 @@ const Profile = () => {
       ...previous,
       [name]: value,
     }));
-
-    setProfileMessage("");
-    setError("");
   };
 
-  // ======================================
-  // PASSWORD INPUT
-  // ======================================
+  // ==========================================
+  // PASSWORD CHANGE
+  // ==========================================
 
   const handlePasswordChange = (event) => {
     const { name, value } = event.target;
 
-    setPasswords((previous) => ({
+    setPassword((previous) => ({
       ...previous,
       [name]: value,
     }));
-
-    setPasswordMessage("");
-    setError("");
   };
 
-  // ======================================
+  // ==========================================
   // UPDATE PROFILE
-  // ======================================
+  // ==========================================
 
   const handleProfileSubmit = async (event) => {
     event.preventDefault();
 
     setSavingProfile(true);
-    setProfileMessage("");
+    setMessage("");
     setError("");
 
     try {
-      const response = await updateProfile({
-        fullName: profile.fullName,
-        bio: profile.bio,
-      });
+      const response =
+        await updateProfile({
+          username: profile.username,
+          bio: profile.bio,
+        });
 
       const updatedUser =
         response?.data?.user ||
@@ -146,15 +121,22 @@ const Profile = () => {
 
       if (updatedUser) {
         setUser(updatedUser);
+
+        setProfile((previous) => ({
+          ...previous,
+          username:
+            updatedUser.username ||
+            previous.username,
+          bio:
+            updatedUser.bio ||
+            previous.bio,
+        }));
       }
 
-      setProfileMessage(
-        "Profile updated successfully."
-      );
+      setMessage("Profile updated successfully.");
     } catch (err) {
       setError(
         err?.response?.data?.message ||
-          err?.message ||
           "Unable to update your profile."
       );
     } finally {
@@ -162,507 +144,430 @@ const Profile = () => {
     }
   };
 
-  // ======================================
-  // CHANGE PASSWORD
-  // ======================================
+  // ==========================================
+  // UPDATE PASSWORD
+  // ==========================================
 
   const handlePasswordSubmit = async (event) => {
     event.preventDefault();
 
-    setPasswordMessage("");
+    setMessage("");
     setError("");
 
     if (
-      !passwords.currentPassword ||
-      !passwords.newPassword ||
-      !passwords.confirmPassword
-    ) {
-      setError("Please fill in all password fields.");
-      return;
-    }
-
-    if (
-      passwords.newPassword !==
-      passwords.confirmPassword
+      password.newPassword !==
+      password.confirmPassword
     ) {
       setError("New passwords do not match.");
       return;
     }
 
-    if (passwords.newPassword.length < 8) {
-      setError(
-        "New password must be at least 8 characters."
-      );
-      return;
-    }
-
-    setChangingPassword(true);
+    setSavingPassword(true);
 
     try {
       await changePassword({
         currentPassword:
-          passwords.currentPassword,
-        newPassword: passwords.newPassword,
+          password.currentPassword,
+        newPassword:
+          password.newPassword,
       });
 
-      setPasswords({
+      setPassword({
         currentPassword: "",
         newPassword: "",
         confirmPassword: "",
       });
 
-      setPasswordMessage(
-        "Password changed successfully."
-      );
+      setMessage("Password changed successfully.");
     } catch (err) {
       setError(
         err?.response?.data?.message ||
-          err?.message ||
           "Unable to change your password."
       );
     } finally {
-      setChangingPassword(false);
+      setSavingPassword(false);
     }
   };
 
-  // ======================================
-  // LOGOUT
-  // ======================================
-
-  const handleLogout = async () => {
-    setLoggingOut(true);
-
-    try {
-      await logoutUser();
-    } catch {
-      // Token is removed by the auth service
-      // even if the server request fails.
-    } finally {
-      setLoggingOut(false);
-      navigate("/");
-    }
-  };
-
-  // ======================================
-  // LOGIN REQUIRED
-  // ======================================
-
-  if (!isAuthenticated) {
-    return (
-      <main className="profile-page">
-        <div className="container">
-
-          <div className="profile-empty">
-
-            <span className="page-eyebrow">
-              DOCYARD
-            </span>
-
-            <h1>Account</h1>
-
-            <p>
-              Sign in to access your profile.
-            </p>
-
-            <button
-              type="button"
-              className="btn btn-primary"
-              onClick={() => navigate("/login")}
-            >
-              Sign in
-            </button>
-
-          </div>
-
-        </div>
-      </main>
-    );
-  }
-
-  // ======================================
+  // ==========================================
   // LOADING
-  // ======================================
+  // ==========================================
 
   if (loading) {
     return (
-      <main className="profile-page">
-        <div className="container">
+      <main className="min-h-screen bg-paper px-6 py-16 md:px-12">
+        <div className="mx-auto max-w-[1180px]">
 
-          <div className="profile-loading">
-            Loading profile...
-          </div>
+          <div className="h-3 w-24 bg-paper-raised" />
+
+          <div className="mt-5 h-12 max-w-lg bg-paper-raised" />
+
+          <div className="mt-4 h-4 max-w-md bg-paper-raised" />
+
+          <div className="mt-12 h-64 bg-paper-raised" />
 
         </div>
       </main>
     );
   }
 
-  // ======================================
-  // PAGE
-  // ======================================
-
   return (
-    <main className="profile-page">
+    <main className="min-h-screen bg-paper px-6 py-14 text-ink md:px-12 md:py-20">
 
-      <div className="container">
+      <div className="mx-auto max-w-[1180px]">
 
         {/* ================================= */}
-        {/* HEADER                             */}
+        {/* HEADER                            */}
         {/* ================================= */}
 
-        <header className="profile-header">
+        <header className="border-b border-line pb-10">
 
-          <div>
+          <span className="page-eyebrow">
+            ACCOUNT
+          </span>
 
-            <span className="page-eyebrow">
-              ACCOUNT
-            </span>
+          <h1 className="mt-3 font-display text-5xl font-semibold leading-[1.05] md:text-6xl">
+            Your Profile
+          </h1>
 
-            <h1>Profile</h1>
-
-            <p>
-              Manage your DocYard account and
-              personal information.
-            </p>
-
-          </div>
-
-          <button
-            type="button"
-            className="btn btn-ghost"
-            onClick={() => navigate("/my-documents")}
-          >
-            My documents
-          </button>
+          <p className="mt-4 max-w-xl text-sm leading-6 text-ink-soft">
+            Manage your DocYard account and
+            personal information.
+          </p>
 
         </header>
 
 
         {/* ================================= */}
-        {/* ERROR                              */}
+        {/* STATUS                            */}
         {/* ================================= */}
 
-        {error && (
-          <div className="profile-alert">
-            {error}
+        {(message || error) && (
+          <div
+            className={`mt-6 border px-5 py-4 text-sm ${
+              error
+                ? "border-line bg-paper-raised text-ink-soft"
+                : "border-line bg-white text-ink"
+            }`}
+          >
+            {error || message}
           </div>
         )}
 
 
         {/* ================================= */}
-        {/* PROFILE INFORMATION                */}
+        {/* PROFILE GRID                       */}
         {/* ================================= */}
 
-        <section className="profile-section">
+        <div className="grid gap-12 py-12 lg:grid-cols-[280px_minmax(0,1fr)]">
 
-          <div className="profile-section-heading">
+          {/* SIDEBAR */}
 
-            <span>
-              01
-            </span>
+          <aside>
 
-            <div>
-              <h2>
-                Personal information
-              </h2>
+            <div className="border-t border-line">
 
-              <p>
-                Information displayed on your
-                DocYard profile.
-              </p>
-            </div>
+              <div className="border-b border-line py-5">
 
-          </div>
-
-
-          <form
-            className="profile-form"
-            onSubmit={handleProfileSubmit}
-          >
-
-            {/* USERNAME */}
-
-            <div className="profile-field">
-
-              <label htmlFor="username">
-                Username
-              </label>
-
-              <input
-                id="username"
-                name="username"
-                type="text"
-                value={profile.username}
-                disabled
-              />
-
-              <small>
-                Username cannot be changed here.
-              </small>
-
-            </div>
-
-
-            {/* EMAIL */}
-
-            <div className="profile-field">
-
-              <label htmlFor="email">
-                Email
-              </label>
-
-              <input
-                id="email"
-                name="email"
-                type="email"
-                value={profile.email}
-                disabled
-              />
-
-              <small>
-                Your account email address.
-              </small>
-
-            </div>
-
-
-            {/* NAME */}
-
-            <div className="profile-field">
-
-              <label htmlFor="fullName">
-                Full name
-              </label>
-
-              <input
-                id="fullName"
-                name="fullName"
-                type="text"
-                value={profile.fullName}
-                onChange={handleProfileChange}
-                placeholder="Your name"
-                maxLength={100}
-              />
-
-            </div>
-
-
-            {/* BIO */}
-
-            <div className="profile-field">
-
-              <label htmlFor="bio">
-                About
-              </label>
-
-              <textarea
-                id="bio"
-                name="bio"
-                value={profile.bio}
-                onChange={handleProfileChange}
-                placeholder="Tell the DocYard community a little about yourself..."
-                rows={5}
-                maxLength={500}
-              />
-
-            </div>
-
-
-            <div className="profile-form-footer">
-
-              {profileMessage && (
-                <span className="profile-success">
-                  {profileMessage}
+                <span className="page-eyebrow">
+                  ACCOUNT
                 </span>
-              )}
 
-              <button
-                type="submit"
-                className="btn btn-primary"
-                disabled={savingProfile}
-              >
-                {savingProfile
-                  ? "Saving..."
-                  : "Save changes"}
-              </button>
+              </div>
 
-            </div>
+              <div className="border-b border-line py-5">
 
-          </form>
+                <div className="flex h-16 w-16 items-center justify-center bg-ink font-display text-2xl text-paper">
+                  {(
+                    profile.username ||
+                    "U"
+                  )
+                    .charAt(0)
+                    .toUpperCase()}
+                </div>
 
-        </section>
+                <h2 className="mt-5 font-display text-2xl font-semibold">
+                  {profile.username ||
+                    "User"}
+                </h2>
 
+                <p className="mt-1 break-all text-xs text-ink-soft">
+                  {profile.email}
+                </p>
 
-        {/* ================================= */}
-        {/* SECURITY                            */}
-        {/* ================================= */}
+              </div>
 
-        <section className="profile-section">
+              <nav className="divide-y divide-line">
 
-          <div className="profile-section-heading">
+                <Link
+                  to="/my-documents"
+                  className="block py-4 font-mono text-[10px] uppercase tracking-wide text-ink-faint transition-colors hover:text-blue"
+                >
+                  My documents →
+                </Link>
 
-            <span>
-              02
-            </span>
+                <Link
+                  to="/bookmarks"
+                  className="block py-4 font-mono text-[10px] uppercase tracking-wide text-ink-faint transition-colors hover:text-blue"
+                >
+                  Bookmarks →
+                </Link>
 
-            <div>
-              <h2>
-                Security
-              </h2>
-
-              <p>
-                Keep your DocYard account secure.
-              </p>
-            </div>
-
-          </div>
-
-
-          <form
-            className="profile-form"
-            onSubmit={handlePasswordSubmit}
-          >
-
-            {/* CURRENT PASSWORD */}
-
-            <div className="profile-field">
-
-              <label htmlFor="currentPassword">
-                Current password
-              </label>
-
-              <input
-                id="currentPassword"
-                name="currentPassword"
-                type="password"
-                value={
-                  passwords.currentPassword
-                }
-                onChange={handlePasswordChange}
-                autoComplete="current-password"
-              />
+              </nav>
 
             </div>
 
-
-            {/* NEW PASSWORD */}
-
-            <div className="profile-field">
-
-              <label htmlFor="newPassword">
-                New password
-              </label>
-
-              <input
-                id="newPassword"
-                name="newPassword"
-                type="password"
-                value={passwords.newPassword}
-                onChange={handlePasswordChange}
-                autoComplete="new-password"
-              />
-
-            </div>
+          </aside>
 
 
-            {/* CONFIRM */}
+          {/* FORMS */}
 
-            <div className="profile-field">
+          <div className="space-y-12">
 
-              <label htmlFor="confirmPassword">
-                Confirm new password
-              </label>
+            {/* ================================= */}
+            {/* PERSONAL INFORMATION              */}
+            {/* ================================= */}
 
-              <input
-                id="confirmPassword"
-                name="confirmPassword"
-                type="password"
-                value={
-                  passwords.confirmPassword
-                }
-                onChange={handlePasswordChange}
-                autoComplete="new-password"
-              />
+            <section>
 
-            </div>
+              <div className="mb-7 border-b border-line pb-5">
 
-
-            <div className="profile-form-footer">
-
-              {passwordMessage && (
-                <span className="profile-success">
-                  {passwordMessage}
+                <span className="page-eyebrow">
+                  PROFILE
                 </span>
-              )}
 
-              <button
-                type="submit"
-                className="btn btn-primary"
-                disabled={changingPassword}
+                <h2 className="mt-2 font-display text-3xl font-semibold">
+                  Personal information
+                </h2>
+
+              </div>
+
+              <form
+                onSubmit={handleProfileSubmit}
+                className="border border-line bg-white p-6 md:p-8"
               >
-                {changingPassword
-                  ? "Updating..."
-                  : "Change password"}
-              </button>
 
-            </div>
+                <div className="grid gap-6 md:grid-cols-2">
 
-          </form>
+                  <div>
 
-        </section>
+                    <label
+                      htmlFor="username"
+                      className="form-label"
+                    >
+                      Username
+                    </label>
+
+                    <input
+                      id="username"
+                      name="username"
+                      type="text"
+                      value={profile.username}
+                      onChange={
+                        handleProfileChange
+                      }
+                      className="form-input"
+                    />
+
+                  </div>
 
 
-        {/* ================================= */}
-        {/* ACCOUNT                            */}
-        {/* ================================= */}
+                  <div>
 
-        <section className="profile-section profile-danger-section">
+                    <label
+                      htmlFor="email"
+                      className="form-label"
+                    >
+                      Email
+                    </label>
 
-          <div className="profile-section-heading">
+                    <input
+                      id="email"
+                      name="email"
+                      type="email"
+                      value={profile.email}
+                      disabled
+                      className="form-input cursor-not-allowed opacity-60"
+                    />
 
-            <span>
-              03
-            </span>
+                    <span className="form-help">
+                      Email cannot be changed here.
+                    </span>
 
-            <div>
-              <h2>
-                Account
-              </h2>
+                  </div>
 
-              <p>
-                Sign out of your DocYard account.
-              </p>
-            </div>
+                </div>
+
+
+                <div className="mt-6">
+
+                  <label
+                    htmlFor="bio"
+                    className="form-label"
+                  >
+                    Bio
+                  </label>
+
+                  <textarea
+                    id="bio"
+                    name="bio"
+                    value={profile.bio}
+                    onChange={
+                      handleProfileChange
+                    }
+                    placeholder="Tell the DocYard community a little about yourself..."
+                    rows={5}
+                    className="form-textarea"
+                  />
+
+                </div>
+
+
+                <div className="mt-7 flex justify-end">
+
+                  <button
+                    type="submit"
+                    disabled={savingProfile}
+                    className="btn btn-primary"
+                  >
+                    {savingProfile
+                      ? "Saving..."
+                      : "Save profile"}
+                  </button>
+
+                </div>
+
+              </form>
+
+            </section>
+
+
+            {/* ================================= */}
+            {/* PASSWORD                           */}
+            {/* ================================= */}
+
+            <section>
+
+              <div className="mb-7 border-b border-line pb-5">
+
+                <span className="page-eyebrow">
+                  SECURITY
+                </span>
+
+                <h2 className="mt-2 font-display text-3xl font-semibold">
+                  Change password
+                </h2>
+
+              </div>
+
+              <form
+                onSubmit={handlePasswordSubmit}
+                className="border border-line bg-white p-6 md:p-8"
+              >
+
+                <div className="space-y-6">
+
+                  <div>
+
+                    <label
+                      htmlFor="currentPassword"
+                      className="form-label"
+                    >
+                      Current password
+                    </label>
+
+                    <input
+                      id="currentPassword"
+                      name="currentPassword"
+                      type="password"
+                      value={
+                        password.currentPassword
+                      }
+                      onChange={
+                        handlePasswordChange
+                      }
+                      className="form-input"
+                      required
+                    />
+
+                  </div>
+
+
+                  <div>
+
+                    <label
+                      htmlFor="newPassword"
+                      className="form-label"
+                    >
+                      New password
+                    </label>
+
+                    <input
+                      id="newPassword"
+                      name="newPassword"
+                      type="password"
+                      value={
+                        password.newPassword
+                      }
+                      onChange={
+                        handlePasswordChange
+                      }
+                      className="form-input"
+                      required
+                    />
+
+                  </div>
+
+
+                  <div>
+
+                    <label
+                      htmlFor="confirmPassword"
+                      className="form-label"
+                    >
+                      Confirm new password
+                    </label>
+
+                    <input
+                      id="confirmPassword"
+                      name="confirmPassword"
+                      type="password"
+                      value={
+                        password.confirmPassword
+                      }
+                      onChange={
+                        handlePasswordChange
+                      }
+                      className="form-input"
+                      required
+                    />
+
+                  </div>
+
+                </div>
+
+
+                <div className="mt-7 flex justify-end">
+
+                  <button
+                    type="submit"
+                    disabled={savingPassword}
+                    className="btn btn-primary"
+                  >
+                    {savingPassword
+                      ? "Updating..."
+                      : "Change password"}
+                  </button>
+
+                </div>
+
+              </form>
+
+            </section>
 
           </div>
 
-          <div className="profile-logout">
-
-            <div>
-              <strong>
-                Sign out
-              </strong>
-
-              <p>
-                You'll need to sign in again to
-                access your account.
-              </p>
-            </div>
-
-            <button
-              type="button"
-              className="btn btn-ghost"
-              onClick={handleLogout}
-              disabled={loggingOut}
-            >
-              {loggingOut
-                ? "Signing out..."
-                : "Sign out"}
-            </button>
-
-          </div>
-
-        </section>
+        </div>
 
       </div>
 

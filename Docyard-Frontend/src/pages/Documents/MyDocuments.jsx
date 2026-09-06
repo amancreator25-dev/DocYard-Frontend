@@ -6,82 +6,59 @@ import {
   deleteDocument,
 } from "../services/document.js";
 
-import useAuth from "../hooks/useAuth.js";
-
-
-// ======================================
-// MY DOCUMENTS
-// ======================================
-
 const MyDocuments = () => {
   const navigate = useNavigate();
 
-  const { isAuthenticated } = useAuth();
-
   const [documents, setDocuments] = useState([]);
-
   const [loading, setLoading] = useState(true);
-
+  const [deletingId, setDeletingId] = useState(null);
   const [error, setError] = useState("");
 
-  const [deletingId, setDeletingId] = useState(null);
-
-
-// ======================================
-// LOAD DOCUMENTS
-// ======================================
-
-  const loadDocuments = async () => {
-    setLoading(true);
-    setError("");
-
-    try {
-      const response = await getMyDocuments();
-
-      const data =
-        response?.data?.documents ||
-        response?.documents ||
-        response?.data ||
-        [];
-
-      setDocuments(
-        Array.isArray(data) ? data : []
-      );
-
-    } catch (err) {
-      setError(
-        err?.response?.data?.message ||
-        err?.message ||
-        "Unable to load your documents."
-      );
-
-    } finally {
-      setLoading(false);
-    }
-  };
-
+  // ======================================
+  // LOAD MY DOCUMENTS
+  // ======================================
 
   useEffect(() => {
-    if (isAuthenticated) {
-      loadDocuments();
-    } else {
-      setLoading(false);
-    }
-  }, [isAuthenticated]);
+    const loadDocuments = async () => {
+      setLoading(true);
+      setError("");
 
+      try {
+        const response = await getMyDocuments();
 
-// ======================================
-// DELETE DOCUMENT
-// ======================================
+        const data =
+          response?.data?.documents ||
+          response?.documents ||
+          response?.data ||
+          [];
+
+        setDocuments(
+          Array.isArray(data) ? data : []
+        );
+      } catch (err) {
+        setError(
+          err?.response?.data?.message ||
+            err?.message ||
+            "Unable to load your documents."
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadDocuments();
+  }, []);
+
+  // ======================================
+  // DELETE DOCUMENT
+  // ======================================
 
   const handleDelete = async (documentId) => {
     const confirmed = window.confirm(
       "Are you sure you want to delete this document?"
     );
 
-    if (!confirmed) {
-      return;
-    }
+    if (!confirmed) return;
 
     setDeletingId(documentId);
     setError("");
@@ -95,146 +72,144 @@ const MyDocuments = () => {
             document._id !== documentId
         )
       );
-
     } catch (err) {
       setError(
         err?.response?.data?.message ||
-        err?.message ||
-        "Unable to delete document."
+          err?.message ||
+          "Unable to delete the document."
       );
-
     } finally {
       setDeletingId(null);
     }
   };
 
+  // ======================================
+  // FORMAT DATE
+  // ======================================
 
-// ======================================
-// NOT AUTHENTICATED
-// ======================================
+  const formatDate = (date) => {
+    if (!date) return "—";
 
-  if (!isAuthenticated) {
-    return (
-      <main className="auth-page">
-
-        <div className="container">
-
-          <div className="empty-state">
-
-            <h2>
-              Login Required
-            </h2>
-
-            <p>
-              Sign in to view the documents
-              you have uploaded.
-            </p>
-
-            <button
-              type="button"
-              className="btn btn-primary"
-              onClick={() => navigate("/login")}
-            >
-              Sign In
-            </button>
-
-          </div>
-
-        </div>
-
-      </main>
+    return new Date(date).toLocaleDateString(
+      "en-US",
+      {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      }
     );
-  }
+  };
 
-
-// ======================================
-// PAGE
-// ======================================
+  // ======================================
+  // PAGE
+  // ======================================
 
   return (
-    <main className="my-documents-page">
+    <main className="min-h-[calc(100vh-72px)] bg-paper px-6 py-16 text-ink md:px-12">
 
-      <div className="container">
+      <div className="mx-auto max-w-[1180px]">
 
         {/* ================================= */}
-        {/* HEADER                             */}
+        {/* HEADER */}
         {/* ================================= */}
 
-        <div className="my-documents-header">
+        <header className="flex flex-col items-start justify-between gap-7 border-b border-line pb-8 md:flex-row md:items-end">
 
           <div>
 
             <span className="page-eyebrow">
-              MY DOCYARD
+              YOUR ARCHIVE
             </span>
 
-            <h1>
+            <h1 className="mt-2 font-display text-5xl font-semibold leading-[1.1]">
               My Documents
             </h1>
 
-            <p>
-              Manage the documents you have
-              uploaded to DocYard.
+            <p className="mt-3 max-w-xl text-sm leading-6 text-ink-soft">
+              Manage the documents you've
+              contributed to DocYard.
             </p>
 
           </div>
 
           <Link
-            to="/upload"
+            to="/contribute"
             className="btn btn-primary"
           >
-            + Upload Document
+            Contribute a document
           </Link>
 
-        </div>
+        </header>
 
 
         {/* ================================= */}
-        {/* ERROR                              */}
+        {/* ERROR */}
         {/* ================================= */}
 
         {error && (
-          <div className="alert alert-error">
+          <div className="mt-6 border border-line-strong bg-paper-raised px-4 py-3 text-sm text-ink-soft">
             {error}
           </div>
         )}
 
 
         {/* ================================= */}
-        {/* LOADING                            */}
+        {/* COUNT */}
         {/* ================================= */}
 
-        {loading && (
-          <div className="loading-container">
-            <p>
-              Loading your documents...
-            </p>
+        {!loading && (
+          <div className="border-b border-line py-5 font-mono text-[10px] uppercase tracking-wide text-ink-faint">
+            {documents.length}{" "}
+            {documents.length === 1
+              ? "document"
+              : "documents"}
           </div>
         )}
 
 
         {/* ================================= */}
-        {/* EMPTY                              */}
+        {/* LOADING */}
+        {/* ================================= */}
+
+        {loading && (
+          <div className="flex flex-col gap-3 py-10">
+
+            <div className="h-3 w-3/4 bg-paper-raised" />
+
+            <div className="h-3 w-1/2 bg-paper-raised" />
+
+            <div className="h-3 w-2/3 bg-paper-raised" />
+
+          </div>
+        )}
+
+
+        {/* ================================= */}
+        {/* EMPTY STATE */}
         {/* ================================= */}
 
         {!loading &&
           documents.length === 0 && (
-            <div className="empty-state">
+            <div className="mx-auto my-20 max-w-xl border border-line bg-white px-8 py-14 text-center">
 
-              <h2>
-                You haven't uploaded anything yet.
+              <span className="font-mono text-xs text-ink-faint">
+                YOUR ARCHIVE
+              </span>
+
+              <h2 className="mt-3 font-display text-3xl font-semibold">
+                No documents yet.
               </h2>
 
-              <p>
-                Upload your first document and
-                start sharing your knowledge.
+              <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-ink-soft">
+                Documents you contribute to
+                DocYard will appear here.
               </p>
 
               <Link
-                to="/upload"
-                className="btn btn-primary"
+                to="/contribute"
+                className="btn btn-primary mt-7"
               >
-                Upload Document
+                Contribute your first document
               </Link>
 
             </div>
@@ -242,76 +217,98 @@ const MyDocuments = () => {
 
 
         {/* ================================= */}
-        {/* DOCUMENTS                          */}
+        {/* DOCUMENT LIST */}
         {/* ================================= */}
 
         {!loading &&
           documents.length > 0 && (
-
-            <div className="my-documents-list">
+            <section className="border-t border-line">
 
               {documents.map((document) => (
-
                 <article
-                  className="my-document-card"
                   key={document._id}
+                  className="grid gap-5 border-b border-line py-7 transition-colors hover:bg-paper-raised/40 md:grid-cols-[72px_minmax(0,1fr)_auto]"
                 >
 
-                  {/* FILE ICON */}
+                  {/* DOCUMENT TYPE */}
 
-                  <div className="my-document-icon">
-                    {document.fileType
-                      ?.toUpperCase() || "DOC"}
+                  <div className="flex h-[78px] w-[62px] items-center justify-center bg-ink text-paper">
+
+                    <div className="relative flex h-full w-full items-center justify-center">
+
+                      <span className="absolute inset-[7px] border border-paper/25" />
+
+                      <span className="relative font-mono text-[9px] tracking-wide">
+                        {(
+                          document.fileType ||
+                          "DOC"
+                        ).toUpperCase()}
+                      </span>
+
+                    </div>
+
                   </div>
 
 
                   {/* CONTENT */}
 
-                  <div className="my-document-content">
+                  <div className="min-w-0">
 
-                    <div className="my-document-title-row">
+                    <div className="mb-2 flex flex-wrap items-center gap-3">
 
-                      <h2>
-                        {document.title}
-                      </h2>
+                      <span className="font-mono text-[10px] uppercase tracking-wide text-blue">
+                        {document.category ||
+                          "Archive"}
+                      </span>
 
-                      <span
-                        className={`visibility-badge ${
-                          document.visibility ===
-                          "private"
-                            ? "visibility-private"
-                            : "visibility-public"
-                        }`}
-                      >
-                        {document.visibility ||
-                          "public"}
+                      <span className="font-mono text-[10px] text-ink-faint">
+                        {formatDate(
+                          document.createdAt
+                        )}
                       </span>
 
                     </div>
 
-                    <p>
-                      {document.description}
+
+                    <h2 className="font-display text-[26px] font-semibold leading-tight">
+
+                      {document.slug ? (
+                        <Link
+                          to={`/documents/${document.slug}`}
+                          className="transition-colors hover:text-blue"
+                        >
+                          {document.title}
+                        </Link>
+                      ) : (
+                        document.title
+                      )}
+
+                    </h2>
+
+
+                    <p className="mt-2 line-clamp-2 max-w-2xl text-sm leading-6 text-ink-soft">
+                      {document.description ||
+                        "No description available."}
                     </p>
 
-                    <div className="my-document-meta">
 
-                      <span>
-                        {document.category}
-                      </span>
+                    <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2 font-mono text-[10px] text-ink-faint">
 
-                      <span>
-                        👁 {document.views || 0}
-                      </span>
-
-                      <span>
-                        ↓ {document.downloads || 0}
-                      </span>
-
-                      {document.createdAt && (
+                      {document.author && (
                         <span>
-                          {new Date(
-                            document.createdAt
-                          ).toLocaleDateString()}
+                          By {document.author}
+                        </span>
+                      )}
+
+                      {document.language && (
+                        <span>
+                          {document.language}
+                        </span>
+                      )}
+
+                      {document.views !== undefined && (
+                        <span>
+                          {document.views} views
                         </span>
                       )}
 
@@ -322,25 +319,31 @@ const MyDocuments = () => {
 
                   {/* ACTIONS */}
 
-                  <div className="my-document-actions">
+                  <div className="flex items-center gap-3 md:self-center">
 
-                    <Link
-                      to={`/documents/${document.slug}`}
-                      className="btn btn-secondary"
-                    >
-                      View
-                    </Link>
-
-                    <Link
-                      to={`/documents/${document.slug}/edit`}
-                      className="btn btn-secondary"
-                    >
-                      Edit
-                    </Link>
+                    {document.slug && (
+                      <Link
+                        to={`/documents/${document.slug}`}
+                        className="btn btn-primary"
+                      >
+                        View
+                      </Link>
+                    )}
 
                     <button
                       type="button"
-                      className="btn btn-danger"
+                      onClick={() =>
+                        navigate(
+                          `/documents/edit/${document._id}`
+                        )
+                      }
+                      className="btn btn-ghost"
+                    >
+                      Edit
+                    </button>
+
+                    <button
+                      type="button"
                       onClick={() =>
                         handleDelete(
                           document._id
@@ -350,8 +353,10 @@ const MyDocuments = () => {
                         deletingId ===
                         document._id
                       }
+                      className="px-1 py-2 text-xs text-ink-faint transition-colors hover:text-ink disabled:opacity-50"
                     >
-                      {deletingId === document._id
+                      {deletingId ===
+                      document._id
                         ? "Deleting..."
                         : "Delete"}
                     </button>
@@ -359,11 +364,9 @@ const MyDocuments = () => {
                   </div>
 
                 </article>
-
               ))}
 
-            </div>
-
+            </section>
           )}
 
       </div>
@@ -371,6 +374,5 @@ const MyDocuments = () => {
     </main>
   );
 };
-
 
 export default MyDocuments;

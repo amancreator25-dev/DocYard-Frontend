@@ -2,56 +2,34 @@ import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 
 import { getAllDocuments } from "../services/document.js";
-import { searchDocuments } from "../services/search.js";
-
-
-// ======================================
-// DOCUMENTS PAGE
-// ======================================
 
 const Documents = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams, setSearchParams] =
+    useSearchParams();
 
   const [documents, setDocuments] = useState([]);
-
-  const [search, setSearch] = useState(
-    searchParams.get("search") || ""
-  );
-
-  const [category, setCategory] = useState(
-    searchParams.get("category") || ""
-  );
-
   const [loading, setLoading] = useState(true);
-
   const [error, setError] = useState("");
 
+  const initialSearch =
+    searchParams.get("search") || "";
 
-  // ======================================
-  // LOAD DOCUMENTS
-  // ======================================
+  const [search, setSearch] =
+    useState(initialSearch);
 
-  const loadDocuments = async () => {
+  const category =
+    searchParams.get("category") || "";
+
+  const loadDocuments = async (params = {}) => {
     setLoading(true);
     setError("");
 
     try {
-      let response;
-
-      if (search.trim()) {
-        response = await searchDocuments({
-          q: search.trim(),
-          category: category || undefined,
-        });
-      } else {
-        response = await getAllDocuments({
-          category: category || undefined,
-        });
-      }
+      const response =
+        await getAllDocuments(params);
 
       const data =
         response?.data?.documents ||
-        response?.data?.data ||
         response?.documents ||
         response?.data ||
         [];
@@ -59,36 +37,30 @@ const Documents = () => {
       setDocuments(
         Array.isArray(data) ? data : []
       );
-
     } catch (err) {
       setError(
         err?.response?.data?.message ||
-        err?.message ||
-        "Unable to load documents."
+          "Unable to load documents."
       );
-
       setDocuments([]);
-
     } finally {
       setLoading(false);
     }
   };
 
-
-  // ======================================
-  // INITIAL LOAD
-  // ======================================
-
   useEffect(() => {
-    loadDocuments();
-  }, [
-    searchParams,
-  ]);
+    const params = {};
 
+    if (initialSearch.trim()) {
+      params.search = initialSearch.trim();
+    }
 
-  // ======================================
-  // SEARCH
-  // ======================================
+    if (category) {
+      params.category = category;
+    }
+
+    loadDocuments(params);
+  }, [initialSearch, category]);
 
   const handleSearch = (event) => {
     event.preventDefault();
@@ -106,128 +78,63 @@ const Documents = () => {
     setSearchParams(params);
   };
 
-
-  // ======================================
-  // CATEGORY
-  // ======================================
-
-  const handleCategoryChange = (event) => {
-    const value = event.target.value;
-
-    setCategory(value);
-
-    const params = {};
-
-    if (search.trim()) {
-      params.search = search.trim();
-    }
-
-    if (value) {
-      params.category = value;
-    }
-
-    setSearchParams(params);
-  };
-
-
-  // ======================================
-  // CLEAR FILTERS
-  // ======================================
-
   const clearFilters = () => {
     setSearch("");
-    setCategory("");
-
     setSearchParams({});
   };
 
+  const formatDate = (date) => {
+    if (!date) return "—";
+
+    return new Date(date).toLocaleDateString(
+      "en-US",
+      {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      }
+    );
+  };
 
   return (
-    <main>
+    <main className="min-h-screen bg-paper text-ink">
 
       {/* ================================= */}
-      {/* PAGE HEADER                        */}
+      {/* HEADER                            */}
       {/* ================================= */}
 
-      <section className="page-header">
+      <section className="border-b border-line px-6 py-14 md:px-12 md:py-20">
 
-        <div className="container">
+        <div className="mx-auto max-w-[1180px]">
 
           <span className="page-eyebrow">
-            DOCYARD LIBRARY
+            THE DOCYARD ARCHIVE
           </span>
 
-          <h1>
-            Explore Documents
+          <h1 className="mt-3 max-w-4xl font-display text-5xl font-semibold leading-[1.05] md:text-7xl">
+            Browse the archive.
           </h1>
 
-          <p>
-            Discover useful documents, resources,
-            notes, and knowledge shared on DocYard.
+          <p className="mt-5 max-w-2xl text-sm leading-7 text-ink-soft">
+            Explore documents shared by the
+            DocYard community.
           </p>
 
-        </div>
-
-      </section>
-
-
-      {/* ================================= */}
-      {/* SEARCH & FILTERS                   */}
-      {/* ================================= */}
-
-      <section className="document-controls">
-
-        <div className="container">
+          {/* SEARCH */}
 
           <form
-            className="document-search-form"
             onSubmit={handleSearch}
+            className="mt-10 flex max-w-3xl flex-col gap-3 sm:flex-row"
           >
-
             <input
               type="search"
-              className="form-input"
-              placeholder="Search documents..."
               value={search}
               onChange={(event) =>
                 setSearch(event.target.value)
               }
+              placeholder="Search documents..."
+              className="form-input flex-1"
             />
-
-            <select
-              className="form-select"
-              value={category}
-              onChange={handleCategoryChange}
-            >
-              <option value="">
-                All Categories
-              </option>
-
-              <option value="notes">
-                Notes
-              </option>
-
-              <option value="education">
-                Education
-              </option>
-
-              <option value="technology">
-                Technology
-              </option>
-
-              <option value="research">
-                Research
-              </option>
-
-              <option value="business">
-                Business
-              </option>
-
-              <option value="other">
-                Other
-              </option>
-
-            </select>
 
             <button
               type="submit"
@@ -235,16 +142,6 @@ const Documents = () => {
             >
               Search
             </button>
-
-            {(search || category) && (
-              <button
-                type="button"
-                className="btn btn-secondary"
-                onClick={clearFilters}
-              >
-                Clear
-              </button>
-            )}
 
           </form>
 
@@ -254,196 +151,231 @@ const Documents = () => {
 
 
       {/* ================================= */}
-      {/* DOCUMENTS                          */}
+      {/* CONTENT                            */}
       {/* ================================= */}
 
-      <section className="documents-section">
+      <section className="px-6 py-10 md:px-12 md:py-14">
 
-        <div className="container">
+        <div className="mx-auto max-w-[1180px]">
 
-          <div className="documents-heading">
+          {/* TOP BAR */}
 
-            <div>
+          <div className="flex flex-col justify-between gap-4 border-b border-line pb-5 sm:flex-row sm:items-center">
 
-              <span className="page-eyebrow">
-                DOCUMENTS
-              </span>
-
-              <h2>
-                {search
-                  ? `Search results for "${search}"`
-                  : "Latest Documents"}
-              </h2>
-
+            <div className="font-mono text-[10px] uppercase tracking-wide text-ink-faint">
+              {loading
+                ? "Loading archive..."
+                : `${documents.length} ${
+                    documents.length === 1
+                      ? "document"
+                      : "documents"
+                  }`}
             </div>
 
-            <span className="document-count">
-              {documents.length} document
-              {documents.length !== 1 ? "s" : ""}
-            </span>
+            {(search || category) && (
+              <button
+                type="button"
+                onClick={clearFilters}
+                className="self-start font-mono text-[10px] uppercase tracking-wide text-blue hover:text-ink"
+              >
+                Clear filters ×
+              </button>
+            )}
 
           </div>
 
 
-          {/* ================================= */}
-          {/* LOADING                            */}
-          {/* ================================= */}
+          {/* ERROR */}
 
-          {loading && (
-            <div className="loading-container">
-              <p>
-                Loading documents...
-              </p>
-            </div>
-          )}
-
-
-          {/* ================================= */}
-          {/* ERROR                              */}
-          {/* ================================= */}
-
-          {!loading && error && (
-            <div className="alert alert-error">
+          {error && (
+            <div className="mt-6 border border-line bg-paper-raised px-5 py-4 text-sm text-ink-soft">
               {error}
             </div>
           )}
 
 
-          {/* ================================= */}
-          {/* EMPTY                              */}
-          {/* ================================= */}
+          {/* LOADING */}
+
+          {loading && (
+            <div className="divide-y divide-line">
+
+              {[1, 2, 3, 4].map(
+                (item) => (
+                  <div
+                    key={item}
+                    className="grid gap-5 py-7 md:grid-cols-[72px_minmax(0,1fr)]"
+                  >
+
+                    <div className="h-[78px] w-[62px] bg-paper-raised" />
+
+                    <div>
+
+                      <div className="h-3 w-24 bg-paper-raised" />
+
+                      <div className="mt-4 h-7 max-w-xl bg-paper-raised" />
+
+                      <div className="mt-3 h-3 max-w-2xl bg-paper-raised" />
+
+                    </div>
+
+                  </div>
+                )
+              )}
+
+            </div>
+          )}
+
+
+          {/* EMPTY */}
 
           {!loading &&
             !error &&
             documents.length === 0 && (
-              <div className="empty-state">
+              <div className="py-24 text-center">
 
-                <h3>
-                  No documents found
-                </h3>
+                <span className="font-mono text-[10px] uppercase tracking-wide text-ink-faint">
+                  ARCHIVE
+                </span>
 
-                <p>
-                  Try changing your search or filters.
+                <h2 className="mt-3 font-display text-3xl font-semibold">
+                  Nothing found.
+                </h2>
+
+                <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-ink-soft">
+                  Try a different search term or
+                  clear your filters.
                 </p>
 
-                {(search || category) && (
-                  <button
-                    type="button"
-                    className="btn btn-outline"
-                    onClick={clearFilters}
-                    style={{ marginTop: "18px" }}
-                  >
-                    Clear Filters
-                  </button>
-                )}
+                <button
+                  type="button"
+                  onClick={clearFilters}
+                  className="btn btn-primary mt-7"
+                >
+                  View all documents
+                </button>
 
               </div>
             )}
 
 
-          {/* ================================= */}
-          {/* DOCUMENT GRID                      */}
-          {/* ================================= */}
+          {/* DOCUMENTS */}
 
           {!loading &&
-            !error &&
             documents.length > 0 && (
+              <div className="divide-y divide-line">
 
-              <div className="document-grid">
+                {documents.map((document) => {
 
-                {documents.map((document) => (
+                  const author =
+                    document.author?.username ||
+                    document.author?.name ||
+                    document.author ||
+                    "Unknown contributor";
 
-                  <article
-                    className="document-card"
-                    key={document._id}
-                  >
+                  return (
+                    <article
+                      key={document._id}
+                      className="group grid gap-6 py-8 md:grid-cols-[72px_minmax(0,1fr)_auto]"
+                    >
 
-                    {/* FILE TYPE */}
+                      {/* FILE MARK */}
 
-                    <div className="document-card-top">
+                      <div className="flex h-[78px] w-[62px] items-center justify-center bg-ink text-paper">
 
-                      <div className="document-file-icon">
-                        {document.fileType
-                          ?.toUpperCase() || "DOC"}
+                        <span className="font-mono text-[9px] uppercase">
+                          {(
+                            document.fileType ||
+                            "DOC"
+                          ).replace(".", "")}
+                        </span>
+
                       </div>
 
-                      <span className="document-category">
-                        {document.category}
-                      </span>
 
-                    </div>
+                      {/* INFORMATION */}
 
+                      <div className="min-w-0">
 
-                    {/* CONTENT */}
+                        <div className="flex flex-wrap items-center gap-3">
 
-                    <div className="document-card-content">
+                          <span className="font-mono text-[10px] uppercase tracking-wide text-blue">
+                            {document.category ||
+                              "Archive"}
+                          </span>
 
-                      <h3>
-                        {document.title}
-                      </h3>
-
-                      <p className="document-description">
-                        {document.description}
-                      </p>
-
-                      <p className="document-author">
-                        By {document.author}
-                      </p>
-
-
-                      {/* TAGS */}
-
-                      {document.tags?.length > 0 && (
-                        <div className="document-tags">
-
-                          {document.tags
-                            .slice(0, 3)
-                            .map((tag) => (
-                              <span
-                                key={tag}
-                                className="document-tag"
-                              >
-                                #{tag}
-                              </span>
-                            ))}
+                          <span className="font-mono text-[10px] text-ink-faint">
+                            {formatDate(
+                              document.createdAt
+                            )}
+                          </span>
 
                         </div>
-                      )}
 
-                    </div>
+                        <h2 className="mt-2 font-display text-2xl font-semibold leading-tight md:text-3xl">
 
+                          <Link
+                            to={`/documents/${
+                              document.slug ||
+                              document._id
+                            }`}
+                            className="transition-colors group-hover:text-blue"
+                          >
+                            {document.title ||
+                              "Untitled document"}
+                          </Link>
 
-                    {/* FOOTER */}
+                        </h2>
 
-                    <div className="document-card-footer">
+                        <p className="mt-2 line-clamp-2 max-w-2xl text-sm leading-6 text-ink-soft">
+                          {document.description ||
+                            "No description available."}
+                        </p>
 
-                      <div className="document-stats">
+                        <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2 font-mono text-[10px] text-ink-faint">
 
-                        <span>
-                          👁 {document.views || 0}
-                        </span>
+                          <span>
+                            By {author}
+                          </span>
 
-                        <span>
-                          ↓ {document.downloads || 0}
-                        </span>
+                          {document.language && (
+                            <span>
+                              {document.language}
+                            </span>
+                          )}
+
+                          {document.views !==
+                            undefined && (
+                            <span>
+                              {document.views} views
+                            </span>
+                          )}
+
+                        </div>
 
                       </div>
 
-                      <Link
-                        to={`/documents/${document.slug}`}
-                        className="document-view-link"
-                      >
-                        View →
-                      </Link>
 
-                    </div>
+                      {/* VIEW */}
 
-                  </article>
+                      <div className="flex items-center md:self-center">
 
-                ))}
+                        <Link
+                          to={`/documents/${
+                            document.slug ||
+                            document._id
+                          }`}
+                          className="btn btn-ghost"
+                        >
+                          Read →
+                        </Link>
+
+                      </div>
+
+                    </article>
+                  );
+                })}
 
               </div>
-
             )}
 
         </div>
@@ -453,6 +385,5 @@ const Documents = () => {
     </main>
   );
 };
-
 
 export default Documents;

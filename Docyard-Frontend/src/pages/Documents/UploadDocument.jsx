@@ -1,77 +1,21 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import { createDocument } from "../services/document.js";
-import useAuth from "../hooks/useAuth.js";
-
-
-// ======================================
-// UPLOAD DOCUMENT PAGE
-// ======================================
 
 const UploadDocument = () => {
   const navigate = useNavigate();
 
-  const { isAuthenticated } = useAuth();
-
   const [formData, setFormData] = useState({
     title: "",
     description: "",
-    author: "",
     category: "",
-    tags: "",
-    language: "English",
-    visibility: "public",
+    language: "",
   });
 
   const [file, setFile] = useState(null);
-
-  const [thumbnail, setThumbnail] = useState(null);
-
   const [loading, setLoading] = useState(false);
-
   const [error, setError] = useState("");
-
-  const [success, setSuccess] = useState("");
-
-
-// ======================================
-// AUTH CHECK
-// ======================================
-
-  if (!isAuthenticated) {
-    return (
-      <main className="auth-page">
-        <div className="container">
-          <div className="empty-state">
-
-            <h2>
-              Login Required
-            </h2>
-
-            <p>
-              You need to sign in before uploading
-              a document.
-            </p>
-
-            <button
-              type="button"
-              className="btn btn-primary"
-              onClick={() => navigate("/login")}
-            >
-              Sign In
-            </button>
-
-          </div>
-        </div>
-      </main>
-    );
-  }
-
-
-// ======================================
-// HANDLE INPUT
-// ======================================
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -80,285 +24,143 @@ const UploadDocument = () => {
       ...previous,
       [name]: value,
     }));
-
-    setError("");
-    setSuccess("");
   };
-
-
-// ======================================
-// HANDLE DOCUMENT FILE
-// ======================================
 
   const handleFileChange = (event) => {
-    const selectedFile =
-      event.target.files?.[0];
+    const selectedFile = event.target.files?.[0];
 
-    if (!selectedFile) {
-      setFile(null);
-      return;
-    }
-
-    const allowedTypes = [
-      "application/pdf",
-      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-      "text/plain",
-    ];
-
-    if (!allowedTypes.includes(selectedFile.type)) {
-      setError(
-        "Only PDF, DOCX and TXT files are supported."
-      );
-
-      event.target.value = "";
-      setFile(null);
-
-      return;
-    }
-
-    setFile(selectedFile);
-
-    setError("");
-    setSuccess("");
-  };
-
-
-// ======================================
-// HANDLE THUMBNAIL
-// ======================================
-
-  const handleThumbnailChange = (event) => {
-    const selectedThumbnail =
-      event.target.files?.[0];
-
-    if (!selectedThumbnail) {
-      setThumbnail(null);
-      return;
-    }
-
-    if (!selectedThumbnail.type.startsWith("image/")) {
-      setError(
-        "Thumbnail must be an image file."
-      );
-
-      event.target.value = "";
-      setThumbnail(null);
-
-      return;
-    }
-
-    setThumbnail(selectedThumbnail);
-
+    setFile(selectedFile || null);
     setError("");
   };
-
-
-// ======================================
-// SUBMIT
-// ======================================
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
     setError("");
-    setSuccess("");
 
     if (!file) {
-      setError(
-        "Please select a document to upload."
-      );
+      setError("Please select a document to upload.");
       return;
     }
 
     if (!formData.title.trim()) {
-      setError("Document title is required.");
-      return;
-    }
-
-    if (!formData.description.trim()) {
-      setError("Document description is required.");
-      return;
-    }
-
-    if (!formData.author.trim()) {
-      setError("Author name is required.");
-      return;
-    }
-
-    if (!formData.category.trim()) {
-      setError("Please select a category.");
+      setError("Please enter a document title.");
       return;
     }
 
     setLoading(true);
 
     try {
-      const uploadData = new FormData();
+      const data = new FormData();
 
-      uploadData.append(
-        "title",
-        formData.title.trim()
-      );
-
-      uploadData.append(
+      data.append("title", formData.title.trim());
+      data.append(
         "description",
         formData.description.trim()
       );
+      data.append("category", formData.category);
+      data.append("language", formData.language);
+      data.append("file", file);
 
-      uploadData.append(
-        "author",
-        formData.author.trim()
-      );
+      const response = await createDocument(data);
 
-      uploadData.append(
-        "category",
-        formData.category
-      );
-
-      uploadData.append(
-        "language",
-        formData.language
-      );
-
-      uploadData.append(
-        "visibility",
-        formData.visibility
-      );
-
-      // Convert comma-separated tags
-      const tags = formData.tags
-        .split(",")
-        .map((tag) => tag.trim())
-        .filter(Boolean);
-
-      tags.forEach((tag) => {
-        uploadData.append("tags", tag);
-      });
-
-      uploadData.append(
-        "file",
-        file
-      );
-
-      if (thumbnail) {
-        uploadData.append(
-          "thumbnail",
-          thumbnail
-        );
-      }
-
-      const response =
-        await createDocument(uploadData);
-
-      const createdDocument =
+      const document =
         response?.data?.document ||
         response?.document ||
         null;
 
-      setSuccess(
-        "Document uploaded successfully!"
-      );
-
-      // Redirect to document after upload
-      setTimeout(() => {
-        if (createdDocument?.slug) {
-          navigate(
-            `/documents/${createdDocument.slug}`
-          );
-        } else {
-          navigate("/documents");
-        }
-      }, 1000);
-
+      if (document?.slug) {
+        navigate(`/documents/${document.slug}`);
+      } else if (document?._id) {
+        navigate(`/documents/${document._id}`);
+      } else {
+        navigate("/my-documents");
+      }
     } catch (err) {
       setError(
         err?.response?.data?.message ||
-        err?.response?.data?.error ||
-        err?.message ||
-        "Unable to upload document."
+          "Unable to upload the document."
       );
     } finally {
       setLoading(false);
     }
   };
 
-
   return (
-    <main className="upload-page">
+    <main className="min-h-screen bg-paper px-6 py-14 text-ink md:px-12 md:py-20">
 
-      <div className="container">
+      <div className="mx-auto max-w-[1000px]">
 
-        {/* ================================= */}
-        {/* HEADER                             */}
-        {/* ================================= */}
+        {/* HEADER */}
 
-        <div className="upload-header">
+        <header className="border-b border-line pb-9">
 
-          <span className="page-eyebrow">
-            DOCYARD
-          </span>
-
-          <h1>
-            Upload Document
-          </h1>
-
-          <p>
-            Share your documents and knowledge
-            with the DocYard community.
-          </p>
-
-        </div>
-
-
-        {/* ================================= */}
-        {/* CARD                               */}
-        {/* ================================= */}
-
-        <div className="upload-card">
-
-          {/* ERROR */}
-
-          {error && (
-            <div className="alert alert-error">
-              {error}
-            </div>
-          )}
-
-
-          {/* SUCCESS */}
-
-          {success && (
-            <div className="alert alert-success">
-              {success}
-            </div>
-          )}
-
-
-          <form
-            className="upload-form"
-            onSubmit={handleSubmit}
+          <Link
+            to="/my-documents"
+            className="font-mono text-[10px] uppercase tracking-wide text-ink-faint hover:text-blue"
           >
+            ← My documents
+          </Link>
+
+          <div className="mt-9">
+
+            <span className="page-eyebrow">
+              CONTRIBUTE
+            </span>
+
+            <h1 className="mt-3 font-display text-5xl font-semibold leading-[1.05] md:text-6xl">
+              Add to the archive.
+            </h1>
+
+            <p className="mt-4 max-w-xl text-sm leading-6 text-ink-soft">
+              Share a document with the DocYard
+              community.
+            </p>
+
+          </div>
+
+        </header>
+
+
+        {/* ERROR */}
+
+        {error && (
+          <div className="mt-6 border border-line bg-paper-raised px-5 py-4 text-sm text-ink-soft">
+            {error}
+          </div>
+        )}
+
+
+        {/* FORM */}
+
+        <form
+          onSubmit={handleSubmit}
+          className="mt-10 grid gap-10 lg:grid-cols-[minmax(0,1fr)_300px]"
+        >
+
+          {/* MAIN */}
+
+          <div className="border border-line bg-white p-6 md:p-8">
 
             {/* TITLE */}
 
-            <div className="form-group">
+            <div>
 
               <label
                 htmlFor="title"
                 className="form-label"
               >
-                Document Title
+                Document title
               </label>
 
               <input
                 id="title"
                 name="title"
                 type="text"
-                className="form-input"
                 value={formData.title}
                 onChange={handleChange}
                 placeholder="Enter document title"
-                maxLength={150}
+                className="form-input"
                 required
               />
 
@@ -367,7 +169,7 @@ const UploadDocument = () => {
 
             {/* DESCRIPTION */}
 
-            <div className="form-group">
+            <div className="mt-7">
 
               <label
                 htmlFor="description"
@@ -379,39 +181,11 @@ const UploadDocument = () => {
               <textarea
                 id="description"
                 name="description"
-                className="form-input"
                 value={formData.description}
                 onChange={handleChange}
-                placeholder="Describe your document..."
-                rows={5}
-                maxLength={1000}
-                required
-              />
-
-            </div>
-
-
-            {/* AUTHOR */}
-
-            <div className="form-group">
-
-              <label
-                htmlFor="author"
-                className="form-label"
-              >
-                Author
-              </label>
-
-              <input
-                id="author"
-                name="author"
-                type="text"
-                className="form-input"
-                value={formData.author}
-                onChange={handleChange}
-                placeholder="Enter author name"
-                maxLength={100}
-                required
+                placeholder="What is this document about?"
+                rows={6}
+                className="form-textarea"
               />
 
             </div>
@@ -419,9 +193,9 @@ const UploadDocument = () => {
 
             {/* CATEGORY + LANGUAGE */}
 
-            <div className="form-row">
+            <div className="mt-7 grid gap-6 sm:grid-cols-2">
 
-              <div className="form-group">
+              <div>
 
                 <label
                   htmlFor="category"
@@ -430,49 +204,20 @@ const UploadDocument = () => {
                   Category
                 </label>
 
-                <select
+                <input
                   id="category"
                   name="category"
-                  className="form-select"
+                  type="text"
                   value={formData.category}
                   onChange={handleChange}
-                  required
-                >
-
-                  <option value="">
-                    Select category
-                  </option>
-
-                  <option value="notes">
-                    Notes
-                  </option>
-
-                  <option value="education">
-                    Education
-                  </option>
-
-                  <option value="technology">
-                    Technology
-                  </option>
-
-                  <option value="research">
-                    Research
-                  </option>
-
-                  <option value="business">
-                    Business
-                  </option>
-
-                  <option value="other">
-                    Other
-                  </option>
-
-                </select>
+                  placeholder="e.g. Technology"
+                  className="form-input"
+                />
 
               </div>
 
 
-              <div className="form-group">
+              <div>
 
                 <label
                   htmlFor="language"
@@ -481,201 +226,177 @@ const UploadDocument = () => {
                   Language
                 </label>
 
-                <select
+                <input
                   id="language"
                   name="language"
-                  className="form-select"
+                  type="text"
                   value={formData.language}
                   onChange={handleChange}
-                >
-
-                  <option value="English">
-                    English
-                  </option>
-
-                  <option value="Hindi">
-                    Hindi
-                  </option>
-
-                  <option value="Spanish">
-                    Spanish
-                  </option>
-
-                  <option value="French">
-                    French
-                  </option>
-
-                  <option value="German">
-                    German
-                  </option>
-
-                  <option value="Other">
-                    Other
-                  </option>
-
-                </select>
+                  placeholder="e.g. English"
+                  className="form-input"
+                />
 
               </div>
 
             </div>
 
 
-            {/* TAGS */}
+            {/* FILE */}
 
-            <div className="form-group">
+            <div className="mt-7">
 
               <label
-                htmlFor="tags"
+                htmlFor="file"
                 className="form-label"
               >
-                Tags
+                Document file
               </label>
 
-              <input
-                id="tags"
-                name="tags"
-                type="text"
-                className="form-input"
-                value={formData.tags}
-                onChange={handleChange}
-                placeholder="javascript, programming, notes"
-              />
-
-              <small className="form-help">
-                Separate tags with commas.
-              </small>
-
-            </div>
-
-
-            {/* VISIBILITY */}
-
-            <div className="form-group">
-
               <label
-                htmlFor="visibility"
-                className="form-label"
-              >
-                Visibility
-              </label>
-
-              <select
-                id="visibility"
-                name="visibility"
-                className="form-select"
-                value={formData.visibility}
-                onChange={handleChange}
+                htmlFor="file"
+                className="mt-2 flex min-h-[180px] cursor-pointer flex-col items-center justify-center border border-dashed border-line bg-paper-raised px-6 text-center transition-colors hover:border-ink"
               >
 
-                <option value="public">
-                  Public — Everyone can view it
-                </option>
-
-                <option value="private">
-                  Private — Only you can view it
-                </option>
-
-              </select>
-
-            </div>
-
-
-            {/* DOCUMENT */}
-
-            <div className="form-group">
-
-              <label
-                htmlFor="document-file"
-                className="form-label"
-              >
-                Document File
-              </label>
-
-              <input
-                id="document-file"
-                type="file"
-                className="form-file"
-                accept=".pdf,.docx,.txt"
-                onChange={handleFileChange}
-                required
-              />
-
-              {file && (
-                <small className="form-help">
-                  Selected: {file.name}
-                </small>
-              )}
-
-            </div>
-
-
-            {/* THUMBNAIL */}
-
-            <div className="form-group">
-
-              <label
-                htmlFor="thumbnail"
-                className="form-label"
-              >
-                Thumbnail
-                <span className="optional-text">
-                  {" "} (Optional)
+                <span className="font-mono text-[10px] uppercase tracking-wide text-blue">
+                  {file
+                    ? "FILE SELECTED"
+                    : "UPLOAD DOCUMENT"}
                 </span>
+
+                <span className="mt-3 text-sm text-ink-soft">
+                  {file
+                    ? file.name
+                    : "Click to choose a file"}
+                </span>
+
+                <span className="mt-2 font-mono text-[9px] uppercase text-ink-faint">
+                  PDF / DOC / DOCX
+                </span>
+
+                <input
+                  id="file"
+                  name="file"
+                  type="file"
+                  accept=".pdf,.doc,.docx"
+                  onChange={handleFileChange}
+                  className="hidden"
+                />
+
               </label>
-
-              <input
-                id="thumbnail"
-                type="file"
-                className="form-file"
-                accept="image/*"
-                onChange={handleThumbnailChange}
-              />
-
-              {thumbnail && (
-                <small className="form-help">
-                  Selected: {thumbnail.name}
-                </small>
-              )}
 
             </div>
 
 
-            {/* SUBMIT */}
+            {/* ACTIONS */}
 
-            <div className="upload-actions">
+            <div className="mt-8 flex flex-col-reverse gap-3 border-t border-line pt-7 sm:flex-row sm:justify-end">
 
-              <button
-                type="button"
-                className="btn btn-secondary"
-                onClick={() =>
-                  navigate("/documents")
-                }
-                disabled={loading}
+              <Link
+                to="/my-documents"
+                className="btn btn-ghost text-center"
               >
                 Cancel
-              </button>
+              </Link>
 
               <button
                 type="submit"
-                className="btn btn-primary"
                 disabled={loading}
+                className="btn btn-primary"
               >
                 {loading
                   ? "Uploading..."
-                  : "Upload Document"}
+                  : "Publish document →"}
               </button>
 
             </div>
 
-          </form>
+          </div>
 
-        </div>
+
+          {/* SIDEBAR */}
+
+          <aside>
+
+            <div className="border-t border-line">
+
+              <div className="border-b border-line py-5">
+
+                <span className="page-eyebrow">
+                  BEFORE YOU UPLOAD
+                </span>
+
+              </div>
+
+
+              <div className="space-y-6 py-6">
+
+                <div>
+
+                  <span className="font-mono text-[10px] text-blue">
+                    01
+                  </span>
+
+                  <h3 className="mt-2 font-display text-lg font-semibold">
+                    Give it a clear title
+                  </h3>
+
+                  <p className="mt-2 text-xs leading-5 text-ink-soft">
+                    Make it easy for others to
+                    understand what your document
+                    contains.
+                  </p>
+
+                </div>
+
+
+                <div>
+
+                  <span className="font-mono text-[10px] text-blue">
+                    02
+                  </span>
+
+                  <h3 className="mt-2 font-display text-lg font-semibold">
+                    Add context
+                  </h3>
+
+                  <p className="mt-2 text-xs leading-5 text-ink-soft">
+                    A useful description helps
+                    people discover and understand
+                    your contribution.
+                  </p>
+
+                </div>
+
+
+                <div>
+
+                  <span className="font-mono text-[10px] text-blue">
+                    03
+                  </span>
+
+                  <h3 className="mt-2 font-display text-lg font-semibold">
+                    Upload the right file
+                  </h3>
+
+                  <p className="mt-2 text-xs leading-5 text-ink-soft">
+                    Supported document formats are
+                    PDF, DOC, and DOCX.
+                  </p>
+
+                </div>
+
+              </div>
+
+            </div>
+
+          </aside>
+
+        </form>
 
       </div>
 
     </main>
   );
 };
-
 
 export default UploadDocument;

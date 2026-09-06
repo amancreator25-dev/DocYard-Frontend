@@ -1,32 +1,22 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 
 import { loginUser } from "../services/auth.js";
-import useAuth from "../hooks/useAuth.js";
-
-
-// ======================================
-// LOGIN PAGE
-// ======================================
 
 const Login = () => {
   const navigate = useNavigate();
-
-  const { setUser } = useAuth();
+  const location = useLocation();
 
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
 
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const [loading, setLoading] = useState(false);
-
-
-  // ======================================
-  // HANDLE INPUT
-  // ======================================
+  const from =
+    location.state?.from?.pathname || "/";
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -35,196 +25,230 @@ const Login = () => {
       ...previous,
       [name]: value,
     }));
-
-    if (error) {
-      setError("");
-    }
   };
-
-
-  // ======================================
-  // HANDLE LOGIN
-  // ======================================
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    setError("");
     setLoading(true);
+    setError("");
 
     try {
-      const response = await loginUser(formData);
+      await loginUser(formData);
 
-      /*
-       * Depending on the backend response,
-       * the user may be inside:
-       *
-       * response.data
-       * or
-       * response.data.user
-       */
-
-      const loggedInUser =
-        response?.data?.user ||
-        response?.user ||
-        null;
-
-      if (loggedInUser && setUser) {
-        setUser(loggedInUser);
-      }
-
-      navigate("/");
-
+      navigate(from, { replace: true });
     } catch (err) {
-      const message =
+      setError(
         err?.response?.data?.message ||
-        err?.response?.data?.error ||
-        err?.message ||
-        "Login failed. Please check your credentials.";
-
-      setError(message);
-
+          "Invalid email or password."
+      );
     } finally {
       setLoading(false);
     }
   };
 
-
   return (
-    <main className="auth-page">
+    <main className="min-h-screen bg-paper text-ink">
 
-      <div className="auth-container">
+      <div className="grid min-h-screen lg:grid-cols-2">
 
         {/* ================================= */}
-        {/* LOGIN CARD                         */}
+        {/* BRAND PANEL                       */}
         {/* ================================= */}
 
-        <div className="auth-card">
+        <section className="hidden border-r border-line bg-ink p-12 text-paper lg:flex lg:flex-col lg:justify-between">
 
-          {/* HEADER */}
+          <Link
+            to="/"
+            className="font-display text-3xl font-semibold"
+          >
+            DocYard<span className="text-blue">.</span>
+          </Link>
 
-          <div className="auth-header">
+          <div className="max-w-xl">
 
-            <span className="auth-badge">
-              DOCYARD
+            <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-paper/50">
+              THE DOCUMENT ARCHIVE
             </span>
 
-            <h1>
-              Welcome Back
+            <h1 className="mt-5 font-display text-6xl font-semibold leading-[1.02]">
+              Knowledge,
+              <br />
+              kept together.
             </h1>
 
-            <p>
-              Sign in to continue to your DocYard account.
+            <p className="mt-6 max-w-md text-sm leading-7 text-paper/60">
+              Access your saved documents,
+              contribute to the archive, and
+              keep your research organized.
             </p>
 
           </div>
 
+          <p className="font-mono text-[9px] uppercase tracking-wide text-paper/40">
+            DOCYARD / 2026
+          </p>
 
-          {/* ERROR */}
-
-          {error && (
-            <div className="alert alert-error">
-              {error}
-            </div>
-          )}
+        </section>
 
 
-          {/* FORM */}
+        {/* ================================= */}
+        {/* LOGIN PANEL                       */}
+        {/* ================================= */}
 
-          <form
-            onSubmit={handleSubmit}
-            className="auth-form"
-          >
+        <section className="flex min-h-screen items-center justify-center px-6 py-12 md:px-12">
 
-            {/* EMAIL */}
+          <div className="w-full max-w-[440px]">
 
-            <div className="form-group">
+            {/* MOBILE LOGO */}
 
-              <label
-                htmlFor="email"
-                className="form-label"
-              >
-                Email
-              </label>
-
-              <input
-                id="email"
-                name="email"
-                type="email"
-                value={formData.email}
-                onChange={handleChange}
-                placeholder="Enter your email"
-                className="form-input"
-                autoComplete="email"
-                required
-              />
-
-            </div>
-
-
-            {/* PASSWORD */}
-
-            <div className="form-group">
-
-              <label
-                htmlFor="password"
-                className="form-label"
-              >
-                Password
-              </label>
-
-              <input
-                id="password"
-                name="password"
-                type="password"
-                value={formData.password}
-                onChange={handleChange}
-                placeholder="Enter your password"
-                className="form-input"
-                autoComplete="current-password"
-                required
-              />
-
-            </div>
-
-
-            {/* SUBMIT */}
-
-            <button
-              type="submit"
-              className="btn btn-primary auth-submit"
-              disabled={loading}
+            <Link
+              to="/"
+              className="font-display text-3xl font-semibold lg:hidden"
             >
-              {loading
-                ? "Signing in..."
-                : "Sign In"}
-            </button>
-
-          </form>
+              DocYard<span className="text-blue">.</span>
+            </Link>
 
 
-          {/* REGISTER */}
+            {/* HEADING */}
 
-          <div className="auth-footer">
+            <div className="mt-12 lg:mt-0">
 
-            <p>
-              Don't have an account?{" "}
+              <span className="page-eyebrow">
+                WELCOME BACK
+              </span>
 
-              <Link to="/register">
-                Create one
+              <h2 className="mt-3 font-display text-4xl font-semibold md:text-5xl">
+                Sign in.
+              </h2>
+
+              <p className="mt-4 text-sm leading-6 text-ink-soft">
+                Sign in to continue to your
+                DocYard account.
+              </p>
+
+            </div>
+
+
+            {/* ERROR */}
+
+            {error && (
+              <div className="mt-7 border border-line bg-paper-raised px-4 py-3 text-sm text-ink-soft">
+                {error}
+              </div>
+            )}
+
+
+            {/* FORM */}
+
+            <form
+              onSubmit={handleSubmit}
+              className="mt-8"
+            >
+
+              {/* EMAIL */}
+
+              <div>
+
+                <label
+                  htmlFor="email"
+                  className="form-label"
+                >
+                  Email
+                </label>
+
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  placeholder="you@example.com"
+                  className="form-input"
+                  autoComplete="email"
+                  required
+                />
+
+              </div>
+
+
+              {/* PASSWORD */}
+
+              <div className="mt-6">
+
+                <div className="flex items-center justify-between">
+
+                  <label
+                    htmlFor="password"
+                    className="form-label"
+                  >
+                    Password
+                  </label>
+
+                  <Link
+                    to="/forgot-password"
+                    className="font-mono text-[9px] uppercase tracking-wide text-ink-faint hover:text-blue"
+                  >
+                    Forgot?
+                  </Link>
+
+                </div>
+
+                <input
+                  id="password"
+                  name="password"
+                  type="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  placeholder="Enter your password"
+                  className="form-input"
+                  autoComplete="current-password"
+                  required
+                />
+
+              </div>
+
+
+              {/* SUBMIT */}
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="btn btn-primary mt-7 w-full"
+              >
+                {loading
+                  ? "Signing in..."
+                  : "Sign in →"}
+              </button>
+
+            </form>
+
+
+            {/* REGISTER */}
+
+            <div className="mt-8 border-t border-line pt-7 text-center">
+
+              <p className="text-sm text-ink-soft">
+                Don't have an account?
+              </p>
+
+              <Link
+                to="/register"
+                className="mt-2 inline-block font-mono text-[10px] uppercase tracking-wide text-blue hover:text-ink"
+              >
+                Create an account →
               </Link>
 
-            </p>
+            </div>
 
           </div>
 
-        </div>
+        </section>
 
       </div>
 
     </main>
   );
 };
-
 
 export default Login;
