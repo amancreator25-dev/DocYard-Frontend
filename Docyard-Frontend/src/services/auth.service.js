@@ -1,4 +1,4 @@
-import api from "./axios.js";
+import api from "./axios.service.js";
 
 const registerUser = async (userData) => {
   const response = await api.post("/users/register", userData);

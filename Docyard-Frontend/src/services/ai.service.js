@@ -1,4 +1,4 @@
-import api from "./axios.js";
+import api from "./axios.service.js";
 
 const summarizeDocument = async (documentId) => {
   const response = await api.post(

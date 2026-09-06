@@ -25,12 +25,12 @@ import MainLayout from "../layouts/MainLayout.jsx";
 // ======================================
 
 import Home from "../pages/Home.jsx";
-import Login from "../pages/Login.jsx";
-import Register from "../pages/Register.jsx";
-import Documents from "../pages/Documents.jsx";
-import DocumentDetails from "../pages/DocumentDetails.jsx";
-import Profile from "../pages/Profile.jsx";
-import Contact from "../pages/Contact.jsx";
+import Login from "../pages/Auth/Login.jsx";
+import Register from "../pages/Auth/Register.jsx";
+import Documents from "../pages/Documents/Documents.jsx";
+import DocumentDetails from "../pages/Documents/DocumentDetails.jsx";
+import Profile from "../pages/Profile/Profile.jsx";
+import Contact from "../pages/Contact/Contact.jsx";
 import NotFound from "../pages/NotFound.jsx";
 
 
@@ -38,15 +38,15 @@ import NotFound from "../pages/NotFound.jsx";
 // PROTECTED PAGES
 // ======================================
 
-import MyDocuments from "../pages/MyDocuments.jsx";
-import Bookmarks from "../pages/Bookmarks.jsx";
+import MyDocuments from "../pages/Documents/MyDocuments.jsx";
+import Bookmarks from "../pages/Documents/Bookmarks.jsx";
 
 
 // ======================================
 // ADMIN PAGES
 // ======================================
 
-import AdminDashboard from "../pages/admin/AdminDashboard.jsx";
+import AdminDashboard from "../pages/Admin/Dashboard.jsx";
 
 
 // ======================================

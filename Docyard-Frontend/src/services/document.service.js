@@ -1,4 +1,4 @@
-import api from "./axios.js";
+import api from "./axios.service.js";
 
 const getAllDocuments = async (params = {}) => {
   const response = await api.get("/documents", {

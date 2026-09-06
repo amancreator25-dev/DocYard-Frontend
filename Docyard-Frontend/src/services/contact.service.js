@@ -1,4 +1,4 @@
-import api from "./axios.js";
+import api from "./axios.service.js";
 
 const createContact = async (contactData) => {
   const response = await api.post(

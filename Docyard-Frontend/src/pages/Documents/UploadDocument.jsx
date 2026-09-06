@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-import { createDocument } from "../services/document.js";
+import { createDocument } from "../../services/document.service.js";
 
 const UploadDocument = () => {
   const navigate = useNavigate();

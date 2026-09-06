@@ -4,27 +4,27 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import {
   getDocumentBySlug,
   downloadDocument,
-} from "../services/document.js";
+} from "../services/document.service.js";
 
 import {
   addBookmark,
   removeBookmark,
   checkBookmarkStatus,
-} from "../services/bookmark.js";
+} from "../services/bookmark.service.js";
 
 import {
   likeDocument,
   unlikeDocument,
   checkLikeStatus,
   getLikeCount,
-} from "../services/like.js";
+} from "../services/like.service.js";
 
 import {
   addComment,
   getDocumentComments,
   updateComment,
   deleteComment,
-} from "../services/comment.js";
+} from "../services/comment.service.js";
 
 const DocumentDetails = () => {
   const { slug } = useParams();

@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 
-import { loginUser } from "../services/auth.js";
+import { loginUser } from "../../services/auth.service.js";
 
-import FormInput from "../components/Common/FormInput.jsx";
+import LoginForm from "../../components/Form/LoginForm.jsx";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -132,7 +132,7 @@ const Login = () => {
               className="mt-8"
             >
 
-              <FormInput
+              <LoginForm
                 id="email"
                 name="email"
                 type="email"
@@ -161,7 +161,7 @@ const Login = () => {
                   </Link>
                 </div>
 
-                <FormInput
+                <LoginForm
                   id="password"
                   name="password"
                   type="password"

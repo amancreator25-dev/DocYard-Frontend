@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import {
   getMyDocuments,
   deleteDocument,
-} from "../services/document.js";
+} from "../../services/document.service.js";
 
 const MyDocuments = () => {
   const navigate = useNavigate();

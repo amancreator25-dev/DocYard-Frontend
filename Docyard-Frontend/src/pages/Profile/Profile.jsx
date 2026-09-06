@@ -5,7 +5,7 @@ import {
   getCurrentUser,
   updateProfile,
   changePassword,
-} from "../services/auth.js";
+} from "../services/auth.service.js";
 
 const Profile = () => {
   const [user, setUser] = useState(null);

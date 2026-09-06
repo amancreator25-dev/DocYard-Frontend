@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-import { registerUser } from "../services/auth.js";
+import { registerUser } from "../../services/auth.service.js";
 
-import FormInput from "../components/Common/FormInput.jsx";
+import RegisterForm from "../../components/Forms/RegisterForm.jsx";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -142,7 +142,7 @@ const Register = () => {
               onSubmit={handleSubmit}
               className="mt-8"
             >
-              <FormInput
+              <RegisterForm
                 id="username"
                 name="username"
                 type="text"
@@ -155,7 +155,7 @@ const Register = () => {
               />
 
               <div className="mt-5">
-                <FormInput
+                <RegisterForm
                   id="email"
                   name="email"
                   type="email"
@@ -169,7 +169,7 @@ const Register = () => {
               </div>
 
               <div className="mt-5">
-                <FormInput
+                <RegisterForm
                   id="password"
                   name="password"
                   type="password"
@@ -183,7 +183,7 @@ const Register = () => {
               </div>
 
               <div className="mt-5">
-                <FormInput
+                <RegisterForm
                   id="confirmPassword"
                   name="confirmPassword"
                   type="password"

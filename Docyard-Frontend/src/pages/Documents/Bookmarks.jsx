@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import {
   getMyBookmarks,
   removeBookmark,
-} from "../services/bookmark.js";
+} from "../services/bookmark.service.js";
 
 const Bookmarks = () => {
   const [bookmarks, setBookmarks] = useState([]);

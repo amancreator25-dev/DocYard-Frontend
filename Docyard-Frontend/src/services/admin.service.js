@@ -1,4 +1,4 @@
-import api from "./axios.js";
+import api from "./axios.service.js";
 
 const getAdminDashboard = () => {
   return api.get("/admin/dashboard");

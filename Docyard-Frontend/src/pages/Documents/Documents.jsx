@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 
-import { getAllDocuments } from "../services/document.js";
+import { getAllDocuments } from "../services/document.service.js";
 
-import FormInput from "../components/Common/FormInput.jsx";
+import DocumentUploadForm from "../components/Common/DocumentUploadForm.jsx";
 
 const Documents = () => {
   const [searchParams, setSearchParams] =
@@ -130,7 +130,7 @@ const Documents = () => {
           >
 
             <div className="flex-1">
-              <FormInput
+              <DocumentUploadForm
                 id="document-search"
                 name="document-search"
                 type="search"
