@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 
 import { createContact } from "../services/contact.js";
 
+import FormInput from "../components/Common/FormInput.jsx";
+
 const Contact = () => {
   const [formData, setFormData] = useState({
     name: "",
@@ -56,13 +58,11 @@ const Contact = () => {
 
   return (
     <main className="min-h-screen bg-paper px-6 py-14 text-ink md:px-12 md:py-20">
-
       <div className="mx-auto max-w-[1180px]">
 
         {/* HEADER */}
 
         <header className="border-b border-line pb-10">
-
           <span className="page-eyebrow">
             GET IN TOUCH
           </span>
@@ -76,9 +76,7 @@ const Contact = () => {
             you'd like to tell us? We'd love to hear
             from you.
           </p>
-
         </header>
-
 
         {/* CONTENT */}
 
@@ -87,22 +85,17 @@ const Contact = () => {
           {/* INFO */}
 
           <aside>
-
             <div className="border-t border-line">
 
               <div className="border-b border-line py-5">
-
                 <span className="page-eyebrow">
                   DOCYARD
                 </span>
-
               </div>
-
 
               <div className="divide-y divide-line">
 
                 <div className="py-6">
-
                   <span className="font-mono text-[9px] uppercase tracking-wide text-ink-faint">
                     QUESTIONS
                   </span>
@@ -111,12 +104,9 @@ const Contact = () => {
                     Ask us anything about the
                     platform or your account.
                   </p>
-
                 </div>
 
-
                 <div className="py-6">
-
                   <span className="font-mono text-[9px] uppercase tracking-wide text-ink-faint">
                     FEEDBACK
                   </span>
@@ -125,12 +115,9 @@ const Contact = () => {
                     Tell us how we can make
                     DocYard better.
                   </p>
-
                 </div>
 
-
                 <div className="py-6">
-
                   <span className="font-mono text-[9px] uppercase tracking-wide text-ink-faint">
                     SUPPORT
                   </span>
@@ -139,20 +126,15 @@ const Contact = () => {
                     Need help with your documents
                     or account? Send us a message.
                   </p>
-
                 </div>
 
               </div>
-
             </div>
-
           </aside>
-
 
           {/* FORM */}
 
           <section>
-
             <form
               onSubmit={handleSubmit}
               className="border border-line bg-white p-6 md:p-8"
@@ -172,83 +154,48 @@ const Contact = () => {
                 </div>
               )}
 
-
               {/* NAME + EMAIL */}
 
               <div className="grid gap-6 md:grid-cols-2">
 
-                <div>
-
-                  <label
-                    htmlFor="name"
-                    className="form-label"
-                  >
-                    Name
-                  </label>
-
-                  <input
-                    id="name"
-                    name="name"
-                    type="text"
-                    value={formData.name}
-                    onChange={handleChange}
-                    placeholder="Your name"
-                    className="form-input"
-                    required
-                  />
-
-                </div>
-
-
-                <div>
-
-                  <label
-                    htmlFor="email"
-                    className="form-label"
-                  >
-                    Email
-                  </label>
-
-                  <input
-                    id="email"
-                    name="email"
-                    type="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    placeholder="you@example.com"
-                    className="form-input"
-                    required
-                  />
-
-                </div>
-
-              </div>
-
-
-              {/* SUBJECT */}
-
-              <div className="mt-6">
-
-                <label
-                  htmlFor="subject"
-                  className="form-label"
-                >
-                  Subject
-                </label>
-
-                <input
-                  id="subject"
-                  name="subject"
+                <FormInput
+                  id="name"
+                  name="name"
                   type="text"
-                  value={formData.subject}
+                  label="Name"
+                  value={formData.name}
                   onChange={handleChange}
-                  placeholder="What is this about?"
-                  className="form-input"
+                  placeholder="Your name"
+                  required
+                />
+
+                <FormInput
+                  id="email"
+                  name="email"
+                  type="email"
+                  label="Email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  placeholder="you@example.com"
                   required
                 />
 
               </div>
 
+              {/* SUBJECT */}
+
+              <div className="mt-6">
+                <FormInput
+                  id="subject"
+                  name="subject"
+                  type="text"
+                  label="Subject"
+                  value={formData.subject}
+                  onChange={handleChange}
+                  placeholder="What is this about?"
+                  required
+                />
+              </div>
 
               {/* MESSAGE */}
 
@@ -274,7 +221,6 @@ const Contact = () => {
 
               </div>
 
-
               {/* ACTION */}
 
               <div className="mt-8 flex flex-col-reverse gap-3 border-t border-line pt-7 sm:flex-row sm:items-center sm:justify-between">
@@ -289,7 +235,7 @@ const Contact = () => {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="btn btn-primary"
+                  className="btn btn-primary disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   {loading
                     ? "Sending..."
@@ -299,13 +245,10 @@ const Contact = () => {
               </div>
 
             </form>
-
           </section>
 
         </div>
-
       </div>
-
     </main>
   );
 };

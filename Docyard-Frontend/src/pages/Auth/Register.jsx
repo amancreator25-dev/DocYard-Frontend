@@ -3,6 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 
 import { registerUser } from "../services/auth.js";
 
+import FormInput from "../components/Common/FormInput.jsx";
+
 const Register = () => {
   const navigate = useNavigate();
 
@@ -60,13 +62,11 @@ const Register = () => {
 
   return (
     <main className="min-h-screen bg-paper text-ink">
-
       <div className="grid min-h-screen lg:grid-cols-2">
 
         {/* BRAND PANEL */}
 
         <section className="hidden border-r border-line bg-ink p-12 text-paper lg:flex lg:flex-col lg:justify-between">
-
           <Link
             to="/"
             className="font-display text-3xl font-semibold"
@@ -75,7 +75,6 @@ const Register = () => {
           </Link>
 
           <div className="max-w-xl">
-
             <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-paper/50">
               JOIN THE ARCHIVE
             </span>
@@ -91,20 +90,16 @@ const Register = () => {
               part of the DocYard document
               community.
             </p>
-
           </div>
 
           <p className="font-mono text-[9px] uppercase tracking-wide text-paper/40">
             DOCYARD / 2026
           </p>
-
         </section>
-
 
         {/* REGISTER PANEL */}
 
         <section className="flex min-h-screen items-center justify-center px-6 py-12 md:px-12">
-
           <div className="w-full max-w-[440px]">
 
             {/* MOBILE LOGO */}
@@ -116,11 +111,9 @@ const Register = () => {
               DocYard<span className="text-blue">.</span>
             </Link>
 
-
             {/* HEADING */}
 
             <div className="mt-12 lg:mt-0">
-
               <span className="page-eyebrow">
                 CREATE ACCOUNT
               </span>
@@ -133,9 +126,7 @@ const Register = () => {
                 Create an account to save,
                 share, and discover documents.
               </p>
-
             </div>
-
 
             {/* ERROR */}
 
@@ -145,139 +136,82 @@ const Register = () => {
               </div>
             )}
 
-
             {/* FORM */}
 
             <form
               onSubmit={handleSubmit}
               className="mt-8"
             >
-
-              {/* USERNAME */}
-
-              <div>
-
-                <label
-                  htmlFor="username"
-                  className="form-label"
-                >
-                  Username
-                </label>
-
-                <input
-                  id="username"
-                  name="username"
-                  type="text"
-                  value={formData.username}
-                  onChange={handleChange}
-                  placeholder="Choose a username"
-                  className="form-input"
-                  autoComplete="username"
-                  required
-                />
-
-              </div>
-
-
-              {/* EMAIL */}
+              <FormInput
+                id="username"
+                name="username"
+                type="text"
+                label="Username"
+                value={formData.username}
+                onChange={handleChange}
+                placeholder="Choose a username"
+                autoComplete="username"
+                required
+              />
 
               <div className="mt-5">
-
-                <label
-                  htmlFor="email"
-                  className="form-label"
-                >
-                  Email
-                </label>
-
-                <input
+                <FormInput
                   id="email"
                   name="email"
                   type="email"
+                  label="Email"
                   value={formData.email}
                   onChange={handleChange}
                   placeholder="you@example.com"
-                  className="form-input"
                   autoComplete="email"
                   required
                 />
-
               </div>
 
-
-              {/* PASSWORD */}
-
               <div className="mt-5">
-
-                <label
-                  htmlFor="password"
-                  className="form-label"
-                >
-                  Password
-                </label>
-
-                <input
+                <FormInput
                   id="password"
                   name="password"
                   type="password"
+                  label="Password"
                   value={formData.password}
                   onChange={handleChange}
                   placeholder="Create a password"
-                  className="form-input"
                   autoComplete="new-password"
                   required
                 />
-
               </div>
 
-
-              {/* CONFIRM PASSWORD */}
-
               <div className="mt-5">
-
-                <label
-                  htmlFor="confirmPassword"
-                  className="form-label"
-                >
-                  Confirm password
-                </label>
-
-                <input
+                <FormInput
                   id="confirmPassword"
                   name="confirmPassword"
                   type="password"
-                  value={
-                    formData.confirmPassword
-                  }
+                  label="Confirm password"
+                  value={formData.confirmPassword}
                   onChange={handleChange}
                   placeholder="Repeat your password"
-                  className="form-input"
                   autoComplete="new-password"
                   required
                 />
-
               </div>
-
 
               {/* SUBMIT */}
 
               <button
                 type="submit"
                 disabled={loading}
-                className="btn btn-primary mt-7 w-full"
+                className="btn btn-primary mt-7 w-full disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {loading
                   ? "Creating account..."
                   : "Create account →"}
               </button>
-
             </form>
-
 
             {/* LOGIN */}
 
             <div className="mt-8 border-t border-line pt-7 text-center">
-
               <p className="text-sm text-ink-soft">
                 Already have an account?
               </p>
@@ -288,15 +222,11 @@ const Register = () => {
               >
                 Sign in →
               </Link>
-
             </div>
 
           </div>
-
         </section>
-
       </div>
-
     </main>
   );
 };

@@ -6,6 +6,9 @@ import {
   deleteDocument,
 } from "../../services/document.js";
 
+import Loader from "../../components/Common/Loader.jsx";
+import EmptyState from "../../components/Common/EmptyState.jsx";
+
 const Documents = () => {
   const [documents, setDocuments] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -72,13 +75,11 @@ const Documents = () => {
 
   return (
     <main className="min-h-screen bg-paper px-6 py-14 text-ink md:px-12 md:py-20">
-
       <div className="mx-auto max-w-[1200px]">
 
         {/* HEADER */}
 
         <header className="border-b border-line pb-10">
-
           <Link
             to="/admin"
             className="font-mono text-[10px] uppercase tracking-wide text-ink-faint hover:text-blue"
@@ -87,15 +88,12 @@ const Documents = () => {
           </Link>
 
           <div className="mt-9">
-
             <span className="page-eyebrow">
               ADMIN / DOCUMENTS
             </span>
 
             <div className="mt-3 flex flex-col justify-between gap-5 md:flex-row md:items-end">
-
               <div>
-
                 <h1 className="font-display text-5xl font-semibold leading-[1.05] md:text-6xl">
                   Documents.
                 </h1>
@@ -104,19 +102,14 @@ const Documents = () => {
                   Review and manage documents
                   published to the DocYard archive.
                 </p>
-
               </div>
 
               <span className="font-mono text-[9px] uppercase tracking-wide text-ink-faint">
                 {documents.length} DOCUMENTS
               </span>
-
             </div>
-
           </div>
-
         </header>
-
 
         {/* ERROR */}
 
@@ -126,54 +119,27 @@ const Documents = () => {
           </div>
         )}
 
-
         {/* CONTENT */}
 
         <section className="py-10">
 
           {loading ? (
-
-            <div className="border border-line bg-white">
-
-              {[1, 2, 3, 4].map((item) => (
-                <div
-                  key={item}
-                  className="border-b border-line p-6 last:border-b-0"
-                >
-                  <div className="h-5 w-2/3 bg-paper-raised" />
-                  <div className="mt-3 h-3 w-1/3 bg-paper-raised" />
-                </div>
-              ))}
-
+            <div className="flex min-h-[260px] items-center justify-center border border-line bg-white">
+              <Loader />
             </div>
-
           ) : documents.length === 0 ? (
-
             <div className="border border-line bg-white px-6 py-16 text-center">
-
-              <span className="page-eyebrow">
-                EMPTY ARCHIVE
-              </span>
-
-              <h2 className="mt-4 font-display text-3xl font-semibold">
-                No documents found.
-              </h2>
-
-              <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-ink-soft">
-                There are currently no documents
-                available to manage.
-              </p>
-
+              <EmptyState
+                title="No documents found."
+                message="There are currently no documents available to manage."
+              />
             </div>
-
           ) : (
-
             <div className="border border-line bg-white">
 
               {/* TABLE HEADER */}
 
               <div className="hidden border-b border-line bg-paper-raised px-6 py-4 md:grid md:grid-cols-[1fr_180px_150px_100px] md:gap-6">
-
                 <span className="table-heading">
                   DOCUMENT
                 </span>
@@ -189,14 +155,11 @@ const Documents = () => {
                 <span className="table-heading text-right">
                   ACTION
                 </span>
-
               </div>
-
 
               {/* DOCUMENTS */}
 
               {documents.map((document) => {
-
                 const documentId =
                   document._id || document.id;
 
@@ -210,14 +173,16 @@ const Documents = () => {
                   document.createdBy?.username ||
                   "Unknown";
 
-                const date =
-                  document.createdAt
-                    ? new Date(
-                        document.createdAt
-                      ).toLocaleDateString()
-                    : "—";
+                const date = document.createdAt
+                  ? new Date(
+                      document.createdAt
+                    ).toLocaleDateString()
+                  : "—";
 
                 const slug = document.slug;
+
+                const isDeleting =
+                  deletingId === documentId;
 
                 return (
                   <div
@@ -228,7 +193,6 @@ const Documents = () => {
                     {/* DOCUMENT */}
 
                     <div className="min-w-0">
-
                       <div className="flex items-start gap-3">
 
                         <span className="mt-1 font-mono text-[9px] text-blue">
@@ -236,7 +200,6 @@ const Documents = () => {
                         </span>
 
                         <div className="min-w-0">
-
                           {slug ? (
                             <Link
                               to={`/documents/${slug}`}
@@ -255,18 +218,14 @@ const Documents = () => {
                               {document.category}
                             </span>
                           )}
-
                         </div>
 
                       </div>
-
                     </div>
-
 
                     {/* AUTHOR */}
 
                     <div>
-
                       <span className="table-heading md:hidden">
                         AUTHOR
                       </span>
@@ -274,14 +233,11 @@ const Documents = () => {
                       <p className="mt-1 text-sm text-ink-soft md:mt-0">
                         {author}
                       </p>
-
                     </div>
-
 
                     {/* DATE */}
 
                     <div>
-
                       <span className="table-heading md:hidden">
                         CREATED
                       </span>
@@ -289,29 +245,23 @@ const Documents = () => {
                       <p className="mt-1 font-mono text-[10px] text-ink-faint md:mt-0">
                         {date}
                       </p>
-
                     </div>
-
 
                     {/* ACTION */}
 
                     <div className="flex justify-start md:justify-end">
-
                       <button
                         type="button"
                         onClick={() =>
                           handleDelete(documentId)
                         }
-                        disabled={
-                          deletingId === documentId
-                        }
+                        disabled={isDeleting}
                         className="font-mono text-[9px] uppercase tracking-wide text-ink-faint transition-colors hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-50"
                       >
-                        {deletingId === documentId
+                        {isDeleting
                           ? "Deleting..."
                           : "Delete"}
                       </button>
-
                     </div>
 
                   </div>
@@ -319,13 +269,10 @@ const Documents = () => {
               })}
 
             </div>
-
           )}
 
         </section>
-
       </div>
-
     </main>
   );
 };

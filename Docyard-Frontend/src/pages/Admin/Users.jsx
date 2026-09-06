@@ -7,16 +7,14 @@ import {
   deleteUser,
 } from "../../services/admin.js";
 
+import Loader from "../../components/Common/Loader.jsx";
+import EmptyState from "../../components/Common/EmptyState.jsx";
+
 const Users = () => {
   const [users, setUsers] = useState([]);
-
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [actionLoading, setActionLoading] = useState(null);
-
-  // ==========================================
-  // LOAD USERS
-  // ==========================================
 
   const loadUsers = async () => {
     try {
@@ -45,10 +43,6 @@ const Users = () => {
   useEffect(() => {
     loadUsers();
   }, []);
-
-  // ==========================================
-  // CHANGE ROLE
-  // ==========================================
 
   const handleRoleChange = async (userId, role) => {
     try {
@@ -81,10 +75,6 @@ const Users = () => {
     }
   };
 
-  // ==========================================
-  // DELETE USER
-  // ==========================================
-
   const handleDelete = async (userId) => {
     const confirmed = window.confirm(
       "Are you sure you want to delete this user?"
@@ -116,10 +106,6 @@ const Users = () => {
     }
   };
 
-  // ==========================================
-  // FORMAT DATE
-  // ==========================================
-
   const formatDate = (date) => {
     if (!date) {
       return "—";
@@ -130,15 +116,11 @@ const Users = () => {
 
   return (
     <main className="min-h-screen bg-paper px-6 py-14 text-ink md:px-12 md:py-20">
-
       <div className="mx-auto max-w-[1200px]">
 
-        {/* ==========================================
-            HEADER
-        ========================================== */}
+        {/* HEADER */}
 
         <header className="border-b border-line pb-10">
-
           <Link
             to="/admin"
             className="font-mono text-[10px] uppercase tracking-wide text-ink-faint hover:text-blue"
@@ -147,15 +129,12 @@ const Users = () => {
           </Link>
 
           <div className="mt-9">
-
             <span className="page-eyebrow">
               ADMIN / USERS
             </span>
 
             <div className="mt-3 flex flex-col justify-between gap-5 md:flex-row md:items-end">
-
               <div>
-
                 <h1 className="font-display text-5xl font-semibold leading-[1.05] md:text-6xl">
                   Users.
                 </h1>
@@ -164,23 +143,16 @@ const Users = () => {
                   Manage accounts and permissions
                   across the DocYard community.
                 </p>
-
               </div>
 
               <span className="font-mono text-[9px] uppercase tracking-wide text-ink-faint">
                 {users.length} USERS
               </span>
-
             </div>
-
           </div>
-
         </header>
 
-
-        {/* ==========================================
-            ERROR
-        ========================================== */}
+        {/* ERROR */}
 
         {error && (
           <div className="mt-6 border border-line bg-paper-raised px-5 py-4 text-sm text-ink-soft">
@@ -188,57 +160,27 @@ const Users = () => {
           </div>
         )}
 
-
-        {/* ==========================================
-            USERS
-        ========================================== */}
+        {/* USERS */}
 
         <section className="py-10">
 
           {loading ? (
-
-            <div className="border border-line bg-white">
-
-              {[1, 2, 3, 4].map((item) => (
-                <div
-                  key={item}
-                  className="border-b border-line p-6 last:border-b-0"
-                >
-                  <div className="h-5 w-48 bg-paper-raised" />
-
-                  <div className="mt-3 h-3 w-64 bg-paper-raised" />
-                </div>
-              ))}
-
+            <div className="flex min-h-[260px] items-center justify-center border border-line bg-white">
+              <Loader />
             </div>
-
           ) : users.length === 0 ? (
-
             <div className="border border-line bg-white px-6 py-16 text-center">
-
-              <span className="page-eyebrow">
-                NO USERS
-              </span>
-
-              <h2 className="mt-4 font-display text-3xl font-semibold">
-                No users found.
-              </h2>
-
-              <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-ink-soft">
-                There are currently no users to
-                manage.
-              </p>
-
+              <EmptyState
+                title="No users found."
+                message="There are currently no users to manage."
+              />
             </div>
-
           ) : (
-
             <div className="border border-line bg-white">
 
               {/* TABLE HEADER */}
 
               <div className="hidden border-b border-line bg-paper-raised px-6 py-4 md:grid md:grid-cols-[1fr_190px_130px_140px] md:gap-6">
-
                 <span className="table-heading">
                   USER
                 </span>
@@ -254,14 +196,11 @@ const Users = () => {
                 <span className="table-heading text-right">
                   ACTION
                 </span>
-
               </div>
-
 
               {/* USERS */}
 
               {users.map((user) => {
-
                 const userId =
                   user._id || user.id;
 
@@ -292,7 +231,6 @@ const Users = () => {
                     {/* USER */}
 
                     <div className="min-w-0">
-
                       <div className="flex items-start gap-3">
 
                         <span className="mt-1 font-mono text-[9px] text-blue">
@@ -300,7 +238,6 @@ const Users = () => {
                         </span>
 
                         <div className="min-w-0">
-
                           <h2 className="truncate font-display text-lg font-semibold">
                             {username}
                           </h2>
@@ -308,18 +245,14 @@ const Users = () => {
                           <p className="mt-1 truncate text-xs text-ink-soft">
                             {email}
                           </p>
-
                         </div>
 
                       </div>
-
                     </div>
-
 
                     {/* JOINED */}
 
                     <div>
-
                       <span className="table-heading md:hidden">
                         JOINED
                       </span>
@@ -327,14 +260,11 @@ const Users = () => {
                       <p className="mt-1 font-mono text-[10px] text-ink-faint md:mt-0">
                         {formatDate(createdAt)}
                       </p>
-
                     </div>
-
 
                     {/* ROLE */}
 
                     <div>
-
                       <span className="table-heading md:hidden">
                         ROLE
                       </span>
@@ -358,14 +288,11 @@ const Users = () => {
                           Admin
                         </option>
                       </select>
-
                     </div>
-
 
                     {/* ACTION */}
 
                     <div className="flex justify-start md:justify-end">
-
                       <button
                         type="button"
                         onClick={() =>
@@ -378,7 +305,6 @@ const Users = () => {
                           ? "Processing..."
                           : "Delete"}
                       </button>
-
                     </div>
 
                   </div>
@@ -386,13 +312,10 @@ const Users = () => {
               })}
 
             </div>
-
           )}
 
         </section>
-
       </div>
-
     </main>
   );
 };

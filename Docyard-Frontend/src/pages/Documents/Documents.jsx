@@ -3,6 +3,8 @@ import { Link, useSearchParams } from "react-router-dom";
 
 import { getAllDocuments } from "../services/document.js";
 
+import FormInput from "../components/Common/FormInput.jsx";
+
 const Documents = () => {
   const [searchParams, setSearchParams] =
     useSearchParams();
@@ -42,6 +44,7 @@ const Documents = () => {
         err?.response?.data?.message ||
           "Unable to load documents."
       );
+
       setDocuments([]);
     } finally {
       setLoading(false);
@@ -99,9 +102,7 @@ const Documents = () => {
   return (
     <main className="min-h-screen bg-paper text-ink">
 
-      {/* ================================= */}
-      {/* HEADER                            */}
-      {/* ================================= */}
+      {/* HEADER */}
 
       <section className="border-b border-line px-6 py-14 md:px-12 md:py-20">
 
@@ -120,21 +121,27 @@ const Documents = () => {
             DocYard community.
           </p>
 
+
           {/* SEARCH */}
 
           <form
             onSubmit={handleSearch}
-            className="mt-10 flex max-w-3xl flex-col gap-3 sm:flex-row"
+            className="mt-10 flex max-w-3xl flex-col gap-3 sm:flex-row sm:items-end"
           >
-            <input
-              type="search"
-              value={search}
-              onChange={(event) =>
-                setSearch(event.target.value)
-              }
-              placeholder="Search documents..."
-              className="form-input flex-1"
-            />
+
+            <div className="flex-1">
+              <FormInput
+                id="document-search"
+                name="document-search"
+                type="search"
+                label="Search"
+                value={search}
+                onChange={(event) =>
+                  setSearch(event.target.value)
+                }
+                placeholder="Search documents..."
+              />
+            </div>
 
             <button
               type="submit"
@@ -150,9 +157,7 @@ const Documents = () => {
       </section>
 
 
-      {/* ================================= */}
-      {/* CONTENT                            */}
-      {/* ================================= */}
+      {/* CONTENT */}
 
       <section className="px-6 py-10 md:px-12 md:py-14">
 
@@ -199,28 +204,24 @@ const Documents = () => {
           {loading && (
             <div className="divide-y divide-line">
 
-              {[1, 2, 3, 4].map(
-                (item) => (
-                  <div
-                    key={item}
-                    className="grid gap-5 py-7 md:grid-cols-[72px_minmax(0,1fr)]"
-                  >
+              {[1, 2, 3, 4].map((item) => (
+                <div
+                  key={item}
+                  className="grid gap-5 py-7 md:grid-cols-[72px_minmax(0,1fr)]"
+                >
 
-                    <div className="h-[78px] w-[62px] bg-paper-raised" />
+                  <div className="h-[78px] w-[62px] bg-paper-raised" />
 
-                    <div>
+                  <div>
+                    <div className="h-3 w-24 bg-paper-raised" />
 
-                      <div className="h-3 w-24 bg-paper-raised" />
+                    <div className="mt-4 h-7 max-w-xl bg-paper-raised" />
 
-                      <div className="mt-4 h-7 max-w-xl bg-paper-raised" />
-
-                      <div className="mt-3 h-3 max-w-2xl bg-paper-raised" />
-
-                    </div>
-
+                    <div className="mt-3 h-3 max-w-2xl bg-paper-raised" />
                   </div>
-                )
-              )}
+
+                </div>
+              ))}
 
             </div>
           )}
@@ -272,6 +273,12 @@ const Documents = () => {
                     document.author ||
                     "Unknown contributor";
 
+                  const documentPath =
+                    `/documents/${
+                      document.slug ||
+                      document._id
+                    }`;
+
                   return (
                     <article
                       key={document._id}
@@ -311,13 +318,11 @@ const Documents = () => {
 
                         </div>
 
+
                         <h2 className="mt-2 font-display text-2xl font-semibold leading-tight md:text-3xl">
 
                           <Link
-                            to={`/documents/${
-                              document.slug ||
-                              document._id
-                            }`}
+                            to={documentPath}
                             className="transition-colors group-hover:text-blue"
                           >
                             {document.title ||
@@ -326,10 +331,12 @@ const Documents = () => {
 
                         </h2>
 
+
                         <p className="mt-2 line-clamp-2 max-w-2xl text-sm leading-6 text-ink-soft">
                           {document.description ||
                             "No description available."}
                         </p>
+
 
                         <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2 font-mono text-[10px] text-ink-faint">
 
@@ -360,10 +367,7 @@ const Documents = () => {
                       <div className="flex items-center md:self-center">
 
                         <Link
-                          to={`/documents/${
-                            document.slug ||
-                            document._id
-                          }`}
+                          to={documentPath}
                           className="btn btn-ghost"
                         >
                           Read →

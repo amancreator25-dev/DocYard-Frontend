@@ -7,6 +7,9 @@ import {
   deleteContact,
 } from "../../services/contact.js";
 
+import Loader from "../../components/Common/Loader.jsx";
+import EmptyState from "../../components/Common/EmptyState.jsx";
+
 const Contacts = () => {
   const [contacts, setContacts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -121,13 +124,11 @@ const Contacts = () => {
 
   return (
     <main className="min-h-screen bg-paper px-6 py-14 text-ink md:px-12 md:py-20">
-
       <div className="mx-auto max-w-[1200px]">
 
         {/* HEADER */}
 
         <header className="border-b border-line pb-10">
-
           <Link
             to="/admin"
             className="font-mono text-[10px] uppercase tracking-wide text-ink-faint hover:text-blue"
@@ -136,15 +137,12 @@ const Contacts = () => {
           </Link>
 
           <div className="mt-9">
-
             <span className="page-eyebrow">
               ADMIN / CONTACTS
             </span>
 
             <div className="mt-3 flex flex-col justify-between gap-5 md:flex-row md:items-end">
-
               <div>
-
                 <h1 className="font-display text-5xl font-semibold leading-[1.05] md:text-6xl">
                   Contacts.
                 </h1>
@@ -154,19 +152,14 @@ const Contacts = () => {
                   support messages from the DocYard
                   community.
                 </p>
-
               </div>
 
               <span className="font-mono text-[9px] uppercase tracking-wide text-ink-faint">
                 {contacts.length} MESSAGES
               </span>
-
             </div>
-
           </div>
-
         </header>
-
 
         {/* ERROR */}
 
@@ -176,57 +169,27 @@ const Contacts = () => {
           </div>
         )}
 
-
         {/* CONTACTS */}
 
         <section className="py-10">
 
           {loading ? (
-
-            <div className="border border-line bg-white">
-
-              {[1, 2, 3, 4].map((item) => (
-                <div
-                  key={item}
-                  className="border-b border-line p-6 last:border-b-0"
-                >
-                  <div className="h-5 w-48 bg-paper-raised" />
-
-                  <div className="mt-3 h-3 w-64 bg-paper-raised" />
-
-                  <div className="mt-4 h-3 w-full bg-paper-raised" />
-                </div>
-              ))}
-
+            <div className="flex min-h-[240px] items-center justify-center border border-line bg-white">
+              <Loader />
             </div>
-
           ) : contacts.length === 0 ? (
-
             <div className="border border-line bg-white px-6 py-16 text-center">
-
-              <span className="page-eyebrow">
-                INBOX CLEAR
-              </span>
-
-              <h2 className="mt-4 font-display text-3xl font-semibold">
-                No messages found.
-              </h2>
-
-              <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-ink-soft">
-                There are currently no contact
-                messages to review.
-              </p>
-
+              <EmptyState
+                title="No messages found."
+                message="There are currently no contact messages to review."
+              />
             </div>
-
           ) : (
-
             <div className="border border-line bg-white">
 
               {/* TABLE HEADER */}
 
               <div className="hidden border-b border-line bg-paper-raised px-6 py-4 md:grid md:grid-cols-[1fr_170px_130px_150px] md:gap-6">
-
                 <span className="table-heading">
                   MESSAGE
                 </span>
@@ -242,14 +205,11 @@ const Contacts = () => {
                 <span className="table-heading text-right">
                   ACTION
                 </span>
-
               </div>
-
 
               {/* CONTACT ITEMS */}
 
               {contacts.map((contact) => {
-
                 const contactId =
                   contact._id || contact.id;
 
@@ -267,12 +227,10 @@ const Contacts = () => {
                   "No subject";
 
                 const message =
-                  contact.message ||
-                  "";
+                  contact.message || "";
 
                 const status =
-                  contact.status ||
-                  "pending";
+                  contact.status || "pending";
 
                 const date =
                   contact.createdAt ||
@@ -290,15 +248,12 @@ const Contacts = () => {
                     {/* MESSAGE */}
 
                     <div className="min-w-0">
-
                       <div className="flex items-start gap-3">
-
                         <span className="mt-1 font-mono text-[9px] text-blue">
                           MSG
                         </span>
 
                         <div className="min-w-0">
-
                           <h2 className="font-display text-lg font-semibold">
                             {subject}
                           </h2>
@@ -310,18 +265,13 @@ const Contacts = () => {
                           <p className="mt-3 line-clamp-2 text-sm leading-6 text-ink-soft">
                             {message}
                           </p>
-
                         </div>
-
                       </div>
-
                     </div>
-
 
                     {/* DATE */}
 
                     <div>
-
                       <span className="table-heading md:hidden">
                         DATE
                       </span>
@@ -329,14 +279,11 @@ const Contacts = () => {
                       <p className="mt-1 font-mono text-[10px] text-ink-faint md:mt-0">
                         {formatDate(date)}
                       </p>
-
                     </div>
-
 
                     {/* STATUS */}
 
                     <div>
-
                       <span className="table-heading md:hidden">
                         STATUS
                       </span>
@@ -366,14 +313,11 @@ const Contacts = () => {
                           Resolved
                         </option>
                       </select>
-
                     </div>
-
 
                     {/* ACTION */}
 
                     <div className="flex justify-start md:justify-end">
-
                       <button
                         type="button"
                         onClick={() =>
@@ -386,21 +330,16 @@ const Contacts = () => {
                           ? "Processing..."
                           : "Delete"}
                       </button>
-
                     </div>
 
                   </article>
                 );
               })}
-
             </div>
-
           )}
 
         </section>
-
       </div>
-
     </main>
   );
 };
