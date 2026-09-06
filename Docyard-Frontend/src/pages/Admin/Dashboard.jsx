@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
-import { getAdminStats } from "../../services/admin.js";
+import { getAdminStats } from "../../services/admin.service.js";
 
 import Loader from "../../components/Common/Loader.jsx";
 

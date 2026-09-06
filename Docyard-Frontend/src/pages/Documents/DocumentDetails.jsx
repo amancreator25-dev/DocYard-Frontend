@@ -24,7 +24,7 @@ import {
   getDocumentComments,
   updateComment,
   deleteComment,
-} from "../services/comment.service.js";
+} from "../../services/comment.service.js";
 
 const DocumentDetails = () => {
   const { slug } = useParams();

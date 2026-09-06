@@ -5,7 +5,7 @@ import {
   getAllContacts,
   updateContactStatus,
   deleteContact,
-} from "../../services/contact.js";
+} from "../../services/contact.service.js";
 
 import Loader from "../../components/Common/Loader.jsx";
 import EmptyState from "../../components/Common/EmptyState.jsx";

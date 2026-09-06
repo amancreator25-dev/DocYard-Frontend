@@ -5,7 +5,7 @@ import {
   getAllUsers,
   updateUserRole,
   deleteUser,
-} from "../../services/admin.js";
+} from "../../services/admin.service.js";
 
 import Loader from "../../components/Common/Loader.jsx";
 import EmptyState from "../../components/Common/EmptyState.jsx";

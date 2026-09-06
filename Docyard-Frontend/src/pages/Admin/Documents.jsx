@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import {
   getAllDocuments,
   deleteDocument,
-} from "../../services/document.js";
+} from "../../services/document.service.js";
 
 import Loader from "../../components/Common/Loader.jsx";
 import EmptyState from "../../components/Common/EmptyState.jsx";

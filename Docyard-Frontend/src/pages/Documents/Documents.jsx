@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 
-import { getAllDocuments } from "../services/document.service.js";
+import { getAllDocuments } from "../../services/document.service.js";
 
-import DocumentUploadForm from "../components/Common/DocumentUploadForm.jsx";
+import DocumentUploadForm from "../../components/Common/DocumentUploadForm.jsx";
 
 const Documents = () => {
   const [searchParams, setSearchParams] =

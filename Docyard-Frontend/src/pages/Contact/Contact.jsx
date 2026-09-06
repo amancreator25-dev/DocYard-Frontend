@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
-import { createContact } from "../services/contact.js";
+import { createContact } from "../../services/contact.js";
 
-import FormInput from "../components/Common/FormInput.jsx";
+import ContactForm from "../../components/Forms/ContactForm.jsx";
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -158,7 +158,7 @@ const Contact = () => {
 
               <div className="grid gap-6 md:grid-cols-2">
 
-                <FormInput
+                <ContactForm
                   id="name"
                   name="name"
                   type="text"
@@ -169,7 +169,7 @@ const Contact = () => {
                   required
                 />
 
-                <FormInput
+                <ContactForm
                   id="email"
                   name="email"
                   type="email"
@@ -185,7 +185,7 @@ const Contact = () => {
               {/* SUBJECT */}
 
               <div className="mt-6">
-                <FormInput
+                <ContactForm
                   id="subject"
                   name="subject"
                   type="text"

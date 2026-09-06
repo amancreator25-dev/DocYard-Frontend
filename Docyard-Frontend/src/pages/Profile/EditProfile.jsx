@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import {
   getCurrentUser,
   updateProfile,
-} from "../services/auth.js";
+} from "../../services/auth.service.js";
 
 const EditProfile = () => {
   const navigate = useNavigate();
