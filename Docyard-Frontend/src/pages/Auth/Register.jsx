@@ -9,6 +9,7 @@ const Register = () => {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
+    fullname: "",
     username: "",
     email: "",
     password: "",
@@ -40,19 +41,19 @@ const Register = () => {
 
     setError("");
 
-    // Password validation
-    if (formData.password !== formData.confirmPassword) {
-      setError("Passwords do not match.");
+    // Full name validation
+    if (!formData.fullname.trim()) {
+      setError("Please enter your full name.");
       return;
     }
 
-    // Basic username validation
+    // Username validation
     if (!formData.username.trim()) {
       setError("Please enter a username.");
       return;
     }
 
-    // Basic email validation
+    // Email validation
     if (!formData.email.trim()) {
       setError("Please enter your email.");
       return;
@@ -64,10 +65,17 @@ const Register = () => {
       return;
     }
 
+    // Confirm password validation
+    if (formData.password !== formData.confirmPassword) {
+      setError("Passwords do not match.");
+      return;
+    }
+
     setLoading(true);
 
     try {
       await registerUser({
+        fullname: formData.fullname.trim(),
         username: formData.username.trim(),
         email: formData.email.trim(),
         password: formData.password,
@@ -87,6 +95,7 @@ const Register = () => {
 
   return (
     <main className="min-h-screen bg-paper text-ink">
+
       <div className="grid min-h-screen lg:grid-cols-2">
 
         {/* ==========================================
@@ -175,9 +184,7 @@ const Register = () => {
             </div>
 
 
-            {/* ======================================
-                ERROR
-            ====================================== */}
+            {/* ERROR */}
 
             {error && (
               <div className="mt-7 border border-line bg-paper-raised px-4 py-3 text-sm text-ink-soft">
@@ -188,10 +195,6 @@ const Register = () => {
 
             {/* ======================================
                 REGISTER FORM
-
-                IMPORTANT:
-                RegisterForm only renders inputs.
-                This is the ONLY <form> on this page.
             ====================================== */}
 
             <form
@@ -199,19 +202,38 @@ const Register = () => {
               className="mt-8"
             >
 
-              {/* USERNAME */}
+              {/* FULL NAME */}
 
               <RegisterForm
-                id="username"
-                name="username"
+                id="fullname"
+                name="fullname"
                 type="text"
-                label="Username"
-                value={formData.username}
+                label="Full Name"
+                value={formData.fullname}
                 onChange={handleChange}
-                placeholder="Choose a username"
-                autoComplete="username"
+                placeholder="Enter your full name"
+                autoComplete="name"
                 required
               />
+
+
+              {/* USERNAME */}
+
+              <div className="mt-5">
+
+                <RegisterForm
+                  id="username"
+                  name="username"
+                  type="text"
+                  label="Username"
+                  value={formData.username}
+                  onChange={handleChange}
+                  placeholder="Choose a username"
+                  autoComplete="username"
+                  required
+                />
+
+              </div>
 
 
               {/* EMAIL */}
@@ -286,9 +308,7 @@ const Register = () => {
             </form>
 
 
-            {/* ======================================
-                LOGIN LINK
-            ====================================== */}
+            {/* LOGIN LINK */}
 
             <div className="mt-8 border-t border-line pt-7 text-center">
 
@@ -310,6 +330,7 @@ const Register = () => {
         </section>
 
       </div>
+
     </main>
   );
 };
