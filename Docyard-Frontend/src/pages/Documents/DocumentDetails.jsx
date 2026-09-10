@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 import {
   getDocumentBySlug,
@@ -26,27 +26,79 @@ import {
   deleteComment,
 } from "../../services/comment.service.js";
 
+import {
+  summarizeDocument,
+  translateDocument,
+} from "../../services/ai.service.js";
+
 const DocumentDetails = () => {
   const { slug } = useParams();
-  const navigate = useNavigate();
+
+  // ==========================================
+  // DOCUMENT / COMMENTS STATE
+  // ==========================================
 
   const [document, setDocument] = useState(null);
   const [comments, setComments] = useState([]);
 
-  const [isBookmarked, setIsBookmarked] = useState(false);
-  const [isLiked, setIsLiked] = useState(false);
-  const [likeCount, setLikeCount] = useState(0);
+  // ==========================================
+  // INTERACTION STATE
+  // ==========================================
+
+  const [isBookmarked, setIsBookmarked] =
+    useState(false);
+
+  const [isLiked, setIsLiked] =
+    useState(false);
+
+  const [likeCount, setLikeCount] =
+    useState(0);
+
+  // ==========================================
+  // COMMENT STATE
+  // ==========================================
 
   const [comment, setComment] = useState("");
-  const [editingComment, setEditingComment] = useState(null);
-  const [editContent, setEditContent] = useState("");
 
-  const [loading, setLoading] = useState(true);
+  const [editingComment, setEditingComment] =
+    useState(null);
+
+  const [editContent, setEditContent] =
+    useState("");
+
+  // ==========================================
+  // LOADING / ERROR STATE
+  // ==========================================
+
+  const [loading, setLoading] =
+    useState(true);
+
   const [commentsLoading, setCommentsLoading] =
     useState(true);
 
-  const [error, setError] = useState("");
+  const [error, setError] =
+    useState("");
+
   const [actionLoading, setActionLoading] =
+    useState(false);
+
+  // ==========================================
+  // AI STATE
+  // ==========================================
+
+  const [aiSummary, setAiSummary] =
+    useState("");
+
+  const [translation, setTranslation] =
+    useState("");
+
+  const [translationLanguage, setTranslationLanguage] =
+    useState("");
+
+  const [aiLoading, setAiLoading] =
+    useState(false);
+
+  const [translationLoading, setTranslationLoading] =
     useState(false);
 
   // ==========================================
@@ -69,6 +121,13 @@ const DocumentDetails = () => {
           null;
 
         setDocument(data);
+
+        // Load previously generated AI summary
+        if (data?.aiSummary) {
+          setAiSummary(data.aiSummary);
+        } else {
+          setAiSummary("");
+        }
       } catch (err) {
         setError(
           err?.response?.data?.message ||
@@ -103,35 +162,56 @@ const DocumentDetails = () => {
           getLikeCount(document._id),
         ]);
 
+        // --------------------------------------
+        // BOOKMARK STATUS
+        // --------------------------------------
+
         if (
-          bookmarkResponse.status === "fulfilled"
+          bookmarkResponse.status ===
+          "fulfilled"
         ) {
           const data =
             bookmarkResponse.value;
 
           setIsBookmarked(
-            data?.data?.isBookmarked ??
-              data?.isBookmarked ??
+            data?.data?.bookmarked ??
+              data?.bookmarked ??
               false
           );
         }
 
-        if (likeResponse.status === "fulfilled") {
-          const data = likeResponse.value;
+        // --------------------------------------
+        // LIKE STATUS
+        // --------------------------------------
+
+        if (
+          likeResponse.status ===
+          "fulfilled"
+        ) {
+          const data =
+            likeResponse.value;
 
           setIsLiked(
-            data?.data?.isLiked ??
-              data?.isLiked ??
+            data?.data?.liked ??
+              data?.liked ??
               false
           );
         }
 
-        if (countResponse.status === "fulfilled") {
-          const data = countResponse.value;
+        // --------------------------------------
+        // LIKE COUNT
+        // --------------------------------------
+
+        if (
+          countResponse.status ===
+          "fulfilled"
+        ) {
+          const data =
+            countResponse.value;
 
           setLikeCount(
-            data?.data?.count ??
-              data?.count ??
+            data?.data?.likeCount ??
+              data?.likeCount ??
               0
           );
         }
@@ -166,7 +246,9 @@ const DocumentDetails = () => {
           [];
 
         setComments(
-          Array.isArray(data) ? data : []
+          Array.isArray(data)
+            ? data
+            : []
         );
       } catch {
         setComments([]);
@@ -179,20 +261,134 @@ const DocumentDetails = () => {
   }, [document?._id]);
 
   // ==========================================
+  // AI SUMMARY
+  // ==========================================
+
+  const handleSummarize = async () => {
+    if (
+      !document?._id ||
+      aiLoading
+    ) {
+      return;
+    }
+
+    setAiLoading(true);
+    setError("");
+
+    try {
+      const response =
+        await summarizeDocument(
+          document._id
+        );
+
+      const summary =
+        response?.data?.summary ||
+        response?.summary ||
+        "";
+
+      if (!summary) {
+        throw new Error(
+          "No summary was returned."
+        );
+      }
+
+      setAiSummary(summary);
+
+      // Keep local document state in sync
+      setDocument((previous) =>
+        previous
+          ? {
+              ...previous,
+              aiSummary: summary,
+            }
+          : previous
+      );
+    } catch (err) {
+      setError(
+        err?.response?.data?.message ||
+          err?.message ||
+          "Unable to summarize document."
+      );
+    } finally {
+      setAiLoading(false);
+    }
+  };
+
+  // ==========================================
+  // AI TRANSLATION
+  // ==========================================
+
+  const handleTranslate = async () => {
+    if (
+      !document?._id ||
+      !translationLanguage.trim() ||
+      translationLoading
+    ) {
+      return;
+    }
+
+    setTranslationLoading(true);
+    setError("");
+
+    try {
+      const response =
+        await translateDocument(
+          document._id,
+          translationLanguage.trim()
+        );
+
+      const translatedText =
+        response?.data?.translation ||
+        response?.translation ||
+        "";
+
+      if (!translatedText) {
+        throw new Error(
+          "No translation was returned."
+        );
+      }
+
+      setTranslation(
+        translatedText
+      );
+    } catch (err) {
+      setError(
+        err?.response?.data?.message ||
+          err?.message ||
+          "Unable to translate document."
+      );
+    } finally {
+      setTranslationLoading(false);
+    }
+  };
+
+  // ==========================================
   // BOOKMARK
   // ==========================================
 
   const handleBookmark = async () => {
-    if (!document?._id || actionLoading) return;
+    if (
+      !document?._id ||
+      actionLoading
+    ) {
+      return;
+    }
 
     setActionLoading(true);
+    setError("");
 
     try {
       if (isBookmarked) {
-        await removeBookmark(document._id);
+        await removeBookmark(
+          document._id
+        );
+
         setIsBookmarked(false);
       } else {
-        await addBookmark(document._id);
+        await addBookmark(
+          document._id
+        );
+
         setIsBookmarked(true);
       }
     } catch (err) {
@@ -210,21 +406,37 @@ const DocumentDetails = () => {
   // ==========================================
 
   const handleLike = async () => {
-    if (!document?._id || actionLoading) return;
+    if (
+      !document?._id ||
+      actionLoading
+    ) {
+      return;
+    }
 
     setActionLoading(true);
+    setError("");
 
     try {
       if (isLiked) {
-        await unlikeDocument(document._id);
+        await unlikeDocument(
+          document._id
+        );
+
         setIsLiked(false);
+
         setLikeCount((count) =>
           Math.max(0, count - 1)
         );
       } else {
-        await likeDocument(document._id);
+        await likeDocument(
+          document._id
+        );
+
         setIsLiked(true);
-        setLikeCount((count) => count + 1);
+
+        setLikeCount(
+          (count) => count + 1
+        );
       }
     } catch (err) {
       setError(
@@ -243,6 +455,8 @@ const DocumentDetails = () => {
   const handleDownload = async () => {
     if (!document?._id) return;
 
+    setError("");
+
     try {
       const response =
         await downloadDocument(
@@ -254,10 +468,14 @@ const DocumentDetails = () => {
       ]);
 
       const url =
-        window.URL.createObjectURL(blob);
+        window.URL.createObjectURL(
+          blob
+        );
 
       const anchor =
-        window.document.createElement("a");
+        window.document.createElement(
+          "a"
+        );
 
       anchor.href = url;
 
@@ -270,6 +488,7 @@ const DocumentDetails = () => {
       );
 
       anchor.click();
+
       anchor.remove();
 
       window.URL.revokeObjectURL(url);
@@ -285,18 +504,24 @@ const DocumentDetails = () => {
   // ADD COMMENT
   // ==========================================
 
-  const handleAddComment = async (event) => {
+  const handleAddComment = async (
+    event
+  ) => {
     event.preventDefault();
 
     if (!comment.trim()) return;
 
+    setError("");
+
     try {
-      const response = await addComment(
-        document._id,
-        {
-          content: comment.trim(),
-        }
-      );
+      const response =
+        await addComment(
+          document._id,
+          {
+            content:
+              comment.trim(),
+          }
+        );
 
       const newComment =
         response?.data?.comment ||
@@ -304,10 +529,12 @@ const DocumentDetails = () => {
         null;
 
       if (newComment) {
-        setComments((previous) => [
-          ...previous,
-          newComment,
-        ]);
+        setComments(
+          (previous) => [
+            ...previous,
+            newComment,
+          ]
+        );
       } else {
         const refreshed =
           await getDocumentComments(
@@ -315,13 +542,16 @@ const DocumentDetails = () => {
           );
 
         const data =
-          refreshed?.data?.comments ||
+          refreshed?.data
+            ?.comments ||
           refreshed?.comments ||
           refreshed?.data ||
           [];
 
         setComments(
-          Array.isArray(data) ? data : []
+          Array.isArray(data)
+            ? data
+            : []
         );
       }
 
@@ -343,6 +573,8 @@ const DocumentDetails = () => {
   ) => {
     if (!editContent.trim()) return;
 
+    setError("");
+
     try {
       const response =
         await updateComment(
@@ -355,16 +587,18 @@ const DocumentDetails = () => {
         response?.comment ||
         null;
 
-      setComments((previous) =>
-        previous.map((item) =>
-          item._id === commentId
-            ? updated || {
-                ...item,
-                content:
-                  editContent.trim(),
-              }
-            : item
-        )
+      setComments(
+        (previous) =>
+          previous.map(
+            (item) =>
+              item._id === commentId
+                ? updated || {
+                    ...item,
+                    content:
+                      editContent.trim(),
+                  }
+                : item
+          )
       );
 
       setEditingComment(null);
@@ -384,19 +618,26 @@ const DocumentDetails = () => {
   const handleDeleteComment = async (
     commentId
   ) => {
-    const confirmed = window.confirm(
-      "Delete this comment?"
-    );
+    const confirmed =
+      window.confirm(
+        "Delete this comment?"
+      );
 
     if (!confirmed) return;
 
-    try {
-      await deleteComment(commentId);
+    setError("");
 
-      setComments((previous) =>
-        previous.filter(
-          (item) => item._id !== commentId
-        )
+    try {
+      await deleteComment(
+        commentId
+      );
+
+      setComments(
+        (previous) =>
+          previous.filter(
+            (item) =>
+              item._id !== commentId
+          )
       );
     } catch (err) {
       setError(
@@ -435,6 +676,7 @@ const DocumentDetails = () => {
   if (!document) {
     return (
       <main className="min-h-screen bg-paper px-6 py-20 text-ink md:px-12">
+
         <div className="mx-auto max-w-[760px] text-center">
 
           <span className="page-eyebrow">
@@ -458,6 +700,7 @@ const DocumentDetails = () => {
           </Link>
 
         </div>
+
       </main>
     );
   }
@@ -614,7 +857,9 @@ const DocumentDetails = () => {
                   <span className="ml-2">
                     {likeCount}
                   </span>
+
                 </button>
+
 
                 <button
                   type="button"
@@ -632,6 +877,7 @@ const DocumentDetails = () => {
                 </button>
 
               </div>
+
 
               <button
                 type="button"
@@ -747,6 +993,174 @@ const DocumentDetails = () => {
 
 
       {/* ====================================== */}
+      {/* AI TOOLS                               */}
+      {/* ====================================== */}
+
+      <section className="border-t border-line px-6 py-12 md:px-12 md:py-16">
+
+        <div className="mx-auto max-w-[1180px]">
+
+          <div className="mb-8">
+
+            <span className="page-eyebrow">
+              DOCUMENT INTELLIGENCE
+            </span>
+
+            <h2 className="mt-2 font-display text-3xl font-semibold">
+              AI Tools
+            </h2>
+
+            <p className="mt-3 max-w-2xl text-sm leading-6 text-ink-soft">
+              Use AI to understand this document
+              faster or translate its content into
+              another language.
+            </p>
+
+          </div>
+
+
+          {/* ================================= */}
+          {/* SUMMARY                            */}
+          {/* ================================= */}
+
+          <div className="border border-line bg-white">
+
+            <div className="flex flex-col gap-5 border-b border-line p-5 sm:flex-row sm:items-center sm:justify-between">
+
+              <div>
+
+                <span className="font-mono text-[10px] uppercase tracking-wide text-blue">
+                  AI SUMMARY
+                </span>
+
+                <p className="mt-1 text-sm text-ink-soft">
+                  Generate a concise overview of
+                  this document.
+                </p>
+
+              </div>
+
+
+              <button
+                type="button"
+                onClick={handleSummarize}
+                disabled={aiLoading}
+                className="btn btn-primary"
+              >
+                {aiLoading
+                  ? "Generating..."
+                  : aiSummary
+                    ? "Regenerate Summary"
+                    : "Summarize Document"}
+              </button>
+
+            </div>
+
+
+            {aiSummary && (
+              <div className="p-6">
+
+                <div className="mb-4">
+
+                  <span className="font-mono text-[10px] uppercase tracking-wide text-ink-faint">
+                    SUMMARY
+                  </span>
+
+                </div>
+
+                <div className="whitespace-pre-wrap text-sm leading-7 text-ink-soft">
+                  {aiSummary}
+                </div>
+
+              </div>
+            )}
+
+          </div>
+
+
+          {/* ================================= */}
+          {/* TRANSLATION                        */}
+          {/* ================================= */}
+
+          <div className="mt-6 border border-line bg-white">
+
+            <div className="border-b border-line p-5">
+
+              <span className="font-mono text-[10px] uppercase tracking-wide text-blue">
+                TRANSLATION
+              </span>
+
+              <p className="mt-1 text-sm text-ink-soft">
+                Translate the document into your
+                preferred language.
+              </p>
+
+            </div>
+
+
+            <div className="p-5">
+
+              <div className="flex flex-col gap-3 sm:flex-row">
+
+                <input
+                  type="text"
+                  value={translationLanguage}
+                  onChange={(event) =>
+                    setTranslationLanguage(
+                      event.target.value
+                    )
+                  }
+                  placeholder="Enter target language"
+                  className="w-full flex-1 border border-line bg-paper px-4 py-3 text-sm text-ink outline-none transition-colors placeholder:text-ink-faint focus:border-blue"
+                />
+
+
+                <button
+                  type="button"
+                  onClick={handleTranslate}
+                  disabled={
+                    translationLoading ||
+                    !translationLanguage.trim()
+                  }
+                  className="btn btn-primary"
+                >
+                  {translationLoading
+                    ? "Translating..."
+                    : "Translate"}
+                </button>
+
+              </div>
+
+
+              {translation && (
+                <div className="mt-6 border-t border-line pt-6">
+
+                  <div className="mb-3">
+
+                    <span className="font-mono text-[10px] uppercase tracking-wide text-ink-faint">
+                      TRANSLATED CONTENT
+                    </span>
+
+                  </div>
+
+
+                  <div className="whitespace-pre-wrap text-sm leading-7 text-ink-soft">
+                    {translation}
+                  </div>
+
+                </div>
+              )}
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      {/* ====================================== */}
       {/* COMMENTS                               */}
       {/* ====================================== */}
 
@@ -767,7 +1181,9 @@ const DocumentDetails = () => {
           </div>
 
 
-          {/* ADD COMMENT */}
+          {/* ================================= */}
+          {/* ADD COMMENT                        */}
+          {/* ================================= */}
 
           <form
             onSubmit={handleAddComment}
@@ -781,16 +1197,20 @@ const DocumentDetails = () => {
               Add a comment
             </label>
 
+
             <textarea
               id="comment"
               value={comment}
               onChange={(event) =>
-                setComment(event.target.value)
+                setComment(
+                  event.target.value
+                )
               }
               placeholder="Share something about this document..."
               rows={4}
               className="form-textarea"
             />
+
 
             <div className="mt-4 flex justify-end">
 
@@ -806,19 +1226,26 @@ const DocumentDetails = () => {
           </form>
 
 
-          {/* COMMENT LIST */}
+          {/* ================================= */}
+          {/* COMMENT LIST                       */}
+          {/* ================================= */}
 
           <div className="mt-8">
 
             {commentsLoading ? (
+
               <div className="py-8 font-mono text-[10px] uppercase text-ink-faint">
                 Loading comments...
               </div>
+
             ) : comments.length === 0 ? (
+
               <div className="border-t border-line py-8 text-sm text-ink-soft">
                 No comments yet.
               </div>
+
             ) : (
+
               comments.map((item) => {
 
                 const commenter =
@@ -828,6 +1255,7 @@ const DocumentDetails = () => {
                   "Contributor";
 
                 return (
+
                   <article
                     key={item._id}
                     className="border-t border-line py-6"
@@ -856,6 +1284,7 @@ const DocumentDetails = () => {
 
                     {editingComment ===
                     item._id ? (
+
                       <div className="mt-4">
 
                         <textarea
@@ -868,6 +1297,7 @@ const DocumentDetails = () => {
                           rows={3}
                           className="form-textarea"
                         />
+
 
                         <div className="mt-3 flex gap-3">
 
@@ -883,13 +1313,17 @@ const DocumentDetails = () => {
                             Save
                           </button>
 
+
                           <button
                             type="button"
                             onClick={() => {
                               setEditingComment(
                                 null
                               );
-                              setEditContent("");
+
+                              setEditContent(
+                                ""
+                              );
                             }}
                             className="btn btn-ghost"
                           >
@@ -899,11 +1333,15 @@ const DocumentDetails = () => {
                         </div>
 
                       </div>
+
                     ) : (
+
                       <>
+
                         <p className="mt-3 text-sm leading-6 text-ink-soft">
                           {item.content}
                         </p>
+
 
                         <div className="mt-4 flex gap-4">
 
@@ -913,14 +1351,17 @@ const DocumentDetails = () => {
                               setEditingComment(
                                 item._id
                               );
+
                               setEditContent(
-                                item.content || ""
+                                item.content ||
+                                  ""
                               );
                             }}
                             className="font-mono text-[10px] uppercase text-ink-faint hover:text-ink"
                           >
                             Edit
                           </button>
+
 
                           <button
                             type="button"
@@ -935,12 +1376,17 @@ const DocumentDetails = () => {
                           </button>
 
                         </div>
+
                       </>
+
                     )}
 
                   </article>
+
                 );
+
               })
+
             )}
 
           </div>
