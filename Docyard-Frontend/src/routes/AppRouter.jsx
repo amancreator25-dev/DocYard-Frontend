@@ -4,7 +4,6 @@ import {
   Route,
 } from "react-router-dom";
 
-
 // ======================================
 // ROUTE GUARDS
 // ======================================
@@ -12,13 +11,11 @@ import {
 import ProtectedRoute from "./ProtectedRoute.jsx";
 import AdminRoute from "./AdminRoute.jsx";
 
-
 // ======================================
 // LAYOUT
 // ======================================
 
 import MainLayout from "../layouts/MainLayout.jsx";
-
 
 // ======================================
 // PUBLIC PAGES
@@ -27,12 +24,15 @@ import MainLayout from "../layouts/MainLayout.jsx";
 import Home from "../pages/Home.jsx";
 import Login from "../pages/Auth/Login.jsx";
 import Register from "../pages/Auth/Register.jsx";
+
 import Documents from "../pages/Documents/Documents.jsx";
 import DocumentDetails from "../pages/Documents/DocumentDetails.jsx";
-import Profile from "../pages/Profile/Profile.jsx";
-import Contact from "../pages/Contact/Contact.jsx";
-import PageNotFound from "../pages/PageNotFound/PageNotFound.jsx";
 
+import Profile from "../pages/Profile/Profile.jsx";
+
+import Contact from "../pages/Contact/Contact.jsx";
+
+import PageNotFound from "../pages/PageNotFound/PageNotFound.jsx";
 
 // ======================================
 // PROTECTED PAGES
@@ -40,14 +40,13 @@ import PageNotFound from "../pages/PageNotFound/PageNotFound.jsx";
 
 import MyDocuments from "../pages/Documents/MyDocuments.jsx";
 import Bookmarks from "../pages/Documents/Bookmarks.jsx";
-
+import UploadDocument from "../pages/Documents/UploadDocument.jsx";
 
 // ======================================
 // ADMIN PAGES
 // ======================================
 
 import AdminDashboard from "../pages/Admin/Dashboard.jsx";
-
 
 // ======================================
 // APP ROUTER
@@ -59,15 +58,15 @@ const AppRouter = () => {
 
       <Routes>
 
-        {/* ================================== */}
-        {/* MAIN LAYOUT                         */}
-        {/* ================================== */}
+        {/* ==================================
+            MAIN LAYOUT
+        ================================== */}
 
         <Route element={<MainLayout />}>
 
-          {/* ================================ */}
-          {/* PUBLIC ROUTES                    */}
-          {/* ================================ */}
+          {/* ==================================
+              PUBLIC ROUTES
+          ================================== */}
 
           <Route
             path="/"
@@ -105,28 +104,39 @@ const AppRouter = () => {
           />
 
 
-          {/* ================================ */}
-          {/* PROTECTED ROUTES                 */}
-          {/* ================================ */}
+          {/* ==================================
+              PROTECTED ROUTES
+          ================================== */}
 
           <Route element={<ProtectedRoute />}>
+
+            {/* MY DOCUMENTS */}
 
             <Route
               path="/my-documents"
               element={<MyDocuments />}
             />
 
+            {/* BOOKMARKS */}
+
             <Route
               path="/bookmarks"
               element={<Bookmarks />}
             />
 
+            {/* UPLOAD */}
+
+            <Route
+              path="/upload"
+              element={<UploadDocument />}
+            />
+
           </Route>
 
 
-          {/* ================================ */}
-          {/* ADMIN ROUTES                     */}
-          {/* ================================ */}
+          {/* ==================================
+              ADMIN ROUTES
+          ================================== */}
 
           <Route element={<AdminRoute />}>
 
@@ -138,9 +148,9 @@ const AppRouter = () => {
           </Route>
 
 
-          {/* ================================ */}
-          {/* 404                              */}
-          {/* ================================ */}
+          {/* ==================================
+              404
+          ================================== */}
 
           <Route
             path="*"
@@ -154,6 +164,5 @@ const AppRouter = () => {
     </BrowserRouter>
   );
 };
-
 
 export default AppRouter;

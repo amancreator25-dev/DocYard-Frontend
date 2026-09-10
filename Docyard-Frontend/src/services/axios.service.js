@@ -6,7 +6,6 @@ import {
   removeToken,
 } from "../utils/storage.js";
 
-
 // ======================================
 // API BASE URL
 // ======================================
@@ -15,21 +14,14 @@ const API_BASE_URL =
   import.meta.env.VITE_API_URL ||
   "http://localhost:8000/api";
 
-
 // ======================================
 // AXIOS INSTANCE
 // ======================================
 
 const api = axios.create({
   baseURL: API_BASE_URL,
-
   withCredentials: true,
-
-  headers: {
-    "Content-Type": "application/json",
-  },
 });
-
 
 // ======================================
 // REQUEST INTERCEPTOR
@@ -51,7 +43,6 @@ api.interceptors.request.use(
     return Promise.reject(error);
   }
 );
-
 
 // ======================================
 // RESPONSE INTERCEPTOR
@@ -101,17 +92,26 @@ api.interceptors.response.use(
           );
         }
 
-        // Save new token
+        // ==================================
+        // SAVE NEW TOKEN
+        // ==================================
+
         setToken(newAccessToken);
 
-        // Add new token to original request
+        // ==================================
+        // ADD TOKEN TO ORIGINAL REQUEST
+        // ==================================
+
         originalRequest.headers =
           originalRequest.headers || {};
 
         originalRequest.headers.Authorization =
           `Bearer ${newAccessToken}`;
 
-        // Retry original request
+        // ==================================
+        // RETRY REQUEST
+        // ==================================
+
         return api(originalRequest);
 
       } catch (refreshError) {
@@ -126,6 +126,5 @@ api.interceptors.response.use(
     return Promise.reject(error);
   }
 );
-
 
 export default api;

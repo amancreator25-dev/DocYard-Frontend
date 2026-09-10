@@ -1,77 +1,70 @@
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import Logo from "../../assets/Logo.png";
+import { useAuth } from "../../context/AuthContext.jsx";
 
-const Navbar = ({ user, onLogout }) => {
+const Navbar = () => {
   const navigate = useNavigate();
 
-  const handleLogout = async () => {
-    try {
-      await onLogout?.();
-    } finally {
-      navigate("/login");
-    }
-  };
+  const {
+    user,
+    logout,
+  } = useAuth();
 
-  // ==========================================
-  // NAVIGATION BUTTON STYLES (Refined for Heritage + Tech)
-  // ==========================================
-  // Streamlined into a single elegant style instead of 
-  // complex variants to make the header feel unified and academic.
+  const handleLogout = async () => {
+    await logout();
+    navigate("/login");
+  };
 
   const navLinkClass = ({ isActive }) => {
     const baseClasses = `
-      inline-flex 
-      min-h-[36px] 
-      items-center 
-      justify-center 
-      rounded 
-      px-4 
-      font-mono 
-      text-[11px] 
-      uppercase 
-      tracking-[0.1em] 
-      transition-all 
+      inline-flex
+      min-h-[36px]
+      items-center
+      justify-center
+      rounded
+      px-4
+      font-mono
+      text-[11px]
+      uppercase
+      tracking-[0.1em]
+      transition-all
       duration-200
     `;
 
     const activeClasses = `
-      bg-white 
-      text-blue 
-      shadow-sm 
-      border 
+      bg-white
+      text-blue
+      shadow-sm
+      border
       border-line-strong
     `;
 
     const inactiveClasses = `
-      border 
-      border-transparent 
-      text-ink-soft 
-      hover:text-blue 
+      border
+      border-transparent
+      text-ink-soft
+      hover:text-blue
       hover:bg-white/60
     `;
 
-    return `${baseClasses} ${isActive ? activeClasses : inactiveClasses}`;
+    return `${baseClasses} ${
+      isActive ? activeClasses : inactiveClasses
+    }`;
   };
 
   return (
     <header className="border-b border-line bg-paper">
 
-      {/* ==========================================
-          DESKTOP HEADER
-      ========================================================== */}
+      {/* HEADER */}
 
       <div className="flex min-h-[76px] items-center justify-between px-5 md:px-8 lg:px-10 xl:px-12">
 
-
-        {/* ==========================================
-            LOGO
-        ========================================================== */}
+        {/* LOGO */}
 
         <Link
           to="/"
           className="group flex items-center gap-0"
         >
-
           <span
             className="
               flex
@@ -84,59 +77,61 @@ const Navbar = ({ user, onLogout }) => {
               text-lg
               font-bold
               text-white
-              transition-colors
-              group-hover:bg-blue-dark
             "
           >
             <img
-                src={Logo}
-                alt="DocYard logo"
-                className="h-15 w-15 object-contain"
+              src={Logo}
+              alt="DocYard logo"
+              className="h-15 w-15 object-contain"
             />
           </span>
 
           <span className="font-display text-2xl font-bold tracking-tight text-blue">
             DocYard<span className="italic text-ai-gold">.</span>
           </span>
-
         </Link>
 
-
-        {/* ==========================================
-            DESKTOP NAVIGATION
-        ========================================================== */}
+        {/* DESKTOP NAV */}
 
         <nav className="hidden items-center gap-2 md:flex">
 
-          <NavLink to="/" end className={navLinkClass}>
+          <NavLink
+            to="/"
+            end
+            className={navLinkClass}
+          >
             Home
           </NavLink>
 
-          <NavLink to="/documents" className={navLinkClass}>
+          <NavLink
+            to="/documents"
+            className={navLinkClass}
+          >
             Documents
           </NavLink>
 
-          <NavLink to="/about" className={navLinkClass}>
+          <NavLink
+            to="/about"
+            className={navLinkClass}
+          >
             About
           </NavLink>
 
-          <NavLink to="/contact" className={navLinkClass}>
+          <NavLink
+            to="/contact"
+            className={navLinkClass}
+          >
             Contact
           </NavLink>
 
         </nav>
 
-
-        {/* ==========================================
-            RIGHT SIDE
-        ========================================================== */}
+        {/* RIGHT SIDE */}
 
         <div className="flex items-center gap-3">
 
           {user ? (
-
             <>
-
               {/* PROFILE */}
 
               <NavLink
@@ -179,11 +174,9 @@ const Navbar = ({ user, onLogout }) => {
                     text-blue
                   "
                 >
-                  {(
-                    user.username ||
-                    user.name ||
-                    "U"
-                  ).charAt(0)}
+                  {(user.username || "U")
+                    .charAt(0)
+                    .toUpperCase()}
                 </span>
 
                 <span
@@ -197,13 +190,10 @@ const Navbar = ({ user, onLogout }) => {
                     text-ink-soft
                   "
                 >
-                  {user.username ||
-                    user.name ||
-                    "Profile"}
+                  {user.username || "Profile"}
                 </span>
 
               </NavLink>
-
 
               {/* LOGOUT */}
 
@@ -234,13 +224,9 @@ const Navbar = ({ user, onLogout }) => {
               >
                 Logout
               </button>
-
             </>
-
           ) : (
-
             <>
-
               {/* SIGN IN */}
 
               <Link
@@ -263,14 +249,12 @@ const Navbar = ({ user, onLogout }) => {
                   transition-all
                   duration-150
                   hover:border-blue
-                  hover:bg-white
                   hover:text-blue
                   sm:inline-flex
                 "
               >
                 Sign in
               </Link>
-
 
               {/* JOIN */}
 
@@ -300,37 +284,45 @@ const Navbar = ({ user, onLogout }) => {
               >
                 Join &rarr;
               </Link>
-
             </>
-
           )}
 
         </div>
 
       </div>
 
-
-      {/* ==========================================
-          MOBILE NAVIGATION
-      ========================================================== */}
+      {/* MOBILE NAV */}
 
       <div className="border-t border-line md:hidden">
 
         <nav className="flex items-center gap-2 overflow-x-auto px-5 py-3">
 
-          <NavLink to="/" end className={navLinkClass}>
+          <NavLink
+            to="/"
+            end
+            className={navLinkClass}
+          >
             Home
           </NavLink>
 
-          <NavLink to="/documents" className={navLinkClass}>
+          <NavLink
+            to="/documents"
+            className={navLinkClass}
+          >
             Documents
           </NavLink>
 
-          <NavLink to="/about" className={navLinkClass}>
+          <NavLink
+            to="/about"
+            className={navLinkClass}
+          >
             About
           </NavLink>
 
-          <NavLink to="/contact" className={navLinkClass}>
+          <NavLink
+            to="/contact"
+            className={navLinkClass}
+          >
             Contact
           </NavLink>
 

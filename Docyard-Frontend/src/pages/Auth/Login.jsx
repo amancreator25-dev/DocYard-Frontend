@@ -1,11 +1,22 @@
 import { useState } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import {
+  Link,
+  useNavigate,
+  useLocation,
+} from "react-router-dom";
 
 import { loginUser } from "../../services/auth.service.js";
+import { useAuth } from "../../context/AuthContext.jsx";
 
 const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
+
+  // ==========================================
+  // AUTH CONTEXT
+  // ==========================================
+
+  const { login } = useAuth();
 
   const [formData, setFormData] = useState({
     email: "",
@@ -42,17 +53,74 @@ const Login = () => {
     setError("");
 
     try {
-      await loginUser({
+      // --------------------------------------
+      // LOGIN API
+      // --------------------------------------
+
+      const response = await loginUser({
         email: formData.email.trim(),
         password: formData.password,
       });
 
+      console.log("LOGIN RESPONSE:", response);
+
+      // --------------------------------------
+      // GET USER FROM BACKEND RESPONSE
+      // --------------------------------------
+      //
+      // Backend response:
+      //
+      // {
+      //   success: true,
+      //   data: {
+      //     user: {...}
+      //   }
+      // }
+      //
+      // Axios response:
+      //
+      // response.data.data.user
+      //
+
+      const loggedInUser =
+        response?.data?.data?.user ||
+        response?.data?.user ||
+        response?.user;
+
+      console.log(
+        "LOGGED IN USER:",
+        loggedInUser
+      );
+
+      if (!loggedInUser) {
+        throw new Error(
+          "Login successful, but user information was not received."
+        );
+      }
+
+      // --------------------------------------
+      // UPDATE AUTH CONTEXT
+      // --------------------------------------
+
+      login(loggedInUser);
+
+      // --------------------------------------
+      // REDIRECT
+      // --------------------------------------
+
       navigate(from, {
         replace: true,
       });
+
     } catch (err) {
+      console.error(
+        "Login Error:",
+        err
+      );
+
       setError(
         err?.response?.data?.message ||
+          err?.message ||
           "Invalid email or password."
       );
     } finally {
@@ -62,6 +130,7 @@ const Login = () => {
 
   return (
     <main className="min-h-screen bg-paper text-ink">
+
       <div className="grid min-h-screen lg:grid-cols-2">
 
         {/* ======================================
@@ -260,6 +329,7 @@ const Login = () => {
         </section>
 
       </div>
+
     </main>
   );
 };

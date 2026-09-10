@@ -1,9 +1,16 @@
 import api from "./axios.service.js";
 
-const getAllDocuments = async (params = {}) => {
-  const response = await api.get("/documents", {
-    params,
-  });
+const createDocument = async (formData) => {
+  const response = await api.post(
+    "/documents",
+    formData
+  );
+
+  return response.data;
+};
+
+const getAllDocuments = async () => {
+  const response = await api.get("/documents");
 
   return response.data;
 };
@@ -22,22 +29,13 @@ const getMyDocuments = async () => {
   return response.data;
 };
 
-const createDocument = async (documentData) => {
-  const response = await api.post(
-    "/documents",
-    documentData
-  );
-
-  return response.data;
-};
-
 const updateDocument = async (
   documentId,
-  documentData
+  formData
 ) => {
   const response = await api.patch(
     `/documents/${documentId}`,
-    documentData
+    formData
   );
 
   return response.data;
@@ -53,20 +51,17 @@ const deleteDocument = async (documentId) => {
 
 const downloadDocument = async (documentId) => {
   const response = await api.get(
-    `/documents/download/${documentId}`,
-    {
-      responseType: "blob",
-    }
+    `/documents/download/${documentId}`
   );
 
-  return response;
+  return response.data;
 };
 
 export {
+  createDocument,
   getAllDocuments,
   getDocumentBySlug,
   getMyDocuments,
-  createDocument,
   updateDocument,
   deleteDocument,
   downloadDocument,
