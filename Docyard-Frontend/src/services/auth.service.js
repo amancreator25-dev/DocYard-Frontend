@@ -1,54 +1,96 @@
-import api from "./axios.service.js";
+import api from "./api.js";
+
+
+// ======================================
+// REGISTER USER
+// ======================================
 
 const registerUser = async (userData) => {
-  const response = await api.post("/users/register", userData);
+  const response = await api.post(
+    "/users/register",
+    userData
+  );
 
   return response.data;
 };
+
+
+// ======================================
+// LOGIN USER
+// ======================================
+//
+// Backend sets:
+//
+// accessToken     -> HttpOnly cookie
+// refreshToken    -> HttpOnly cookie
+//
+// We DO NOT save either token manually.
+// ======================================
 
 const loginUser = async (credentials) => {
-  const response = await api.post("/users/login", credentials);
-
-  const accessToken =
-    response.data?.data?.accessToken ||
-    response.data?.accessToken;
-
-  if (accessToken) {
-    localStorage.setItem("accessToken", accessToken);
-  }
+  const response = await api.post(
+    "/users/login",
+    credentials
+  );
 
   return response.data;
 };
+
+
+// ======================================
+// LOGOUT USER
+// ======================================
+//
+// Backend clears the HttpOnly cookies.
+// ======================================
 
 const logoutUser = async () => {
-  const response = await api.post("/users/logout");
-
-  localStorage.removeItem("accessToken");
+  const response = await api.post(
+    "/users/logout"
+  );
 
   return response.data;
 };
+
+
+// ======================================
+// REFRESH ACCESS TOKEN
+// ======================================
+//
+// Backend reads the refreshToken
+// HttpOnly cookie and creates a new
+// accessToken cookie.
+// ======================================
 
 const refreshAccessToken = async () => {
-  const response = await api.post("/users/refresh-token");
-
-  const accessToken =
-    response.data?.data?.accessToken ||
-    response.data?.accessToken;
-
-  if (accessToken) {
-    localStorage.setItem("accessToken", accessToken);
-  }
+  const response = await api.post(
+    "/users/refresh-token"
+  );
 
   return response.data;
 };
+
+
+// ======================================
+// GET CURRENT USER
+// ======================================
 
 const getCurrentUser = async () => {
-  const response = await api.get("/users/me");
+  const response = await api.get(
+    "/users/me"
+  );
 
   return response.data;
 };
 
-const changePassword = async (passwordData) => {
+
+// ======================================
+// CHANGE PASSWORD
+// ======================================
+
+const changePassword = async (
+  passwordData
+) => {
   const response = await api.patch(
     "/users/change-password",
     passwordData
@@ -57,7 +99,14 @@ const changePassword = async (passwordData) => {
   return response.data;
 };
 
-const updateProfile = async (profileData) => {
+
+// ======================================
+// UPDATE PROFILE
+// ======================================
+
+const updateProfile = async (
+  profileData
+) => {
   const response = await api.patch(
     "/users/profile",
     profileData
@@ -66,13 +115,25 @@ const updateProfile = async (profileData) => {
   return response.data;
 };
 
-const getUserProfile = async (username) => {
+
+// ======================================
+// GET PUBLIC USER PROFILE
+// ======================================
+
+const getUserProfile = async (
+  username
+) => {
   const response = await api.get(
     `/users/profile/${username}`
   );
 
   return response.data;
 };
+
+
+// ======================================
+// EXPORT
+// ======================================
 
 export {
   registerUser,
