@@ -1,26 +1,30 @@
 import { Link } from "react-router-dom";
+import Hero from "../assets/Hero.png";
 
 const Home = () => {
   return (
     <main className="min-h-screen bg-paper text-ink">
 
-      {/* ==========================================
-          HERO
-      ========================================== */}
+      {/* HERO */}
 
-      <section className="border-b border-line px-6 py-20 md:px-10 lg:px-14 xl:px-16 md:py-28">
+      <section
+        className="relative min-h-[calc(100vh-76px)] overflow-hidden border-b border-line bg-cover bg-center bg-no-repeat"
+        style={{
+          backgroundImage: `url(${Hero})`,
+        }}
+      >
 
-        <div className="grid items-end gap-16 lg:grid-cols-[minmax(0,1.65fr)_minmax(300px,0.65fr)] lg:gap-24">
+        <div className="absolute inset-0 bg-paper/65" />
 
-          {/* LEFT */}
+        <div className="relative flex min-h-[calc(100vh-76px)] items-center px-6 py-16 md:px-10 lg:px-14 xl:px-16">
 
-          <div className="max-w-[1050px]">
+          <div className="max-w-3xl">
 
             <span className="page-eyebrow">
               THE DOCUMENT ARCHIVE
             </span>
 
-            <h1 className="mt-5 max-w-[1000px] font-display text-6xl font-semibold leading-[0.9] tracking-tight md:text-8xl lg:text-[8rem]">
+            <h1 className="mt-6 max-w-3xl font-display text-5xl font-semibold leading-[0.92] tracking-tight sm:text-6xl md:text-7xl lg:text-[6.5rem]">
               Knowledge,
               <br />
               <span className="text-blue">
@@ -29,17 +33,16 @@ const Home = () => {
             </h1>
 
             <p className="mt-8 max-w-2xl text-base leading-7 text-ink-soft md:text-lg">
-              DocYard is a place to discover,
-              organize, save, and share useful
-              documents with a community of
-              curious people.
+              Discover, organize, save, and share useful documents.
+              DocYard gives important knowledge a place where it can
+              be found, revisited, and preserved.
             </p>
 
             <div className="mt-9 flex flex-wrap gap-3">
 
               <Link
                 to="/documents"
-                className="btn btn-primary text-#132a57"
+                className="btn btn-primary"
               >
                 Explore documents →
               </Link>
@@ -55,70 +58,24 @@ const Home = () => {
 
           </div>
 
-
-          {/* RIGHT */}
-
-          <div className="border-t border-line pt-6 lg:mb-2">
-
-            <p className="font-mono text-[10px] uppercase leading-5 tracking-wide text-ink-faint">
-              A SHARED SPACE FOR
-            </p>
-
-            <div className="mt-5">
-
-              {[
-                "Research",
-                "Notes",
-                "Guides",
-                "Ideas",
-              ].map((item, index) => (
-                <div
-                  key={item}
-                  className="flex items-center justify-between border-b border-line py-4"
-                >
-
-                  <span className="font-display text-xl">
-                    {item}
-                  </span>
-
-                  <span className="font-mono text-[10px] text-ink-faint">
-                    0{index + 1}
-                  </span>
-
-                </div>
-              ))}
-
-            </div>
-
-          </div>
-
         </div>
 
       </section>
 
 
-      {/* ==========================================
-          INTRO
-      ========================================== */}
+      {/* INTRO */}
 
-      <section className="px-6 py-20 md:px-10 lg:px-14 xl:px-16 md:py-28">
+      <section className="px-6 py-20 md:px-10 lg:px-14 xl:px-16 md:py-24">
 
-        <div className="grid gap-12 lg:grid-cols-[0.55fr_1.45fr] lg:gap-24">
-
-          {/* LABEL */}
+        <div className="grid gap-12 lg:grid-cols-[0.45fr_1.55fr] lg:gap-20">
 
           <div>
-
             <span className="page-eyebrow">
               WHY DOCYARD
             </span>
-
           </div>
 
-
-          {/* CONTENT */}
-
-          <div className="max-w-[1100px]">
+          <div className="max-w-5xl">
 
             <h2 className="font-display text-4xl font-semibold leading-[1.02] md:text-6xl lg:text-7xl">
               Good information deserves
@@ -127,10 +84,10 @@ const Home = () => {
             </h2>
 
             <p className="mt-7 max-w-2xl text-sm leading-7 text-ink-soft md:text-base">
-              Instead of letting useful documents
-              disappear across folders, chats, and
-              scattered links, DocYard gives them a
-              shared home.
+              Instead of letting useful documents disappear across
+              folders, chats, and scattered links, DocYard gives them
+              a structured home that makes them easier to discover,
+              save, and revisit.
             </p>
 
           </div>
@@ -140,35 +97,31 @@ const Home = () => {
       </section>
 
 
-      {/* ==========================================
-          FEATURES
-      ========================================== */}
+      {/* FEATURES */}
 
       <section className="border-y border-line bg-paper-raised px-6 md:px-10 lg:px-14 xl:px-16">
 
         <div className="grid md:grid-cols-3">
 
-          {/* FEATURE 01 */}
+          <article className="border-b border-line py-10 md:border-b-0 md:border-r md:pr-12 lg:py-14">
 
-          <article className="border-b border-line py-10 md:border-b-0 md:border-r md:pr-14 lg:py-14">
-
-            <span className="font-mono text-[10px] text-blue">
-              01
+            <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-blue">
+              DISCOVER
             </span>
 
             <h3 className="mt-5 font-display text-2xl font-semibold">
-              Discover
+              Find useful documents.
             </h3>
 
             <p className="mt-3 max-w-sm text-sm leading-6 text-ink-soft">
-              Search through documents and find
-              resources that are actually useful
-              to you.
+              Explore the archive and find documents,
+              notes, research material, and guides that
+              are worth keeping.
             </p>
 
             <Link
               to="/documents"
-              className="mt-6 inline-block font-mono text-[10px] uppercase tracking-wide text-ink-faint hover:text-blue"
+              className="mt-6 inline-block font-mono text-[10px] uppercase tracking-wide text-ink-faint transition-colors hover:text-blue"
             >
               Browse archive →
             </Link>
@@ -176,27 +129,25 @@ const Home = () => {
           </article>
 
 
-          {/* FEATURE 02 */}
+          <article className="border-b border-line py-10 md:border-b-0 md:border-r md:px-12 lg:py-14">
 
-          <article className="border-b border-line py-10 md:border-b-0 md:border-r md:px-14 lg:py-14">
-
-            <span className="font-mono text-[10px] text-blue">
-              02
+            <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-blue">
+              SAVE
             </span>
 
             <h3 className="mt-5 font-display text-2xl font-semibold">
-              Save
+              Keep what matters.
             </h3>
 
             <p className="mt-3 max-w-sm text-sm leading-6 text-ink-soft">
-              Bookmark documents you want to
-              revisit and keep your personal
-              collection organized.
+              Bookmark documents you want to revisit
+              and build a personal collection of useful
+              knowledge.
             </p>
 
             <Link
               to="/bookmarks"
-              className="mt-6 inline-block font-mono text-[10px] uppercase tracking-wide text-ink-faint hover:text-blue"
+              className="mt-6 inline-block font-mono text-[10px] uppercase tracking-wide text-ink-faint transition-colors hover:text-blue"
             >
               View bookmarks →
             </Link>
@@ -204,27 +155,25 @@ const Home = () => {
           </article>
 
 
-          {/* FEATURE 03 */}
+          <article className="py-10 md:pl-12 lg:py-14">
 
-          <article className="py-10 md:pl-14 lg:py-14">
-
-            <span className="font-mono text-[10px] text-blue">
-              03
+            <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-blue">
+              CONTRIBUTE
             </span>
 
             <h3 className="mt-5 font-display text-2xl font-semibold">
-              Contribute
+              Add something useful.
             </h3>
 
             <p className="mt-3 max-w-sm text-sm leading-6 text-ink-soft">
-              Upload documents and add something
-              valuable to the archive for others
-              to discover.
+              Upload documents and make valuable
+              resources easier for others to discover
+              and use.
             </p>
 
             <Link
               to="/upload"
-              className="mt-6 inline-block font-mono text-[10px] uppercase tracking-wide text-ink-faint hover:text-blue"
+              className="mt-6 inline-block font-mono text-[10px] uppercase tracking-wide text-ink-faint transition-colors hover:text-blue"
             >
               Upload document →
             </Link>
@@ -236,9 +185,120 @@ const Home = () => {
       </section>
 
 
-      {/* ==========================================
-          CTA
-      ========================================== */}
+      {/* ARCHIVE */}
+
+      <section className="px-6 py-20 md:px-10 lg:px-14 xl:px-16 md:py-24">
+
+        <div className="grid gap-12 lg:grid-cols-[0.6fr_1.4fr] lg:gap-24">
+
+          <div>
+
+            <span className="page-eyebrow">
+              THE ARCHIVE
+            </span>
+
+            <h2 className="mt-5 font-display text-4xl font-semibold leading-[0.98] md:text-6xl">
+              Something useful
+              <br />
+              is waiting.
+            </h2>
+
+            <p className="mt-6 max-w-md text-sm leading-6 text-ink-soft">
+              Browse the document archive, discover useful
+              resources, and find material worth returning to.
+            </p>
+
+            <Link
+              to="/documents"
+              className="btn btn-primary mt-8 inline-flex"
+            >
+              Explore the archive →
+            </Link>
+
+          </div>
+
+
+          <div className="grid border-t border-line md:grid-cols-2">
+
+            <div className="border-b border-line py-8 md:border-r md:pr-10">
+
+              <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-blue">
+                DOCUMENTS
+              </span>
+
+              <h3 className="mt-4 font-display text-2xl font-semibold">
+                Read and discover.
+              </h3>
+
+              <p className="mt-3 text-sm leading-6 text-ink-soft">
+                Search through the archive and explore
+                documents that match what you are looking for.
+              </p>
+
+            </div>
+
+
+            <div className="border-b border-line py-8 md:pl-10">
+
+              <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-blue">
+                BOOKMARKS
+              </span>
+
+              <h3 className="mt-4 font-display text-2xl font-semibold">
+                Return when needed.
+              </h3>
+
+              <p className="mt-3 text-sm leading-6 text-ink-soft">
+                Keep important documents close so they
+                are easy to find whenever you need them.
+              </p>
+
+            </div>
+
+
+            <div className="border-b border-line py-8 md:border-b-0 md:border-r md:pr-10">
+
+              <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-blue">
+                UPLOAD
+              </span>
+
+              <h3 className="mt-4 font-display text-2xl font-semibold">
+                Preserve useful work.
+              </h3>
+
+              <p className="mt-3 text-sm leading-6 text-ink-soft">
+                Add your own documents and give useful
+                information a lasting place in the archive.
+              </p>
+
+            </div>
+
+
+            <div className="py-8 md:pl-10">
+
+              <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-blue">
+                ORGANIZE
+              </span>
+
+              <h3 className="mt-4 font-display text-2xl font-semibold">
+                Keep knowledge together.
+              </h3>
+
+              <p className="mt-3 text-sm leading-6 text-ink-soft">
+                Use the archive's available tools to make
+                useful documents easier to find and revisit.
+              </p>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      {/* CTA */}
 
       <section className="bg-ink px-6 py-20 text-paper md:px-10 lg:px-14 xl:px-16 md:py-28">
 
@@ -250,14 +310,13 @@ const Home = () => {
               START EXPLORING
             </span>
 
-            <h2 className="mt-5 max-w-[1000px] font-display text-5xl font-semibold leading-[0.92] md:text-7xl lg:text-8xl">
+            <h2 className="mt-5 max-w-[900px] font-display text-5xl font-semibold leading-[0.92] md:text-7xl lg:text-8xl">
               Find something
               <br />
               worth keeping.
             </h2>
 
           </div>
-
 
           <Link
             to="/documents"
@@ -271,25 +330,8 @@ const Home = () => {
       </section>
 
 
-      {/* ==========================================
-          FOOTER NOTE
-      ========================================== */}
+      {/* FOOTER NOTE */}
 
-      <section className="border-t border-line px-6 py-8 md:px-10 lg:px-14 xl:px-16">
-
-        <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
-
-          <span className="font-display text-lg font-semibold">
-            DocYard<span className="text-blue">.</span>
-          </span>
-
-          <span className="font-mono text-[9px] uppercase tracking-wide text-ink-faint">
-            DOCUMENTS / KNOWLEDGE / COMMUNITY
-          </span>
-
-        </div>
-
-      </section>
 
     </main>
   );

@@ -5,10 +5,7 @@ import { useAuth } from "../../context/AuthContext.jsx";
 const Navbar = () => {
   const navigate = useNavigate();
 
-  const {
-    user,
-    logout,
-  } = useAuth();
+  const { user, logout } = useAuth();
 
   const handleLogout = async () => {
     await logout();
@@ -24,7 +21,7 @@ const Navbar = () => {
       rounded
       px-4
       font-mono
-      text-[11px]
+      text-[11.5px]
       uppercase
       tracking-[0.1em]
       transition-all
@@ -32,19 +29,19 @@ const Navbar = () => {
     `;
 
     const activeClasses = `
+      border
+      border-line-strong
       bg-white
       text-blue
       shadow-sm
-      border
-      border-line-strong
     `;
 
     const inactiveClasses = `
       border
       border-transparent
       text-ink-soft
-      hover:text-blue
       hover:bg-white/60
+      hover:text-blue
     `;
 
     return `${baseClasses} ${
@@ -53,13 +50,9 @@ const Navbar = () => {
   };
 
   return (
-    <header className="border-b border-line bg-paper">
+    <header className="fixed inset-x-0 top-0 z-50 border-b border-line bg-[#F6F1E6]">
 
-      {/* HEADER */}
-
-      <div className="flex min-h-[76px] items-center justify-between px-5 md:px-8 lg:px-10 xl:px-12">
-
-        {/* LOGO */}
+      <div className="flex min-h-[76px] items-center justify-between bg-[#F6F1E6] px-5 md:px-8 lg:px-10 xl:px-12">
 
         <Link
           to="/"
@@ -90,8 +83,6 @@ const Navbar = () => {
             DocYard<span className="italic text-ai-gold">.</span>
           </span>
         </Link>
-
-        {/* DESKTOP NAV */}
 
         <nav className="hidden items-center gap-2 md:flex">
 
@@ -126,14 +117,10 @@ const Navbar = () => {
 
         </nav>
 
-        {/* RIGHT SIDE */}
-
         <div className="flex items-center gap-3">
 
           {user ? (
             <>
-              {/* PROFILE */}
-
               <NavLink
                 to={
                   user.username
@@ -156,7 +143,6 @@ const Navbar = () => {
                   sm:flex
                 "
               >
-
                 <span
                   className="
                     flex
@@ -184,7 +170,7 @@ const Navbar = () => {
                     max-w-[100px]
                     truncate
                     font-mono
-                    text-[11px]
+                    text-[11.5px]
                     uppercase
                     tracking-wide
                     text-ink-soft
@@ -192,10 +178,7 @@ const Navbar = () => {
                 >
                   {user.username || "Profile"}
                 </span>
-
               </NavLink>
-
-              {/* LOGOUT */}
 
               <button
                 type="button"
@@ -211,7 +194,7 @@ const Navbar = () => {
                   bg-paper-raised
                   px-4
                   font-mono
-                  text-[11px]
+                  text-[11.5px]
                   uppercase
                   tracking-[0.1em]
                   text-ink-soft
@@ -227,8 +210,6 @@ const Navbar = () => {
             </>
           ) : (
             <>
-              {/* SIGN IN */}
-
               <Link
                 to="/login"
                 className="
@@ -242,7 +223,7 @@ const Navbar = () => {
                   bg-white
                   px-4
                   font-mono
-                  text-[11px]
+                  text-[11.5px]
                   uppercase
                   tracking-[0.1em]
                   text-ink-soft
@@ -255,8 +236,6 @@ const Navbar = () => {
               >
                 Sign in
               </Link>
-
-              {/* JOIN */}
 
               <Link
                 to="/register"
@@ -271,7 +250,7 @@ const Navbar = () => {
                   bg-blue
                   px-5
                   font-mono
-                  text-[12.5px]
+                  text-[13px]
                   font-medium
                   uppercase
                   tracking-[0.08em]
@@ -288,12 +267,9 @@ const Navbar = () => {
           )}
 
         </div>
-
       </div>
 
-      {/* MOBILE NAV */}
-
-      <div className="border-t border-line md:hidden">
+      <div className="border-t border-line bg-[#F6F1E6] md:hidden">
 
         <nav className="flex items-center gap-2 overflow-x-auto px-5 py-3">
 
