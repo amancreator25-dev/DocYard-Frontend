@@ -52,12 +52,20 @@ const Navbar = () => {
   return (
     <header className="fixed inset-x-0 top-0 z-50 border-b border-line bg-[#F6F1E6]">
 
+      {/* =====================================================
+          MAIN NAVBAR
+      ===================================================== */}
+
       <div className="flex min-h-[76px] items-center justify-between bg-[#F6F1E6] px-5 md:px-8 lg:px-10 xl:px-12">
 
+        {/* ===================================================
+            LOGO
+        =================================================== */}
+
         <Link
-          to="/"
-          className="group flex items-center gap-0"
-        >
+            to="/"
+            className="group relative !left-[-30px] flex items-center gap-0"
+          >
           <span
             className="
               flex
@@ -82,9 +90,13 @@ const Navbar = () => {
           <span className="font-display text-2xl font-bold tracking-tight text-blue">
             DocYard<span className="italic text-ai-gold">.</span>
           </span>
-        </Link>
+      </Link>
 
-        <nav className="hidden items-center gap-2 md:flex">
+        {/* ===================================================
+            DESKTOP NAVIGATION
+        =================================================== */}
+
+        <nav className="hidden items-center gap-[23px] md:flex">
 
           <NavLink
             to="/"
@@ -117,10 +129,20 @@ const Navbar = () => {
 
         </nav>
 
+
+        {/* ===================================================
+            USER ACTIONS
+        =================================================== */}
+
         <div className="flex items-center gap-3">
 
           {user ? (
             <>
+
+              {/* =================================================
+                  PROFILE
+              ================================================= */}
+
               <NavLink
                 to={
                   user.username
@@ -143,6 +165,7 @@ const Navbar = () => {
                   sm:flex
                 "
               >
+
                 <span
                   className="
                     flex
@@ -178,7 +201,13 @@ const Navbar = () => {
                 >
                   {user.username || "Profile"}
                 </span>
+
               </NavLink>
+
+
+              {/* =================================================
+                  LOGOUT
+              ================================================= */}
 
               <button
                 type="button"
@@ -207,9 +236,67 @@ const Navbar = () => {
               >
                 Logout
               </button>
+
             </>
           ) : (
             <>
+
+              {/* =================================================
+                  SEARCH ICON
+                  RIGHT BESIDE SIGN IN
+              ================================================= */}
+
+              <Link
+                to="/documents"
+                aria-label="Search documents"
+                title="Search documents"
+                className="
+                  inline-flex
+                  h-[38px]
+                  w-[38px]
+                  items-center
+                  justify-center
+                  rounded
+                  border
+                  border-transparent
+                  text-ink-soft
+                  transition-all
+                  duration-200
+                  hover:border-line-strong
+                  hover:bg-white
+                  hover:text-blue
+                "
+              >
+
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  className="h-[17px] w-[17px]"
+                  aria-hidden="true"
+                >
+
+                  <circle
+                    cx="11"
+                    cy="11"
+                    r="6.5"
+                  />
+
+                  <path
+                    d="m16 16 4 4"
+                    strokeLinecap="round"
+                  />
+
+                </svg>
+
+              </Link>
+
+
+              {/* =================================================
+                  SIGN IN
+              ================================================= */}
+
               <Link
                 to="/login"
                 className="
@@ -237,6 +324,11 @@ const Navbar = () => {
                 Sign in
               </Link>
 
+
+              {/* =================================================
+                  JOIN
+              ================================================= */}
+
               <Link
                 to="/register"
                 className="
@@ -261,13 +353,20 @@ const Navbar = () => {
                   active:scale-[0.98]
                 "
               >
-                Join &rarr;
+                Join →
               </Link>
+
             </>
           )}
 
         </div>
+
       </div>
+
+
+      {/* =====================================================
+          MOBILE NAVIGATION
+      ===================================================== */}
 
       <div className="border-t border-line bg-[#F6F1E6] md:hidden">
 
@@ -301,6 +400,57 @@ const Navbar = () => {
           >
             Contact
           </NavLink>
+
+
+          {/* MOBILE SEARCH */}
+
+          <Link
+            to="/documents"
+            aria-label="Search documents"
+            title="Search documents"
+            className="
+              inline-flex
+              h-[36px]
+              w-[36px]
+              shrink-0
+              items-center
+              justify-center
+              rounded
+              border
+              border-transparent
+              text-ink-soft
+              transition-all
+              duration-200
+              hover:border-line-strong
+              hover:bg-white
+              hover:text-blue
+            "
+          >
+
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              className="h-[17px] w-[17px]"
+              aria-hidden="true"
+            >
+
+              <circle
+                cx="11"
+                cy="11"
+                r="6.5"
+              />
+
+              <path
+                d="m16 16 4 4"
+                strokeLinecap="round"
+              />
+
+            </svg>
+
+          </Link>
+
 
           {user && (
             <NavLink

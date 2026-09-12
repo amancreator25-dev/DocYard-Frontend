@@ -7,14 +7,14 @@
    DOCYARD DESIGN SYSTEM
    ========================================================= */
 
-theme{
+@theme {
   --color-paper: #f6f1e6;
   --color-paper-raised: #efe7d4;
   --color-white: #fffdf8;
 
   --color-ink: #171717;
   --color-ink-soft: #5f5b53;
-  --color-ink-faint: #8d887d;
+  --color-ink-faint: #7d786e;
 
   --color-line: #ddd5c5;
   --color-line-strong: #c8bfad;
@@ -34,11 +34,13 @@ theme{
 
 :root {
   font-family: "Inter", sans-serif;
+
   color: #171717;
   background: #f6f1e6;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
+
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -53,6 +55,7 @@ html {
 
 body {
   margin: 0;
+
   min-width: 320px;
   min-height: 100vh;
 
@@ -77,80 +80,163 @@ button:disabled {
 
 a {
   color: inherit;
+  text-decoration: none;
 }
 
 
 /* =========================================================
-   DOCYARD GLOBAL ELEMENTS
+   STRETCHED LAYOUT SYSTEM
+   ========================================================= */
+
+/*
+   IMPORTANT:
+   The old design used a centered 1180px container.
+
+   This version intentionally uses almost the entire
+   viewport so desktop screens don't feel empty.
+*/
+
+.container {
+  width: 100%;
+  max-width: none;
+
+  margin: 0;
+
+  padding-left: clamp(24px, 4vw, 72px);
+  padding-right: clamp(24px, 4vw, 72px);
+}
+
+
+/* Useful wider content wrapper */
+
+.container-wide {
+  width: 100%;
+  max-width: none;
+
+  margin: 0;
+
+  padding-left: clamp(24px, 5vw, 96px);
+  padding-right: clamp(24px, 5vw, 96px);
+}
+
+
+/* =========================================================
+   PAGE EYEBROW
    ========================================================= */
 
 .page-eyebrow {
   display: inline-block;
 
   font-family: "IBM Plex Mono", monospace;
-  font-size: 10px;
-  font-weight: 500;
-  line-height: 1;
 
-  letter-spacing: 0.08em;
+  font-size: 12px;
+  font-weight: 600;
+
+  line-height: 1.2;
+
+  letter-spacing: 0.12em;
+
   text-transform: uppercase;
 
   color: #173f67;
 }
 
-.container {
-  width: min(1180px, calc(100% - 48px));
-  margin-inline: auto;
-}
-
 
 /* =========================================================
-   BUTTONS
+   BUTTON SYSTEM
    ========================================================= */
 
 .btn {
   display: inline-flex;
+
   align-items: center;
   justify-content: center;
 
-  min-height: 42px;
-  padding: 10px 18px;
+  min-height: 44px;
+
+  padding: 11px 20px;
 
   border: 1px solid transparent;
+  border-radius: 6px;
 
   font-family: "Inter", sans-serif;
-  font-size: 12px;
-  font-weight: 500;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  line-height: 1;
 
   text-decoration: none;
 
+  white-space: nowrap;
+
   transition:
+    transform 150ms ease,
     background-color 150ms ease,
     border-color 150ms ease,
-    color 150ms ease;
+    color 150ms ease,
+    box-shadow 150ms ease;
 }
+
+.btn:hover {
+  transform: translateY(-1px);
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+
+/* PRIMARY */
 
 .btn-primary {
   background: #173f67;
   color: #fffdf8;
+
+  box-shadow: 0 1px 2px rgba(23, 63, 103, 0.12);
 }
 
 .btn-primary:hover {
   background: #0f3152;
+
+  box-shadow: 0 4px 12px rgba(23, 63, 103, 0.16);
 }
 
 .btn-primary:disabled {
   opacity: 0.55;
+  transform: none;
 }
+
+
+/* GHOST */
 
 .btn-ghost {
   border-color: #c8bfad;
-  background: transparent;
+
+  background: #fffdf8;
+
   color: #171717;
 }
 
 .btn-ghost:hover {
+  border-color: #171717;
   background: #efe7d4;
+}
+
+
+/* SECONDARY */
+
+.btn-secondary {
+  border-color: #c8bfad;
+
+  background: #efe7d4;
+
+  color: #171717;
+}
+
+.btn-secondary:hover {
+  border-color: #171717;
+  background: #e5dcc8;
 }
 
 
@@ -160,17 +246,21 @@ a {
 
 .form-label {
   display: block;
-  margin-bottom: 8px;
+
+  margin-bottom: 9px;
 
   font-family: "IBM Plex Mono", monospace;
-  font-size: 10px;
-  font-weight: 500;
 
-  letter-spacing: 0.04em;
+  font-size: 12px;
+  font-weight: 600;
+
+  letter-spacing: 0.06em;
+
   text-transform: uppercase;
 
   color: #5f5b53;
 }
+
 
 .form-input,
 .form-textarea,
@@ -178,69 +268,229 @@ a {
   width: 100%;
 
   border: 1px solid #c8bfad;
-  border-radius: 0;
+
+  border-radius: 6px;
 
   background: #fffdf8;
+
   color: #171717;
 
   outline: none;
 
-  transition: border-color 150ms ease;
+  transition:
+    border-color 150ms ease,
+    box-shadow 150ms ease;
 }
+
 
 .form-input,
 .form-select {
-  min-height: 44px;
-  padding: 11px 13px;
+  min-height: 48px;
+
+  padding: 12px 15px;
+
+  font-size: 14px;
 }
 
+
 .form-textarea {
-  padding: 12px 13px;
+  padding: 13px 15px;
+
+  font-size: 14px;
+
+  line-height: 1.65;
+
   resize: vertical;
-  line-height: 1.6;
 }
+
+
+.form-input:hover,
+.form-textarea:hover,
+.form-select:hover {
+  border-color: #8d887d;
+}
+
 
 .form-input:focus,
 .form-textarea:focus,
 .form-select:focus {
   border-color: #173f67;
+
+  box-shadow: 0 0 0 3px rgba(23, 63, 103, 0.08);
 }
+
 
 .form-input::placeholder,
 .form-textarea::placeholder {
   color: #8d887d;
 }
 
+
 .form-help {
   display: block;
-  margin-top: 6px;
 
-  font-size: 10px;
-  color: #8d887d;
+  margin-top: 7px;
+
+  font-size: 12px;
+
+  line-height: 1.5;
+
+  color: #7d786e;
 }
 
 
 /* =========================================================
-   DOCYARD TYPOGRAPHY
+   TYPOGRAPHY
    ========================================================= */
 
 .heading-display {
   font-family: "Newsreader", serif;
+
   font-weight: 600;
-  line-height: 1.1;
+
+  line-height: 1.05;
+
+  letter-spacing: -0.025em;
 }
+
 
 .heading-section {
   font-family: "Newsreader", serif;
-  font-size: 28px;
+
+  font-size: clamp(30px, 3vw, 42px);
+
   font-weight: 600;
-  line-height: 1.2;
+
+  line-height: 1.1;
+
+  letter-spacing: -0.02em;
 }
+
 
 .metadata {
   font-family: "IBM Plex Mono", monospace;
-  font-size: 10px;
-  color: #8d887d;
+
+  font-size: 12px;
+
+  line-height: 1.5;
+
+  color: #7d786e;
+}
+
+
+/* =========================================================
+   DOCUMENT CARDS
+   ========================================================= */
+
+.document-card {
+  border: 1px solid #ddd5c5;
+
+  border-radius: 8px;
+
+  background: #fffdf8;
+
+  transition:
+    border-color 180ms ease,
+    transform 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.document-card:hover {
+  border-color: #c8bfad;
+
+  transform: translateY(-2px);
+
+  box-shadow: 0 8px 24px rgba(23, 23, 23, 0.06);
+}
+
+
+/* =========================================================
+   INTERACTIVE TEXT
+   ========================================================= */
+
+.link-blue {
+  color: #173f67;
+
+  transition: color 150ms ease;
+}
+
+.link-blue:hover {
+  color: #0f3152;
+}
+
+
+/* =========================================================
+   STATUS / BADGES
+   ========================================================= */
+
+.badge {
+  display: inline-flex;
+
+  align-items: center;
+
+  min-height: 28px;
+
+  padding: 5px 10px;
+
+  border-radius: 999px;
+
+  font-size: 12px;
+  font-weight: 600;
+
+  line-height: 1;
+}
+
+.badge-blue {
+  background: #e8eef4;
+  color: #173f67;
+}
+
+.badge-neutral {
+  background: #efe7d4;
+  color: #5f5b53;
+}
+
+
+/* =========================================================
+   CONTENT SECTIONS
+   ========================================================= */
+
+.section {
+  width: 100%;
+
+  padding-left: clamp(24px, 4vw, 72px);
+  padding-right: clamp(24px, 4vw, 72px);
+}
+
+
+.section-large {
+  padding-top: clamp(64px, 8vw, 120px);
+  padding-bottom: clamp(64px, 8vw, 120px);
+}
+
+
+.section-medium {
+  padding-top: clamp(48px, 6vw, 88px);
+  padding-bottom: clamp(48px, 6vw, 88px);
+}
+
+
+/* =========================================================
+   DIVIDERS
+   ========================================================= */
+
+/*
+   Don't use huge numbers of borders.
+
+   When a divider is needed, use these classes explicitly.
+*/
+
+.divider {
+  border-top: 1px solid #ddd5c5;
+}
+
+.divider-bottom {
+  border-bottom: 1px solid #ddd5c5;
 }
 
 
@@ -258,6 +508,8 @@ a {
 
 ::-webkit-scrollbar-thumb {
   background: #c8bfad;
+
+  border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
@@ -279,14 +531,36 @@ a {
    RESPONSIVE
    ========================================================= */
 
-@media (max-width: 800px) {
-  .container {
-    width: min(100% - 36px, 1180px);
+@media (max-width: 900px) {
+
+  .container,
+  .container-wide,
+  .section {
+    padding-left: 28px;
+    padding-right: 28px;
   }
+
 }
 
-@media (max-width: 520px) {
-  .container {
-    width: min(100% - 28px, 1180px);
+
+@media (max-width: 640px) {
+
+  .container,
+  .container-wide,
+  .section {
+    padding-left: 20px;
+    padding-right: 20px;
   }
+
+  .btn {
+    min-height: 44px;
+
+    padding-left: 17px;
+    padding-right: 17px;
+  }
+
+  .page-eyebrow {
+    font-size: 11px;
+  }
+
 }
