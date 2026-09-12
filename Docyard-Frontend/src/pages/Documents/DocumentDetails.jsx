@@ -712,179 +712,236 @@ const DocumentDetails = () => {
     document.createdBy?.username ||
     "Unknown contributor";
 
-  return (
-    <main className="min-h-screen bg-paper text-ink">
+ return (
+  <main className="min-h-screen bg-paper text-ink">
 
-      {/* ====================================== */}
-      {/* DOCUMENT HEADER                        */}
-      {/* ====================================== */}
+    {/* =====================================================
+        DOCUMENT HEADER
+    ===================================================== */}
 
-      <section className="border-b border-line px-6 py-12 md:px-12 md:py-16">
+    <section className="w-full px-6 pb-12 pt-12 sm:px-10 md:px-14 md:pb-14 md:pt-16 lg:px-20 xl:px-24">
 
-        <div className="mx-auto max-w-[1180px]">
+      <div className="w-full">
 
-          <Link
-            to="/documents"
-            className="font-mono text-[10px] uppercase tracking-wide text-ink-faint transition-colors hover:text-blue"
-          >
-            ← Back to archive
-          </Link>
+        <Link
+          to="/documents"
+          className="inline-flex items-center text-sm font-medium text-ink-soft transition-colors hover:text-blue"
+        >
+          ← Back to archive
+        </Link>
 
-          <div className="mt-10 max-w-4xl">
 
-            <div className="flex flex-wrap items-center gap-3">
+        <div className="mt-10 w-full">
 
-              <span className="font-mono text-[10px] uppercase tracking-wide text-blue">
-                {document.category ||
-                  "Archive"}
+          <div className="flex flex-wrap items-center gap-3">
+
+            <span className="rounded-full bg-blue/10 px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-blue">
+              {document.category || "Archive"}
+            </span>
+
+            {document.fileType && (
+              <span className="rounded-full bg-paper-raised px-3 py-1.5 text-xs font-medium uppercase tracking-wide text-ink-soft">
+                {document.fileType.replace(".", "")}
               </span>
-
-              {document.fileType && (
-                <span className="font-mono text-[10px] uppercase text-ink-faint">
-                  {document.fileType}
-                </span>
-              )}
-
-            </div>
-
-            <h1 className="mt-4 font-display text-5xl font-semibold leading-[1.05] md:text-6xl">
-              {document.title}
-            </h1>
-
-            {document.description && (
-              <p className="mt-6 max-w-3xl text-base leading-7 text-ink-soft">
-                {document.description}
-              </p>
             )}
 
-            <div className="mt-7 flex flex-wrap gap-x-6 gap-y-2 font-mono text-[10px] text-ink-faint">
+          </div>
 
-              <span>
-                By {author}
+
+          <h1 className="mt-5 max-w-6xl font-display text-5xl font-semibold leading-[1.02] tracking-[-0.035em] sm:text-6xl md:text-7xl lg:text-[80px]">
+            {document.title}
+          </h1>
+
+
+          {document.description && (
+            <p className="mt-6 max-w-4xl text-base leading-7 text-ink-soft md:text-lg md:leading-8">
+              {document.description}
+            </p>
+          )}
+
+
+          <div className="mt-7 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm text-ink-faint md:text-base">
+
+            <span>
+              By{" "}
+              <span className="font-medium text-ink-soft">
+                {author}
               </span>
+            </span>
 
-              {document.createdAt && (
-                <span>
-                  {new Date(
-                    document.createdAt
-                  ).toLocaleDateString(
-                    "en-US",
-                    {
-                      month: "long",
-                      day: "numeric",
-                      year: "numeric",
-                    }
-                  )}
-                </span>
-              )}
 
-              {document.language && (
-                <span>
-                  {document.language}
-                </span>
-              )}
+            {document.createdAt && (
+              <span>
+                {new Date(
+                  document.createdAt
+                ).toLocaleDateString("en-US", {
+                  month: "short",
+                  day: "numeric",
+                  year: "numeric",
+                })}
+              </span>
+            )}
 
-            </div>
+
+            {document.language && (
+              <span>
+                {document.language}
+              </span>
+            )}
+
+
+            {document.views !== undefined && (
+              <span>
+                {document.views} views
+              </span>
+            )}
 
           </div>
 
         </div>
 
-      </section>
+      </div>
+
+    </section>
 
 
-      {/* ====================================== */}
-      {/* MAIN CONTENT                           */}
-      {/* ====================================== */}
+    {/* =====================================================
+        DOCUMENT + DETAILS
+    ===================================================== */}
 
-      <section className="px-6 py-10 md:px-12 md:py-14">
+    <section className="w-full px-6 pb-16 sm:px-10 md:px-14 md:pb-20 lg:px-20 xl:px-24">
 
-        <div className="mx-auto grid max-w-[1180px] gap-12 lg:grid-cols-[minmax(0,1fr)_300px]">
+      <div className="w-full">
 
-          {/* DOCUMENT VIEWER */}
+        <div className="grid w-full gap-8 lg:grid-cols-[minmax(0,1fr)_320px] xl:grid-cols-[minmax(0,1fr)_360px]">
 
-          <div>
 
-            <div className="overflow-hidden border border-line bg-white">
+          {/* =================================================
+              DOCUMENT PREVIEW
+          ================================================= */}
+
+          <div className="min-w-0">
+
+            <div className="overflow-hidden rounded-xl border border-line bg-white">
 
               {document.fileUrl ? (
+
                 <iframe
                   src={document.fileUrl}
                   title={document.title}
-                  className="h-[700px] w-full"
+                  className="h-[700px] w-full sm:h-[780px] lg:h-[820px] xl:h-[900px]"
                 />
+
               ) : (
-                <div className="flex h-[500px] items-center justify-center bg-paper-raised">
 
-                  <div className="text-center">
+                <div className="flex h-[560px] items-center justify-center bg-paper-raised sm:h-[650px]">
 
-                    <span className="font-mono text-[10px] uppercase text-ink-faint">
-                      Document preview
-                    </span>
+                  <div className="px-6 text-center">
 
-                    <p className="mt-2 text-sm text-ink-soft">
-                      Preview unavailable.
+                    <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-lg bg-ink text-paper">
+
+                      <span className="font-mono text-sm font-medium uppercase">
+                        {(
+                          document.fileType || "DOC"
+                        ).replace(".", "")}
+                      </span>
+
+                    </div>
+
+
+                    <h3 className="mt-5 text-lg font-semibold">
+                      Preview unavailable
+                    </h3>
+
+
+                    <p className="mt-2 text-base text-ink-soft">
+                      This document cannot be previewed here.
                     </p>
 
                   </div>
 
                 </div>
+
               )}
 
             </div>
 
 
-            {/* ACTION BAR */}
+            {/* =================================================
+                DOCUMENT ACTIONS
+            ================================================= */}
 
-            <div className="flex flex-wrap items-center justify-between gap-4 border-x border-b border-line px-5 py-4">
+            <div className="mt-4 flex flex-wrap items-center justify-between gap-4 rounded-xl border border-line bg-paper-raised p-4 md:p-5">
 
-              <div className="flex items-center gap-5">
+              <div className="flex flex-wrap items-center gap-3">
+
+                {/* LIKE */}
 
                 <button
                   type="button"
                   onClick={handleLike}
                   disabled={actionLoading}
-                  className={`font-mono text-[10px] uppercase tracking-wide transition-colors ${
+                  className={`inline-flex h-11 items-center gap-2 rounded-md px-5 text-sm font-semibold transition ${
                     isLiked
-                      ? "text-blue"
-                      : "text-ink-faint hover:text-ink"
+                      ? "bg-blue text-white"
+                      : "border border-line bg-paper text-ink hover:border-ink hover:bg-white"
                   }`}
                 >
-                  {isLiked
-                    ? "♥ Liked"
-                    : "♡ Like"}
 
-                  <span className="ml-2">
+                  <span className="text-base">
+                    {isLiked ? "♥" : "♡"}
+                  </span>
+
+                  <span>
+                    {isLiked ? "Liked" : "Like"}
+                  </span>
+
+                  <span className="opacity-70">
                     {likeCount}
                   </span>
 
                 </button>
 
 
+                {/* BOOKMARK */}
+
                 <button
                   type="button"
                   onClick={handleBookmark}
                   disabled={actionLoading}
-                  className={`font-mono text-[10px] uppercase tracking-wide transition-colors ${
+                  className={`inline-flex h-11 items-center gap-2 rounded-md border px-5 text-sm font-semibold transition ${
                     isBookmarked
-                      ? "text-blue"
-                      : "text-ink-faint hover:text-ink"
+                      ? "border-blue bg-blue/10 text-blue"
+                      : "border-line bg-paper text-ink hover:border-ink hover:bg-white"
                   }`}
                 >
+
+                  <span className="text-base">
+                    {isBookmarked ? "★" : "☆"}
+                  </span>
+
                   {isBookmarked
-                    ? "★ Saved"
-                    : "☆ Save"}
+                    ? "Saved"
+                    : "Save"}
+
                 </button>
 
               </div>
 
 
+              {/* DOWNLOAD */}
+
               <button
                 type="button"
                 onClick={handleDownload}
-                className="btn btn-primary"
+                className="inline-flex h-11 items-center rounded-md bg-blue px-6 text-sm font-semibold text-white transition hover:-translate-y-[1px] hover:bg-[#0f3152] active:translate-y-0"
               >
                 Download
+
+                <span className="ml-2 text-base">
+                  ↓
+                </span>
+
               </button>
 
             </div>
@@ -892,96 +949,110 @@ const DocumentDetails = () => {
           </div>
 
 
-          {/* ================================= */}
-          {/* METADATA                           */}
-          {/* ================================= */}
+          {/* =================================================
+              DOCUMENT DETAILS
+          ================================================= */}
 
-          <aside>
+          <aside className="h-fit">
 
-            <div className="border-t border-line">
+            <div className="rounded-xl border border-line bg-paper-raised p-6 lg:sticky lg:top-6">
 
-              <div className="border-b border-line py-5">
+              <div className="mb-6">
 
-                <span className="page-eyebrow">
-                  DOCUMENT DETAILS
+                <span className="text-xs font-semibold uppercase tracking-[0.14em] text-blue">
+                  Document details
                 </span>
+
+                <h2 className="mt-2 font-display text-2xl font-semibold">
+                  Information
+                </h2>
 
               </div>
 
 
-              <dl>
+              <div className="space-y-6">
 
-                <div className="border-b border-line py-4">
+                {/* TITLE */}
 
-                  <dt className="font-mono text-[10px] uppercase text-ink-faint">
+                <div>
+
+                  <p className="text-xs font-medium uppercase tracking-wide text-ink-faint">
                     Title
-                  </dt>
+                  </p>
 
-                  <dd className="mt-2 text-sm">
+                  <p className="mt-1.5 text-sm leading-6 text-ink">
                     {document.title}
-                  </dd>
+                  </p>
 
                 </div>
 
 
-                <div className="border-b border-line py-4">
+                {/* CONTRIBUTOR */}
 
-                  <dt className="font-mono text-[10px] uppercase text-ink-faint">
+                <div>
+
+                  <p className="text-xs font-medium uppercase tracking-wide text-ink-faint">
                     Contributor
-                  </dt>
+                  </p>
 
-                  <dd className="mt-2 text-sm">
+                  <p className="mt-1.5 text-sm text-ink">
                     {author}
-                  </dd>
+                  </p>
 
                 </div>
 
+
+                {/* CATEGORY */}
 
                 {document.category && (
-                  <div className="border-b border-line py-4">
+                  <div>
 
-                    <dt className="font-mono text-[10px] uppercase text-ink-faint">
+                    <p className="text-xs font-medium uppercase tracking-wide text-ink-faint">
                       Category
-                    </dt>
+                    </p>
 
-                    <dd className="mt-2 text-sm">
+                    <p className="mt-1.5 text-sm text-ink">
                       {document.category}
-                    </dd>
+                    </p>
 
                   </div>
                 )}
 
+
+                {/* LANGUAGE */}
 
                 {document.language && (
-                  <div className="border-b border-line py-4">
+                  <div>
 
-                    <dt className="font-mono text-[10px] uppercase text-ink-faint">
+                    <p className="text-xs font-medium uppercase tracking-wide text-ink-faint">
                       Language
-                    </dt>
+                    </p>
 
-                    <dd className="mt-2 text-sm">
+                    <p className="mt-1.5 text-sm text-ink">
                       {document.language}
-                    </dd>
+                    </p>
 
                   </div>
                 )}
 
+
+                {/* FILE SIZE */}
 
                 {document.fileSize && (
-                  <div className="border-b border-line py-4">
+                  <div>
 
-                    <dt className="font-mono text-[10px] uppercase text-ink-faint">
+                    <p className="text-xs font-medium uppercase tracking-wide text-ink-faint">
                       File size
-                    </dt>
+                    </p>
 
-                    <dd className="mt-2 text-sm">
+                    <p className="mt-1.5 text-sm text-ink">
                       {document.fileSize}
-                    </dd>
+                    </p>
 
                   </div>
                 )}
 
-              </dl>
+              </div>
 
             </div>
 
@@ -989,84 +1060,117 @@ const DocumentDetails = () => {
 
         </div>
 
+      </div>
+
+    </section>
+
+
+    {/* =====================================================
+        ERROR
+    ===================================================== */}
+
+    {error && (
+      <section className="w-full px-6 pb-8 sm:px-10 md:px-14 lg:px-20 xl:px-24">
+
+        <div
+          className="rounded-lg border border-red-200 bg-red-50 px-5 py-4 text-sm leading-6 text-red-700"
+          role="alert"
+        >
+          {error}
+        </div>
+
       </section>
+    )}
 
 
-      {/* ====================================== */}
-      {/* AI TOOLS                               */}
-      {/* ====================================== */}
+    {/* =====================================================
+        AI TOOLS
+    ===================================================== */}
 
-      <section className="border-t border-line px-6 py-12 md:px-12 md:py-16">
+    <section className="w-full px-6 pb-16 sm:px-10 md:px-14 md:pb-20 lg:px-20 xl:px-24">
 
-        <div className="mx-auto max-w-[1180px]">
-
-          <div className="mb-8">
-
-            <span className="page-eyebrow">
-              DOCUMENT INTELLIGENCE
-            </span>
-
-            <h2 className="mt-2 font-display text-3xl font-semibold">
-              AI Tools
-            </h2>
-
-            <p className="mt-3 max-w-2xl text-sm leading-6 text-ink-soft">
-              Use AI to understand this document
-              faster or translate its content into
-              another language.
-            </p>
-
-          </div>
+      <div className="w-full">
 
 
-          {/* ================================= */}
-          {/* SUMMARY                            */}
-          {/* ================================= */}
+        {/* AI HEADER */}
 
-          <div className="border border-line bg-white">
+        <div className="mb-8">
 
-            <div className="flex flex-col gap-5 border-b border-line p-5 sm:flex-row sm:items-center sm:justify-between">
+          <span className="text-xs font-semibold uppercase tracking-[0.14em] text-blue">
+            Document intelligence
+          </span>
+
+          <h2 className="mt-2 font-display text-4xl font-semibold tracking-[-0.02em] md:text-5xl">
+            Understand this document.
+          </h2>
+
+          <p className="mt-3 max-w-3xl text-base leading-7 text-ink-soft">
+            Use DocYard's AI tools to quickly summarize
+            or translate the document.
+          </p>
+
+        </div>
+
+
+        {/* AI CARDS */}
+
+        <div className="grid w-full gap-5 lg:grid-cols-2">
+
+
+          {/* =================================================
+              SUMMARY
+          ================================================= */}
+
+          <div className="rounded-xl border border-line bg-paper-raised p-7 md:p-8">
+
+            <div className="flex items-start justify-between gap-5">
 
               <div>
 
-                <span className="font-mono text-[10px] uppercase tracking-wide text-blue">
-                  AI SUMMARY
+                <span className="text-xs font-semibold uppercase tracking-wide text-blue">
+                  AI Summary
                 </span>
 
-                <p className="mt-1 text-sm text-ink-soft">
-                  Generate a concise overview of
-                  this document.
-                </p>
+                <h3 className="mt-2 font-display text-2xl font-semibold">
+                  Get the key points.
+                </h3>
 
               </div>
 
 
-              <button
-                type="button"
-                onClick={handleSummarize}
-                disabled={aiLoading}
-                className="btn btn-primary"
-              >
-                {aiLoading
-                  ? "Generating..."
-                  : aiSummary
-                    ? "Regenerate Summary"
-                    : "Summarize Document"}
-              </button>
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-blue/10 text-lg text-blue">
+                ✦
+              </div>
 
             </div>
 
 
+            <p className="mt-4 text-base leading-7 text-ink-soft">
+              Generate a concise overview of this
+              document using AI.
+            </p>
+
+
+            <button
+              type="button"
+              onClick={handleSummarize}
+              disabled={aiLoading}
+              className="mt-6 inline-flex h-11 items-center rounded-md bg-blue px-6 text-sm font-semibold text-white transition hover:-translate-y-[1px] hover:bg-[#0f3152] disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {aiLoading
+                ? "Generating..."
+                : aiSummary
+                  ? "Regenerate summary"
+                  : "Summarize document"}
+            </button>
+
+
             {aiSummary && (
-              <div className="p-6">
+              <div className="mt-7 rounded-lg border border-line bg-paper p-6">
 
-                <div className="mb-4">
-
-                  <span className="font-mono text-[10px] uppercase tracking-wide text-ink-faint">
-                    SUMMARY
-                  </span>
-
-                </div>
+                <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-ink-faint">
+                  Summary
+                </p>
 
                 <div className="whitespace-pre-wrap text-sm leading-7 text-ink-soft">
                   {aiSummary}
@@ -1078,175 +1182,225 @@ const DocumentDetails = () => {
           </div>
 
 
-          {/* ================================= */}
-          {/* TRANSLATION                        */}
-          {/* ================================= */}
+          {/* =================================================
+              TRANSLATION
+          ================================================= */}
 
-          <div className="mt-6 border border-line bg-white">
+          <div className="rounded-xl border border-line bg-paper-raised p-7 md:p-8">
 
-            <div className="border-b border-line p-5">
+            <div className="flex items-start justify-between gap-5">
 
-              <span className="font-mono text-[10px] uppercase tracking-wide text-blue">
-                TRANSLATION
-              </span>
+              <div>
 
-              <p className="mt-1 text-sm text-ink-soft">
-                Translate the document into your
-                preferred language.
-              </p>
+                <span className="text-xs font-semibold uppercase tracking-wide text-blue">
+                  Translation
+                </span>
 
-            </div>
-
-
-            <div className="p-5">
-
-              <div className="flex flex-col gap-3 sm:flex-row">
-
-                <input
-                  type="text"
-                  value={translationLanguage}
-                  onChange={(event) =>
-                    setTranslationLanguage(
-                      event.target.value
-                    )
-                  }
-                  placeholder="Enter target language"
-                  className="w-full flex-1 border border-line bg-paper px-4 py-3 text-sm text-ink outline-none transition-colors placeholder:text-ink-faint focus:border-blue"
-                />
-
-
-                <button
-                  type="button"
-                  onClick={handleTranslate}
-                  disabled={
-                    translationLoading ||
-                    !translationLanguage.trim()
-                  }
-                  className="btn btn-primary"
-                >
-                  {translationLoading
-                    ? "Translating..."
-                    : "Translate"}
-                </button>
+                <h3 className="mt-2 font-display text-2xl font-semibold">
+                  Read it your way.
+                </h3>
 
               </div>
 
 
-              {translation && (
-                <div className="mt-6 border-t border-line pt-6">
-
-                  <div className="mb-3">
-
-                    <span className="font-mono text-[10px] uppercase tracking-wide text-ink-faint">
-                      TRANSLATED CONTENT
-                    </span>
-
-                  </div>
-
-
-                  <div className="whitespace-pre-wrap text-sm leading-7 text-ink-soft">
-                    {translation}
-                  </div>
-
-                </div>
-              )}
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-blue/10 text-lg font-medium text-blue">
+                Aa
+              </div>
 
             </div>
+
+
+            <p className="mt-4 text-base leading-7 text-ink-soft">
+              Translate the document into another
+              language using AI.
+            </p>
+
+
+            <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+
+              <input
+                type="text"
+                value={translationLanguage}
+                onChange={(event) =>
+                  setTranslationLanguage(
+                    event.target.value
+                  )
+                }
+                placeholder="Target language"
+                className="h-11 min-w-0 flex-1 rounded-md border border-line bg-paper px-4 text-sm text-ink outline-none transition placeholder:text-ink-faint focus:border-blue focus:ring-2 focus:ring-blue/10"
+              />
+
+
+              <button
+                type="button"
+                onClick={handleTranslate}
+                disabled={
+                  translationLoading ||
+                  !translationLanguage.trim()
+                }
+                className="inline-flex h-11 items-center justify-center rounded-md bg-blue px-6 text-sm font-semibold text-white transition hover:-translate-y-[1px] hover:bg-[#0f3152] disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {translationLoading
+                  ? "Translating..."
+                  : "Translate"}
+              </button>
+
+            </div>
+
+
+            {translation && (
+              <div className="mt-7 rounded-lg border border-line bg-paper p-6">
+
+                <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-ink-faint">
+                  Translated content
+                </p>
+
+                <div className="whitespace-pre-wrap text-sm leading-7 text-ink-soft">
+                  {translation}
+                </div>
+
+              </div>
+            )}
 
           </div>
 
         </div>
 
-      </section>
+      </div>
+
+    </section>
 
 
-      {/* ====================================== */}
-      {/* COMMENTS                               */}
-      {/* ====================================== */}
+    {/* =====================================================
+        COMMENTS
+    ===================================================== */}
 
-      <section className="border-t border-line px-6 py-12 md:px-12 md:py-16">
+    <section className="w-full px-6 pb-20 sm:px-10 md:px-14 md:pb-24 lg:px-20 xl:px-24">
 
-        <div className="mx-auto max-w-[900px]">
-
-          <div className="mb-8">
-
-            <span className="page-eyebrow">
-              DISCUSSION
-            </span>
-
-            <h2 className="mt-2 font-display text-3xl font-semibold">
-              Comments
-            </h2>
-
-          </div>
+      <div className="w-full">
 
 
-          {/* ================================= */}
-          {/* ADD COMMENT                        */}
-          {/* ================================= */}
+        {/* COMMENTS HEADER */}
 
-          <form
-            onSubmit={handleAddComment}
-            className="border border-line bg-white p-5"
-          >
+        <div className="mb-8">
 
-            <label
-              htmlFor="comment"
-              className="form-label"
-            >
-              Add a comment
-            </label>
+          <span className="text-xs font-semibold uppercase tracking-[0.14em] text-blue">
+            Discussion
+          </span>
 
+          <div className="mt-2 flex items-end justify-between gap-4">
 
-            <textarea
-              id="comment"
-              value={comment}
-              onChange={(event) =>
-                setComment(
-                  event.target.value
-                )
-              }
-              placeholder="Share something about this document..."
-              rows={4}
-              className="form-textarea"
-            />
+            <div>
 
+              <h2 className="font-display text-4xl font-semibold tracking-[-0.02em] md:text-5xl">
+                Comments
+              </h2>
 
-            <div className="mt-4 flex justify-end">
-
-              <button
-                type="submit"
-                className="btn btn-primary"
-              >
-                Post comment
-              </button>
+              <p className="mt-2 text-base text-ink-soft">
+                Share your thoughts about this document.
+              </p>
 
             </div>
 
-          </form>
+
+            <span className="rounded-full bg-paper-raised px-4 py-1.5 text-sm font-medium text-ink-soft">
+              {comments.length}
+            </span>
+
+          </div>
+
+        </div>
 
 
-          {/* ================================= */}
-          {/* COMMENT LIST                       */}
-          {/* ================================= */}
+        {/* =================================================
+            ADD COMMENT
+        ================================================= */}
 
-          <div className="mt-8">
+        <form
+          onSubmit={handleAddComment}
+          className="w-full rounded-xl border border-line bg-paper-raised p-6 md:p-7"
+        >
 
-            {commentsLoading ? (
+          <label
+            htmlFor="comment"
+            className="text-sm font-semibold"
+          >
+            Add a comment
+          </label>
 
-              <div className="py-8 font-mono text-[10px] uppercase text-ink-faint">
+
+          <textarea
+            id="comment"
+            value={comment}
+            onChange={(event) =>
+              setComment(event.target.value)
+            }
+            placeholder="Share something about this document..."
+            rows={4}
+            className="mt-3 w-full resize-y rounded-md border border-line bg-paper px-4 py-3 text-base leading-7 text-ink outline-none transition placeholder:text-ink-faint focus:border-blue focus:ring-2 focus:ring-blue/10"
+          />
+
+
+          <div className="mt-4 flex justify-end">
+
+            <button
+              type="submit"
+              className="inline-flex h-11 items-center rounded-md bg-blue px-6 text-sm font-semibold text-white transition hover:-translate-y-[1px] hover:bg-[#0f3152] active:translate-y-0"
+            >
+              Post comment
+
+              <span className="ml-2 text-base">
+                →
+              </span>
+
+            </button>
+
+          </div>
+
+        </form>
+
+
+        {/* =================================================
+            COMMENTS LIST
+        ================================================= */}
+
+        <div className="mt-8">
+
+          {commentsLoading ? (
+
+            <div className="w-full rounded-xl border border-line bg-paper-raised p-7">
+
+              <p className="text-base text-ink-soft">
                 Loading comments...
+              </p>
+
+            </div>
+
+          ) : comments.length === 0 ? (
+
+            <div className="w-full rounded-xl border border-line bg-paper-raised px-6 py-16 text-center">
+
+              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-paper text-ink-soft">
+                💬
               </div>
 
-            ) : comments.length === 0 ? (
 
-              <div className="border-t border-line py-8 text-sm text-ink-soft">
-                No comments yet.
-              </div>
+              <h3 className="mt-4 text-lg font-semibold">
+                No comments yet
+              </h3>
 
-            ) : (
 
-              comments.map((item) => {
+              <p className="mt-2 text-base text-ink-soft">
+                Be the first person to start the discussion.
+              </p>
+
+            </div>
+
+          ) : (
+
+            <div className="grid w-full gap-4">
+
+              {comments.map((item) => {
 
                 const commenter =
                   item.user?.username ||
@@ -1254,38 +1408,60 @@ const DocumentDetails = () => {
                   item.username ||
                   "Contributor";
 
-                return (
 
+                return (
                   <article
                     key={item._id}
-                    className="border-t border-line py-6"
+                    className="w-full rounded-xl border border-line bg-paper-raised p-6 md:p-7"
                   >
 
-                    <div className="flex flex-wrap items-center justify-between gap-3">
+                    {/* COMMENT HEADER */}
 
-                      <div>
+                    <div className="flex items-start justify-between gap-4">
 
-                        <span className="font-mono text-[10px] uppercase text-blue">
-                          {commenter}
-                        </span>
+                      <div className="flex items-center gap-3">
 
-                        {item.createdAt && (
-                          <span className="ml-4 font-mono text-[10px] text-ink-faint">
-                            {new Date(
-                              item.createdAt
-                            ).toLocaleDateString()}
-                          </span>
-                        )}
+                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-ink text-sm font-semibold uppercase text-paper">
+                          {commenter
+                            .charAt(0)
+                            .toUpperCase()}
+                        </div>
+
+
+                        <div>
+
+                          <p className="text-sm font-semibold">
+                            {commenter}
+                          </p>
+
+
+                          {item.createdAt && (
+                            <p className="mt-0.5 text-xs text-ink-faint">
+                              {new Date(
+                                item.createdAt
+                              ).toLocaleDateString(
+                                "en-US",
+                                {
+                                  month: "short",
+                                  day: "numeric",
+                                  year: "numeric",
+                                }
+                              )}
+                            </p>
+                          )}
+
+                        </div>
 
                       </div>
 
                     </div>
 
 
-                    {editingComment ===
-                    item._id ? (
+                    {/* EDIT MODE */}
 
-                      <div className="mt-4">
+                    {editingComment === item._id ? (
+
+                      <div className="mt-5">
 
                         <textarea
                           value={editContent}
@@ -1295,11 +1471,11 @@ const DocumentDetails = () => {
                             )
                           }
                           rows={3}
-                          className="form-textarea"
+                          className="w-full resize-y rounded-md border border-line bg-paper px-4 py-3 text-base leading-7 outline-none transition focus:border-blue focus:ring-2 focus:ring-blue/10"
                         />
 
 
-                        <div className="mt-3 flex gap-3">
+                        <div className="mt-3 flex flex-wrap gap-2">
 
                           <button
                             type="button"
@@ -1308,24 +1484,19 @@ const DocumentDetails = () => {
                                 item._id
                               )
                             }
-                            className="btn btn-primary"
+                            className="inline-flex h-10 items-center rounded-md bg-blue px-5 text-sm font-semibold text-white transition hover:bg-[#0f3152]"
                           >
-                            Save
+                            Save changes
                           </button>
 
 
                           <button
                             type="button"
                             onClick={() => {
-                              setEditingComment(
-                                null
-                              );
-
-                              setEditContent(
-                                ""
-                              );
+                              setEditingComment(null);
+                              setEditContent("");
                             }}
-                            className="btn btn-ghost"
+                            className="inline-flex h-10 items-center rounded-md border border-line bg-paper px-5 text-sm font-medium transition hover:border-ink hover:bg-white"
                           >
                             Cancel
                           </button>
@@ -1338,26 +1509,26 @@ const DocumentDetails = () => {
 
                       <>
 
-                        <p className="mt-3 text-sm leading-6 text-ink-soft">
+                        {/* COMMENT CONTENT */}
+
+                        <p className="mt-5 text-base leading-7 text-ink-soft">
                           {item.content}
                         </p>
 
 
-                        <div className="mt-4 flex gap-4">
+                        {/* COMMENT ACTIONS */}
+
+                        <div className="mt-5 flex flex-wrap gap-2">
 
                           <button
                             type="button"
                             onClick={() => {
-                              setEditingComment(
-                                item._id
-                              );
-
+                              setEditingComment(item._id);
                               setEditContent(
-                                item.content ||
-                                  ""
+                                item.content || ""
                               );
                             }}
-                            className="font-mono text-[10px] uppercase text-ink-faint hover:text-ink"
+                            className="inline-flex h-9 items-center rounded-md border border-line bg-paper px-4 text-sm font-medium text-ink-soft transition hover:border-ink hover:text-ink"
                           >
                             Edit
                           </button>
@@ -1370,7 +1541,7 @@ const DocumentDetails = () => {
                                 item._id
                               )
                             }
-                            className="font-mono text-[10px] uppercase text-ink-faint hover:text-ink"
+                            className="inline-flex h-9 items-center rounded-md border border-line bg-paper px-4 text-sm font-medium text-ink-soft transition hover:border-red-300 hover:text-red-600"
                           >
                             Delete
                           </button>
@@ -1382,21 +1553,21 @@ const DocumentDetails = () => {
                     )}
 
                   </article>
-
                 );
+              })}
 
-              })
+            </div>
 
-            )}
-
-          </div>
+          )}
 
         </div>
 
-      </section>
+      </div>
 
-    </main>
-  );
-};
+    </section>
+
+  </main>
+);
+}
 
 export default DocumentDetails;

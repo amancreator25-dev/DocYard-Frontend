@@ -67,20 +67,6 @@ const Login = () => {
       // --------------------------------------
       // GET USER FROM BACKEND RESPONSE
       // --------------------------------------
-      //
-      // Backend response:
-      //
-      // {
-      //   success: true,
-      //   data: {
-      //     user: {...}
-      //   }
-      // }
-      //
-      // Axios response:
-      //
-      // response.data.data.user
-      //
 
       const loggedInUser =
         response?.data?.data?.user ||
@@ -131,67 +117,132 @@ const Login = () => {
   return (
     <main className="min-h-screen bg-paper text-ink">
 
-      <div className="grid min-h-screen lg:grid-cols-2">
+      <div className="grid min-h-screen lg:grid-cols-[0.9fr_1.1fr]">
 
-        {/* ======================================
+        {/* =====================================================
             BRAND PANEL
-        ====================================== */}
+        ===================================================== */}
 
-        <section className="hidden border-r border-line bg-ink p-12 text-paper lg:flex lg:flex-col lg:justify-between">
+        <section className="relative hidden min-h-screen overflow-hidden bg-ink p-10 text-paper lg:flex lg:flex-col lg:justify-between xl:p-14">
+
+          {/* TOP */}
 
           <Link
             to="/"
-            className="font-display text-3xl font-semibold"
+            className="group inline-flex w-fit items-center"
           >
-            DocYard<span className="text-blue">.</span>
+
+            <span className="font-display text-3xl font-bold tracking-tight">
+              DocYard
+              <span className="text-blue">.</span>
+            </span>
+
           </Link>
 
-          <div className="max-w-xl">
 
-            <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-paper/50">
+          {/* CENTER CONTENT */}
+
+          <div className="max-w-2xl">
+
+            <span className="font-mono text-xs font-medium uppercase tracking-[0.18em] text-paper/45">
               THE DOCUMENT ARCHIVE
             </span>
 
-            <h1 className="mt-5 font-display text-6xl font-semibold leading-[1.02]">
+
+            <h1 className="mt-6 font-display text-6xl font-semibold leading-[0.9] tracking-[-0.03em] xl:text-7xl">
               Knowledge,
               <br />
               kept together.
             </h1>
 
-            <p className="mt-6 max-w-md text-sm leading-7 text-paper/60">
+
+            <p className="mt-7 max-w-xl text-base leading-7 text-paper/60">
               Access your saved documents,
               contribute to the archive, and
               keep your research organized.
             </p>
 
+
+            {/* SMALL FEATURE ROW */}
+
+            <div className="mt-10 flex flex-wrap gap-3">
+
+              <div className="rounded-lg border border-paper/15 px-4 py-3">
+
+                <span className="font-mono text-xs uppercase tracking-[0.1em] text-paper/45">
+                  DISCOVER
+                </span>
+
+              </div>
+
+
+              <div className="rounded-lg border border-paper/15 px-4 py-3">
+
+                <span className="font-mono text-xs uppercase tracking-[0.1em] text-paper/45">
+                  SAVE
+                </span>
+
+              </div>
+
+
+              <div className="rounded-lg border border-paper/15 px-4 py-3">
+
+                <span className="font-mono text-xs uppercase tracking-[0.1em] text-paper/45">
+                  CONTRIBUTE
+                </span>
+
+              </div>
+
+            </div>
+
           </div>
 
-          <p className="font-mono text-[9px] uppercase tracking-wide text-paper/40">
-            DOCYARD / 2026
-          </p>
+
+          {/* BOTTOM */}
+
+          <div className="flex items-center justify-between">
+
+            <p className="font-mono text-xs uppercase tracking-[0.12em] text-paper/35">
+              DOCYARD / 2026
+            </p>
+
+            <span className="font-mono text-xs text-paper/25">
+              01
+            </span>
+
+          </div>
 
         </section>
 
 
-        {/* ======================================
+        {/* =====================================================
             LOGIN PANEL
-        ====================================== */}
+        ===================================================== */}
 
-        <section className="flex min-h-screen items-center justify-center px-6 py-12 md:px-12">
+        <section className="flex min-h-screen items-center px-6 py-12 sm:px-10 md:px-14 lg:px-16 xl:px-24">
 
-          <div className="w-full max-w-[440px]">
+          <div className="w-full max-w-2xl">
 
-            {/* MOBILE LOGO */}
+            {/* =================================================
+                MOBILE LOGO
+            ================================================= */}
 
             <Link
               to="/"
-              className="font-display text-3xl font-semibold lg:hidden"
+              className="inline-flex items-center lg:hidden"
             >
-              DocYard<span className="text-blue">.</span>
+
+              <span className="font-display text-3xl font-bold tracking-tight text-blue">
+                DocYard
+                <span className="text-ai-gold">.</span>
+              </span>
+
             </Link>
 
 
-            {/* HEADING */}
+            {/* =================================================
+                HEADING
+            ================================================= */}
 
             <div className="mt-12 lg:mt-0">
 
@@ -199,11 +250,13 @@ const Login = () => {
                 WELCOME BACK
               </span>
 
-              <h2 className="mt-3 font-display text-4xl font-semibold md:text-5xl">
+
+              <h2 className="mt-4 font-display text-5xl font-semibold leading-[0.95] tracking-[-0.03em] sm:text-6xl md:text-7xl">
                 Sign in.
               </h2>
 
-              <p className="mt-4 text-sm leading-6 text-ink-soft">
+
+              <p className="mt-5 max-w-xl text-base leading-7 text-ink-soft md:text-lg">
                 Sign in to continue to your
                 DocYard account.
               </p>
@@ -211,25 +264,44 @@ const Login = () => {
             </div>
 
 
-            {/* ERROR */}
+            {/* =================================================
+                ERROR
+            ================================================= */}
 
             {error && (
-              <div className="mt-7 border border-line bg-paper-raised px-4 py-3 text-sm text-ink-soft">
+              <div className="mt-8 rounded-xl border border-line-strong bg-paper-raised px-5 py-4 text-sm font-medium leading-6 text-ink">
                 {error}
               </div>
             )}
 
 
-            {/* ==================================
+            {/* =================================================
                 LOGIN FORM
-            ================================== */}
+            ================================================= */}
 
             <form
               onSubmit={handleSubmit}
-              className="mt-8 border border-line bg-white p-6 md:p-8"
+              className="mt-8 rounded-2xl border border-line bg-white p-6 shadow-sm sm:p-8 md:p-10"
             >
 
-              {/* EMAIL */}
+              {/* FORM INTRO */}
+
+              <div className="mb-8">
+
+                <span className="font-mono text-xs font-semibold uppercase tracking-[0.12em] text-blue">
+                  ACCOUNT ACCESS
+                </span>
+
+                <p className="mt-2 text-sm leading-6 text-ink-soft">
+                  Enter your account details below.
+                </p>
+
+              </div>
+
+
+              {/* ===============================================
+                  EMAIL
+              =============================================== */}
 
               <div>
 
@@ -239,6 +311,7 @@ const Login = () => {
                 >
                   Email
                 </label>
+
 
                 <input
                   id="email"
@@ -255,11 +328,13 @@ const Login = () => {
               </div>
 
 
-              {/* PASSWORD */}
+              {/* ===============================================
+                  PASSWORD
+              =============================================== */}
 
-              <div className="mt-6">
+              <div className="mt-7">
 
-                <div className="mb-2 flex items-center justify-between">
+                <div className="mb-2 flex items-center justify-between gap-4">
 
                   <label
                     htmlFor="password"
@@ -268,14 +343,16 @@ const Login = () => {
                     Password
                   </label>
 
+
                   <Link
                     to="/forgot-password"
-                    className="font-mono text-[9px] uppercase tracking-wide text-ink-faint hover:text-blue"
+                    className="font-mono text-xs font-medium uppercase tracking-[0.08em] text-ink-faint transition-colors hover:text-blue"
                   >
                     Forgot?
                   </Link>
 
                 </div>
+
 
                 <input
                   id="password"
@@ -292,12 +369,14 @@ const Login = () => {
               </div>
 
 
-              {/* SUBMIT */}
+              {/* ===============================================
+                  SUBMIT
+              =============================================== */}
 
               <button
                 type="submit"
                 disabled={loading}
-                className="btn btn-primary mt-7 w-full disabled:cursor-not-allowed disabled:opacity-60"
+                className="mt-8 inline-flex h-12 w-full items-center justify-center rounded-lg border border-blue bg-blue px-7 text-sm font-semibold text-white shadow-sm transition-all hover:border-ink hover:bg-ink disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {loading
                   ? "Signing in..."
@@ -307,22 +386,41 @@ const Login = () => {
             </form>
 
 
-            {/* REGISTER */}
+            {/* =================================================
+                REGISTER
+            ================================================= */}
 
-            <div className="mt-8 border-t border-line pt-7 text-center">
+            <div className="mt-8 rounded-xl border border-line bg-paper-raised px-6 py-5">
 
-              <p className="text-sm text-ink-soft">
-                Don't have an account?
-              </p>
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
 
-              <Link
-                to="/register"
-                className="mt-2 inline-block font-mono text-[10px] uppercase tracking-wide text-blue hover:text-ink"
-              >
-                Create an account →
-              </Link>
+                <p className="text-sm text-ink-soft">
+                  Don't have an account?
+                </p>
+
+
+                <Link
+                  to="/register"
+                  className="inline-flex h-10 w-fit items-center justify-center rounded-lg border border-line-strong bg-white px-5 font-mono text-xs font-semibold uppercase tracking-[0.08em] text-blue transition-all hover:border-blue hover:bg-blue-light"
+                >
+                  Create an account →
+                </Link>
+
+              </div>
 
             </div>
+
+
+            {/* =================================================
+                BACK HOME
+            ================================================= */}
+
+            <Link
+              to="/"
+              className="mt-6 inline-flex items-center font-mono text-xs font-medium uppercase tracking-[0.08em] text-ink-faint transition-colors hover:text-blue"
+            >
+              ← Back to DocYard
+            </Link>
 
           </div>
 

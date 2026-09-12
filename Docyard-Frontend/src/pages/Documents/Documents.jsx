@@ -4,21 +4,16 @@ import { Link, useSearchParams } from "react-router-dom";
 import { getAllDocuments } from "../../services/document.service.js";
 
 const Documents = () => {
-  const [searchParams, setSearchParams] =
-    useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const [documents, setDocuments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  const initialSearch =
-    searchParams.get("search") || "";
+  const initialSearch = searchParams.get("search") || "";
+  const [search, setSearch] = useState(initialSearch);
 
-  const [search, setSearch] =
-    useState(initialSearch);
-
-  const category =
-    searchParams.get("category") || "";
+  const category = searchParams.get("category") || "";
 
   // ==========================================
   // LOAD DOCUMENTS
@@ -29,8 +24,7 @@ const Documents = () => {
     setError("");
 
     try {
-      const response =
-        await getAllDocuments(params);
+      const response = await getAllDocuments(params);
 
       const data =
         response?.data?.documents ||
@@ -38,9 +32,7 @@ const Documents = () => {
         response?.data ||
         [];
 
-      setDocuments(
-        Array.isArray(data) ? data : []
-      );
+      setDocuments(Array.isArray(data) ? data : []);
     } catch (err) {
       setError(
         err?.response?.data?.message ||
@@ -109,14 +101,11 @@ const Documents = () => {
       return "—";
     }
 
-    return new Date(date).toLocaleDateString(
-      "en-US",
-      {
-        month: "short",
-        day: "numeric",
-        year: "numeric",
-      }
-    );
+    return new Date(date).toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
   };
 
   // ==========================================
@@ -126,43 +115,49 @@ const Documents = () => {
   return (
     <main className="min-h-screen bg-paper text-ink">
 
-      {/* ======================================
-          HEADER
-      ====================================== */}
+      {/* =====================================================
+          HERO / SEARCH
+      ===================================================== */}
 
-      <section className="border-b border-line px-6 py-14 md:px-12 md:py-20">
+      <section className="w-full px-6 pb-12 pt-14 sm:px-10 md:px-14 lg:px-20 xl:px-24 md:pb-14 md:pt-20">
 
-        <div className="mx-auto max-w-[1180px]">
+        <div className="w-full">
 
           <span className="page-eyebrow">
-            THE DOCYARD ARCHIVE
+            DocYard Archive
           </span>
 
-          <h1 className="mt-3 max-w-4xl font-display text-5xl font-semibold leading-[1.05] md:text-7xl">
-            Browse the archive.
-          </h1>
+          <div className="mt-5 w-full">
 
-          <p className="mt-5 max-w-2xl text-sm leading-7 text-ink-soft">
-            Explore documents shared by the
-            DocYard community.
-          </p>
+            <h1 className="font-display text-5xl font-semibold leading-[1.02] tracking-[-0.035em] sm:text-6xl md:text-7xl lg:text-[80px]">
+              Browse the archive.
+            </h1>
 
-          {/* ==================================
-              SEARCH
-          ================================== */}
+            <p className="mt-5 max-w-2xl text-base leading-7 text-ink-soft md:text-lg">
+              Explore documents shared by the DocYard
+              community and discover useful knowledge
+              in one place.
+            </p>
+
+          </div>
+
+
+          {/* =================================================
+              STRETCHED SEARCH
+          ================================================= */}
 
           <form
             onSubmit={handleSearch}
-            className="mt-10 flex max-w-3xl flex-col gap-3 sm:flex-row sm:items-end"
+            className="mt-10 flex w-full items-stretch gap-3"
           >
 
             <div className="flex-1">
 
               <label
                 htmlFor="document-search"
-                className="form-label"
+                className="sr-only"
               >
-                Search
+                Search documents
               </label>
 
               <input
@@ -174,14 +169,15 @@ const Documents = () => {
                   setSearch(event.target.value)
                 }
                 placeholder="Search documents..."
-                className="form-input"
+                className="h-13 w-full rounded-md border border-line bg-paper-raised px-5 text-base text-ink outline-none transition placeholder:text-ink-faint focus:border-blue focus:ring-2 focus:ring-blue/10"
               />
 
             </div>
 
+
             <button
               type="submit"
-              className="btn btn-primary"
+              className="h-13 shrink-0 rounded-md bg-blue px-8 text-sm font-semibold text-white transition hover:-translate-y-[1px] hover:bg-[#0f3152] active:translate-y-0"
             >
               Search
             </button>
@@ -192,77 +188,88 @@ const Documents = () => {
 
       </section>
 
-      {/* ======================================
-          CONTENT
-      ====================================== */}
 
-      <section className="px-6 py-10 md:px-12 md:py-14">
+      {/* =====================================================
+          DOCUMENT CONTENT
+      ===================================================== */}
 
-        <div className="mx-auto max-w-[1180px]">
+      <section className="w-full px-6 pb-24 sm:px-10 md:px-14 lg:px-20 xl:px-24">
 
-          {/* ==================================
-              TOP BAR
-          ================================== */}
+        <div className="w-full">
 
-          <div className="flex flex-col justify-between gap-4 border-b border-line pb-5 sm:flex-row sm:items-center">
 
-            <div className="font-mono text-[10px] uppercase tracking-wide text-ink-faint">
+          {/* =================================================
+              RESULTS BAR
+          ================================================= */}
+
+          <div className="flex items-center justify-between gap-4 pb-6">
+
+            <p className="text-sm font-medium text-ink-soft md:text-base">
               {loading
-                ? "Loading archive..."
+                ? "Loading documents..."
                 : `${documents.length} ${
                     documents.length === 1
                       ? "document"
                       : "documents"
-                  }`}
-            </div>
+                  } found`}
+            </p>
+
 
             {(search || category) && (
               <button
                 type="button"
                 onClick={clearFilters}
-                className="self-start font-mono text-[10px] uppercase tracking-wide text-blue hover:text-ink"
+                className="inline-flex h-10 items-center rounded-md border border-line bg-paper px-4 text-sm font-medium text-ink-soft transition hover:border-ink hover:bg-paper-raised hover:text-ink"
               >
-                Clear filters ×
+                Clear filters
               </button>
             )}
 
           </div>
 
-          {/* ==================================
+
+          {/* =================================================
               ERROR
-          ================================== */}
+          ================================================= */}
 
           {error && (
             <div
-              className="mt-6 border border-line bg-paper-raised px-5 py-4 text-sm text-ink-soft"
+              className="mb-6 rounded-lg border border-red-200 bg-red-50 px-5 py-4 text-sm leading-6 text-red-700"
               role="alert"
             >
               {error}
             </div>
           )}
 
-          {/* ==================================
+
+          {/* =================================================
               LOADING
-          ================================== */}
+          ================================================= */}
 
           {loading && (
-            <div className="divide-y divide-line">
+            <div className="grid w-full gap-4">
 
               {[1, 2, 3, 4].map((item) => (
                 <div
                   key={item}
-                  className="grid gap-5 py-7 md:grid-cols-[72px_minmax(0,1fr)]"
+                  className="w-full rounded-xl border border-line bg-paper-raised p-6 md:p-7"
                 >
 
-                  <div className="h-[78px] w-[62px] bg-paper-raised" />
+                  <div className="grid gap-5 md:grid-cols-[80px_minmax(0,1fr)_160px]">
 
-                  <div>
+                    <div className="h-16 w-16 animate-pulse rounded-md bg-paper" />
 
-                    <div className="h-3 w-24 bg-paper-raised" />
+                    <div>
 
-                    <div className="mt-4 h-7 max-w-xl bg-paper-raised" />
+                      <div className="h-3 w-28 animate-pulse rounded bg-paper" />
 
-                    <div className="mt-3 h-3 max-w-2xl bg-paper-raised" />
+                      <div className="mt-4 h-8 max-w-lg animate-pulse rounded bg-paper" />
+
+                      <div className="mt-3 h-4 max-w-3xl animate-pulse rounded bg-paper" />
+
+                    </div>
+
+                    <div className="h-11 w-full animate-pulse rounded-md bg-paper md:w-36" />
 
                   </div>
 
@@ -272,46 +279,51 @@ const Documents = () => {
             </div>
           )}
 
-          {/* ==================================
+
+          {/* =================================================
               EMPTY
-          ================================== */}
+          ================================================= */}
 
           {!loading &&
             !error &&
             documents.length === 0 && (
-              <div className="py-24 text-center">
+              <div className="w-full rounded-xl border border-line bg-paper-raised px-6 py-20 text-center">
 
-                <span className="font-mono text-[10px] uppercase tracking-wide text-ink-faint">
-                  ARCHIVE
-                </span>
+                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-paper text-xl text-ink-soft">
+                  —
+                </div>
 
-                <h2 className="mt-3 font-display text-3xl font-semibold">
+                <h2 className="mt-5 font-display text-3xl font-semibold">
                   Nothing found.
                 </h2>
 
-                <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-ink-soft">
-                  Try a different search term or
-                  clear your filters.
+                <p className="mx-auto mt-3 max-w-md text-base leading-7 text-ink-soft">
+                  Try a different search term or clear
+                  your filters to view all documents.
                 </p>
 
                 <button
                   type="button"
                   onClick={clearFilters}
-                  className="btn btn-primary mt-7"
+                  className="mt-7 inline-flex h-11 items-center rounded-md bg-blue px-6 text-sm font-semibold text-white transition hover:-translate-y-[1px] hover:bg-[#0f3152]"
                 >
                   View all documents
+                  <span className="ml-2">
+                    →
+                  </span>
                 </button>
 
               </div>
             )}
 
-          {/* ==================================
-              DOCUMENTS
-          ================================== */}
+
+          {/* =================================================
+              DOCUMENT LIST
+          ================================================= */}
 
           {!loading &&
             documents.length > 0 && (
-              <div className="divide-y divide-line">
+              <div className="grid w-full gap-4">
 
                 {documents.map((document) => {
 
@@ -330,91 +342,121 @@ const Documents = () => {
                   return (
                     <article
                       key={document._id}
-                      className="group grid gap-6 py-8 md:grid-cols-[72px_minmax(0,1fr)_auto]"
+                      className="group w-full rounded-xl border border-line bg-paper-raised p-6 transition-all duration-200 hover:-translate-y-[2px] hover:border-ink/30 hover:bg-white hover:shadow-sm md:p-7 lg:p-8"
                     >
 
-                      {/* FILE MARK */}
+                      <div className="grid gap-6 md:grid-cols-[80px_minmax(0,1fr)_180px] md:items-center">
 
-                      <div className="flex h-[78px] w-[62px] items-center justify-center bg-ink text-paper">
 
-                        <span className="font-mono text-[9px] uppercase">
-                          {(
-                            document.fileType ||
-                            "DOC"
-                          ).replace(".", "")}
-                        </span>
+                        {/* =================================
+                            FILE TYPE
+                        ================================= */}
 
-                      </div>
+                        <div className="flex h-16 w-16 items-center justify-center rounded-md bg-ink text-paper">
 
-                      {/* INFORMATION */}
-
-                      <div className="min-w-0">
-
-                        <div className="flex flex-wrap items-center gap-3">
-
-                          <span className="font-mono text-[10px] uppercase tracking-wide text-blue">
-                            {document.category ||
-                              "Archive"}
-                          </span>
-
-                          <span className="font-mono text-[10px] text-ink-faint">
-                            {formatDate(
-                              document.createdAt
-                            )}
+                          <span className="font-mono text-xs font-medium uppercase">
+                            {(
+                              document.fileType ||
+                              "DOC"
+                            ).replace(".", "")}
                           </span>
 
                         </div>
 
-                        <h2 className="mt-2 font-display text-2xl font-semibold leading-tight md:text-3xl">
+
+                        {/* =================================
+                            DOCUMENT INFORMATION
+                        ================================= */}
+
+                        <div className="min-w-0">
+
+                          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+
+                            <span className="text-xs font-semibold uppercase tracking-[0.08em] text-blue">
+                              {document.category ||
+                                "Archive"}
+                            </span>
+
+                            <span className="text-sm text-ink-faint">
+                              {formatDate(
+                                document.createdAt
+                              )}
+                            </span>
+
+                          </div>
+
+
+                          <h2 className="mt-2 font-display text-2xl font-semibold leading-tight tracking-[-0.015em] sm:text-3xl">
+
+                            <Link
+                              to={documentPath}
+                              className="transition-colors hover:text-blue"
+                            >
+                              {document.title ||
+                                "Untitled document"}
+                            </Link>
+
+                          </h2>
+
+
+                          <p className="mt-3 max-w-4xl text-base leading-7 text-ink-soft">
+                            {document.description ||
+                              "No description available."}
+                          </p>
+
+
+                          {/* =================================
+                              METADATA
+                          ================================= */}
+
+                          <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-ink-faint">
+
+                            <span>
+                              By{" "}
+                              <span className="font-medium text-ink-soft">
+                                {author}
+                              </span>
+                            </span>
+
+
+                            {document.language && (
+                              <span>
+                                {document.language}
+                              </span>
+                            )}
+
+
+                            {document.views !==
+                              undefined && (
+                              <span>
+                                {document.views} views
+                              </span>
+                            )}
+
+                          </div>
+
+                        </div>
+
+
+                        {/* =================================
+                            READ BUTTON
+                        ================================= */}
+
+                        <div className="flex md:justify-end">
 
                           <Link
                             to={documentPath}
-                            className="transition-colors group-hover:text-blue"
+                            className="inline-flex h-11 w-full items-center justify-center rounded-md border border-ink bg-paper px-6 text-sm font-semibold text-ink transition-all duration-200 hover:bg-ink hover:text-paper sm:w-auto"
                           >
-                            {document.title ||
-                              "Untitled document"}
+                            Read document
+
+                            <span className="ml-2 text-base transition-transform group-hover:translate-x-1">
+                              →
+                            </span>
+
                           </Link>
 
-                        </h2>
-
-                        <p className="mt-2 line-clamp-2 max-w-2xl text-sm leading-6 text-ink-soft">
-                          {document.description ||
-                            "No description available."}
-                        </p>
-
-                        <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2 font-mono text-[10px] text-ink-faint">
-
-                          <span>
-                            By {author}
-                          </span>
-
-                          {document.language && (
-                            <span>
-                              {document.language}
-                            </span>
-                          )}
-
-                          {document.views !==
-                            undefined && (
-                            <span>
-                              {document.views} views
-                            </span>
-                          )}
-
                         </div>
-
-                      </div>
-
-                      {/* VIEW */}
-
-                      <div className="flex items-center md:self-center">
-
-                        <Link
-                          to={documentPath}
-                          className="btn btn-ghost"
-                        >
-                          Read →
-                        </Link>
 
                       </div>
 

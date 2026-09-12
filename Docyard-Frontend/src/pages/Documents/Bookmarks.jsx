@@ -56,9 +56,7 @@ const Bookmarks = () => {
           const document =
             item.document || item;
 
-          return (
-            document._id !== documentId
-          );
+          return document._id !== documentId;
         })
       );
     } catch (err) {
@@ -88,72 +86,131 @@ const Bookmarks = () => {
   };
 
   return (
-    <main className="min-h-screen bg-paper px-6 py-16 text-ink md:px-12">
+    <main className="min-h-screen bg-paper text-ink">
 
-      <div className="mx-auto max-w-[1180px]">
+      {/* ======================================
+          HEADER
+      ====================================== */}
 
-        {/* HEADER */}
+      <section className="w-full px-6 pb-10 pt-10 sm:px-10 md:px-14 md:pb-14 md:pt-14 lg:px-20 xl:px-24">
 
-        <header className="border-b border-line pb-8">
+        <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
 
-          <span className="page-eyebrow">
-            YOUR LIBRARY
-          </span>
+          <div>
 
-          <h1 className="mt-3 font-display text-5xl font-semibold leading-[1.05] md:text-6xl">
-            Bookmarks
-          </h1>
+            <span className="page-eyebrow">
+              YOUR LIBRARY
+            </span>
 
-          <p className="mt-4 max-w-xl text-sm leading-6 text-ink-soft">
-            Documents you've saved for later.
-          </p>
+            <h1 className="mt-4 font-display text-5xl font-semibold leading-[0.98] tracking-[-0.03em] sm:text-6xl md:text-7xl lg:text-[76px]">
+              Bookmarks
+            </h1>
 
-        </header>
+            <p className="mt-5 max-w-2xl text-base leading-7 text-ink-soft md:text-lg">
+              Documents you've saved for later.
+              Keep useful research, references, and
+              discoveries close at hand.
+            </p>
+
+          </div>
 
 
-        {/* ERROR */}
+          <Link
+            to="/documents"
+            className="inline-flex h-12 w-fit items-center justify-center rounded-lg border border-blue bg-blue px-6 text-sm font-semibold text-white shadow-sm transition-all hover:border-ink hover:bg-ink"
+          >
+            Browse archive →
+          </Link>
 
-        {error && (
-          <div className="mt-6 border border-line bg-paper-raised px-5 py-4 text-sm text-ink-soft">
+        </div>
+
+      </section>
+
+
+      {/* ======================================
+          ERROR
+      ====================================== */}
+
+      {error && (
+        <section className="w-full px-6 sm:px-10 md:px-14 lg:px-20 xl:px-24">
+
+          <div className="rounded-xl border border-line-strong bg-paper-raised px-5 py-4 text-sm font-medium text-ink md:px-6 md:py-5">
             {error}
           </div>
-        )}
+
+        </section>
+      )}
 
 
-        {/* COUNT */}
+      {/* ======================================
+          CONTENT
+      ====================================== */}
+
+      <section className="w-full px-6 pb-16 pt-6 sm:px-10 md:px-14 md:pb-24 md:pt-8 lg:px-20 xl:px-24">
+
+        {/* ==================================
+            COUNT / TOOLBAR
+        ================================== */}
 
         {!loading && (
-          <div className="border-b border-line py-5 font-mono text-[10px] uppercase tracking-wide text-ink-faint">
-            {bookmarks.length}{" "}
-            {bookmarks.length === 1
-              ? "saved document"
-              : "saved documents"}
+          <div className="mb-8 flex flex-col gap-5 rounded-xl border border-line bg-paper-raised px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+
+            <div>
+
+              <span className="font-mono text-xs font-semibold uppercase tracking-[0.12em] text-blue">
+                SAVED DOCUMENTS
+              </span>
+
+              <p className="mt-2 font-display text-2xl font-semibold">
+                {bookmarks.length}{" "}
+                {bookmarks.length === 1
+                  ? "document"
+                  : "documents"}
+              </p>
+
+            </div>
+
+
+            <Link
+              to="/documents"
+              className="inline-flex h-10 w-fit items-center justify-center rounded-lg border border-line-strong bg-white px-5 text-xs font-semibold text-ink transition-colors hover:border-blue hover:text-blue"
+            >
+              Find more documents
+            </Link>
+
           </div>
         )}
 
 
-        {/* LOADING */}
+        {/* ==================================
+            LOADING
+        ================================== */}
 
         {loading && (
-          <div className="divide-y divide-line">
+          <div className="grid gap-5">
 
             {[1, 2, 3].map((item) => (
               <div
                 key={item}
-                className="grid gap-6 py-8 md:grid-cols-[72px_minmax(0,1fr)]"
+                className="grid gap-6 rounded-2xl border border-line bg-white p-6 sm:p-7 md:grid-cols-[80px_minmax(0,1fr)_180px] md:p-8"
               >
 
-                <div className="h-[78px] w-[62px] bg-paper-raised" />
+                <div className="h-[88px] w-[68px] bg-paper-raised" />
 
                 <div>
 
-                  <div className="h-3 w-24 bg-paper-raised" />
+                  <div className="h-3 w-28 bg-paper-raised" />
 
-                  <div className="mt-4 h-7 max-w-xl bg-paper-raised" />
+                  <div className="mt-5 h-8 w-3/4 bg-paper-raised" />
 
-                  <div className="mt-3 h-3 max-w-2xl bg-paper-raised" />
+                  <div className="mt-4 h-4 w-full max-w-2xl bg-paper-raised" />
+
+                  <div className="mt-3 h-4 w-2/3 max-w-xl bg-paper-raised" />
 
                 </div>
+
+
+                <div className="h-11 w-full bg-paper-raised md:self-center" />
 
               </div>
             ))}
@@ -162,187 +219,220 @@ const Bookmarks = () => {
         )}
 
 
-        {/* EMPTY */}
+        {/* ==================================
+            EMPTY STATE
+        ================================== */}
 
-        {!loading &&
-          bookmarks.length === 0 && (
-            <div className="py-24 text-center">
+        {!loading && bookmarks.length === 0 && (
+          <div className="rounded-2xl border border-line bg-white px-6 py-20 text-center sm:px-10 md:py-28">
 
-              <span className="font-mono text-[10px] uppercase tracking-wide text-ink-faint">
-                SAVED DOCUMENTS
-              </span>
-
-              <h2 className="mt-3 font-display text-3xl font-semibold">
-                Your shelf is empty.
-              </h2>
-
-              <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-ink-soft">
-                Save documents while browsing
-                the archive and they'll appear here.
-              </p>
-
-              <Link
-                to="/documents"
-                className="btn btn-primary mt-7"
-              >
-                Browse the archive
-              </Link>
-
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full border border-line bg-paper-raised font-display text-3xl text-blue">
+              +
             </div>
-          )}
+
+            <span className="mt-7 block font-mono text-xs font-semibold uppercase tracking-[0.12em] text-ink-faint">
+              SAVED DOCUMENTS
+            </span>
+
+            <h2 className="mt-4 font-display text-4xl font-semibold tracking-[-0.02em] md:text-5xl">
+              Your shelf is empty.
+            </h2>
+
+            <p className="mx-auto mt-4 max-w-lg text-sm leading-6 text-ink-soft md:text-base">
+              Save documents while browsing the archive
+              and they'll appear here for quick access later.
+            </p>
+
+            <Link
+              to="/documents"
+              className="mt-8 inline-flex h-12 items-center justify-center rounded-lg border border-blue bg-blue px-7 text-sm font-semibold text-white shadow-sm transition-all hover:border-ink hover:bg-ink"
+            >
+              Browse the archive →
+            </Link>
+
+          </div>
+        )}
 
 
-        {/* BOOKMARK LIST */}
+        {/* ==================================
+            BOOKMARK LIST
+        ================================== */}
 
-        {!loading &&
-          bookmarks.length > 0 && (
-            <section className="divide-y divide-line">
+        {!loading && bookmarks.length > 0 && (
+          <section className="grid gap-5">
 
-              {bookmarks.map((bookmark) => {
+            {bookmarks.map((bookmark) => {
 
-                const document =
-                  getDocument(bookmark);
+              const document =
+                getDocument(bookmark);
 
-                if (!document?._id) return null;
+              if (!document?._id) {
+                return null;
+              }
 
-                const slug =
-                  document.slug ||
-                  document._id;
+              const slug =
+                document.slug ||
+                document._id;
 
-                const author =
-                  document.author?.username ||
-                  document.author?.name ||
-                  document.author ||
-                  "Unknown contributor";
+              const author =
+                document.author?.username ||
+                document.author?.name ||
+                document.author ||
+                "Unknown contributor";
 
-                return (
-                  <article
-                    key={
-                      bookmark._id ||
-                      document._id
-                    }
-                    className="group grid gap-6 py-8 md:grid-cols-[72px_minmax(0,1fr)_auto]"
-                  >
+              return (
+                <article
+                  key={
+                    bookmark._id ||
+                    document._id
+                  }
+                  className="group grid gap-6 rounded-2xl border border-line bg-white p-6 transition-all hover:border-line-strong hover:bg-white hover:shadow-sm sm:p-7 md:grid-cols-[80px_minmax(0,1fr)_220px] md:p-8"
+                >
 
-                    {/* DOCUMENT MARK */}
+                  {/* ==================================
+                      DOCUMENT MARK
+                  ================================== */}
 
-                    <div className="flex h-[78px] w-[62px] items-center justify-center bg-ink text-paper">
+                  <div className="flex h-[88px] w-[68px] items-center justify-center rounded-lg bg-ink text-paper shadow-sm">
 
-                      <span className="font-mono text-[9px] uppercase">
-                        {(
-                          document.fileType ||
-                          "DOC"
-                        ).replace(".", "")}
+                    <span className="font-mono text-xs font-semibold uppercase tracking-wide">
+                      {(
+                        document.fileType ||
+                        "DOC"
+                      ).replace(".", "")}
+                    </span>
+
+                  </div>
+
+
+                  {/* ==================================
+                      DOCUMENT INFO
+                  ================================== */}
+
+                  <div className="min-w-0">
+
+                    {/* CATEGORY + DATE */}
+
+                    <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+
+                      <span className="font-mono text-xs font-semibold uppercase tracking-[0.08em] text-blue">
+                        {document.category ||
+                          "Archive"}
                       </span>
 
-                    </div>
-
-
-                    {/* DOCUMENT INFO */}
-
-                    <div className="min-w-0">
-
-                      <div className="flex flex-wrap items-center gap-3">
-
-                        <span className="font-mono text-[10px] uppercase tracking-wide text-blue">
-                          {document.category ||
-                            "Archive"}
+                      {document.createdAt && (
+                        <span className="font-mono text-xs text-ink-faint">
+                          Saved{" "}
+                          {formatDate(
+                            document.createdAt
+                          )}
                         </span>
-
-                        {document.createdAt && (
-                          <span className="font-mono text-[10px] text-ink-faint">
-                            {formatDate(
-                              document.createdAt
-                            )}
-                          </span>
-                        )}
-
-                      </div>
-
-
-                      <h2 className="mt-2 font-display text-2xl font-semibold leading-tight md:text-3xl">
-
-                        <Link
-                          to={`/documents/${slug}`}
-                          className="transition-colors group-hover:text-blue"
-                        >
-                          {document.title ||
-                            "Untitled document"}
-                        </Link>
-
-                      </h2>
-
-
-                      <p className="mt-2 line-clamp-2 max-w-2xl text-sm leading-6 text-ink-soft">
-                        {document.description ||
-                          "No description available."}
-                      </p>
-
-
-                      <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2 font-mono text-[10px] text-ink-faint">
-
-                        <span>
-                          By {author}
-                        </span>
-
-                        {document.language && (
-                          <span>
-                            {document.language}
-                          </span>
-                        )}
-
-                        {document.views !==
-                          undefined && (
-                          <span>
-                            {document.views} views
-                          </span>
-                        )}
-
-                      </div>
+                      )}
 
                     </div>
 
 
-                    {/* ACTIONS */}
+                    {/* TITLE */}
 
-                    <div className="flex items-center gap-4 md:self-center">
+                    <h2 className="mt-3 font-display text-3xl font-semibold leading-tight tracking-[-0.02em] md:text-4xl">
 
                       <Link
                         to={`/documents/${slug}`}
-                        className="btn btn-primary"
+                        className="transition-colors group-hover:text-blue"
                       >
-                        Read →
+                        {document.title ||
+                          "Untitled document"}
                       </Link>
 
-                      <button
-                        type="button"
-                        onClick={() =>
-                          handleRemove(
-                            document._id
-                          )
-                        }
-                        disabled={
-                          removingId ===
-                          document._id
-                        }
-                        className="font-mono text-[10px] uppercase tracking-wide text-ink-faint transition-colors hover:text-ink disabled:opacity-50"
-                      >
-                        {removingId ===
-                        document._id
-                          ? "Removing..."
-                          : "Remove"}
-                      </button>
+                    </h2>
+
+
+                    {/* DESCRIPTION */}
+
+                    <p className="mt-3 line-clamp-2 max-w-4xl text-sm leading-6 text-ink-soft md:text-base">
+                      {document.description ||
+                        "No description available."}
+                    </p>
+
+
+                    {/* METADATA */}
+
+                    <div className="mt-5 flex flex-wrap gap-x-6 gap-y-2">
+
+                      <span className="text-sm text-ink-soft">
+                        <span className="text-ink-faint">
+                          By{" "}
+                        </span>
+                        {author}
+                      </span>
+
+                      {document.language && (
+                        <span className="text-sm text-ink-soft">
+                          <span className="text-ink-faint">
+                            Language{" "}
+                          </span>
+                          {document.language}
+                        </span>
+                      )}
+
+                      {document.views !==
+                        undefined && (
+                        <span className="text-sm text-ink-soft">
+                          <span className="text-ink-faint">
+                            Views{" "}
+                          </span>
+                          {document.views}
+                        </span>
+                      )}
 
                     </div>
 
-                  </article>
-                );
-              })}
+                  </div>
 
-            </section>
-          )}
 
-      </div>
+                  {/* ==================================
+                      ACTIONS
+                  ================================== */}
+
+                  <div className="flex flex-col justify-center gap-3 sm:flex-row md:flex-col">
+
+                    <Link
+                      to={`/documents/${slug}`}
+                      className="inline-flex h-11 items-center justify-center rounded-lg border border-blue bg-blue px-5 text-sm font-semibold text-white transition-all hover:border-ink hover:bg-ink"
+                    >
+                      Read document →
+                    </Link>
+
+
+                    <button
+                      type="button"
+                      onClick={() =>
+                        handleRemove(
+                          document._id
+                        )
+                      }
+                      disabled={
+                        removingId ===
+                        document._id
+                      }
+                      className="inline-flex h-11 items-center justify-center rounded-lg border border-line-strong bg-paper px-5 font-mono text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft transition-all hover:border-ink hover:text-ink disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      {removingId ===
+                      document._id
+                        ? "Removing..."
+                        : "Remove bookmark"}
+                    </button>
+
+                  </div>
+
+                </article>
+              );
+            })}
+
+          </section>
+        )}
+
+      </section>
 
     </main>
   );

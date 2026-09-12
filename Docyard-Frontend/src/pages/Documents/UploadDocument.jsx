@@ -22,13 +22,9 @@ const UploadDocument = () => {
   });
 
   const [file, setFile] = useState(null);
-
   const [loading, setLoading] = useState(false);
-
   const [error, setError] = useState("");
-
   const [success, setSuccess] = useState("");
-
 
   // ==========================================
   // HANDLE INPUT CHANGE
@@ -44,7 +40,6 @@ const UploadDocument = () => {
 
     setError("");
   };
-
 
   // ==========================================
   // HANDLE FILE CHANGE
@@ -62,7 +57,6 @@ const UploadDocument = () => {
     setError("");
   };
 
-
   // ==========================================
   // GENERATE SLUG
   // ==========================================
@@ -75,7 +69,6 @@ const UploadDocument = () => {
       .replace(/\s+/g, "-")
       .replace(/-+/g, "-");
   };
-
 
   // ==========================================
   // HANDLE TITLE CHANGE
@@ -93,7 +86,6 @@ const UploadDocument = () => {
     setError("");
   };
 
-
   // ==========================================
   // HANDLE SUBMIT
   // ==========================================
@@ -104,50 +96,34 @@ const UploadDocument = () => {
     setError("");
     setSuccess("");
 
-
     // ------------------------------------------
     // VALIDATION
     // ------------------------------------------
 
     if (!file) {
-      setError(
-        "Please select a document to upload."
-      );
+      setError("Please select a document to upload.");
       return;
     }
-
 
     if (!formData.title.trim()) {
-      setError(
-        "Please enter a document title."
-      );
+      setError("Please enter a document title.");
       return;
     }
-
 
     if (!formData.description.trim()) {
-      setError(
-        "Please enter a document description."
-      );
+      setError("Please enter a document description.");
       return;
     }
-
 
     if (!formData.author.trim()) {
-      setError(
-        "Please enter the author name."
-      );
+      setError("Please enter the author name.");
       return;
     }
-
 
     if (!formData.category.trim()) {
-      setError(
-        "Please enter a category."
-      );
+      setError("Please enter a category.");
       return;
     }
-
 
     // ------------------------------------------
     // START LOADING
@@ -155,119 +131,62 @@ const UploadDocument = () => {
 
     setLoading(true);
 
-
     try {
-
       // ========================================
       // CREATE MULTIPART FORM DATA
       // ========================================
 
       const data = new FormData();
 
-
       // ========================================
       // TEXT FIELDS
       // ========================================
 
-      data.append(
-        "title",
-        formData.title.trim()
-      );
+      data.append("title", formData.title.trim());
 
-      data.append(
-        "description",
-        formData.description.trim()
-      );
+      data.append("description", formData.description.trim());
 
-      data.append(
-        "author",
-        formData.author.trim()
-      );
+      data.append("author", formData.author.trim());
 
-      data.append(
-        "slug",
-        formData.slug.trim().toLowerCase()
-      );
+      data.append("slug", formData.slug.trim().toLowerCase());
 
-      data.append(
-        "category",
-        formData.category.trim()
-      );
+      data.append("category", formData.category.trim());
 
-      data.append(
-        "tags",
-        formData.tags.trim()
-      );
+      data.append("tags", formData.tags.trim());
 
-      data.append(
-        "language",
-        formData.language || "English"
-      );
+      data.append("language", formData.language || "English");
 
-      data.append(
-        "visibility",
-        formData.visibility || "public"
-      );
-
+      data.append("visibility", formData.visibility || "public");
 
       // ========================================
       // FILE
       // ========================================
 
-      data.append(
-        "document",
-        file
-      );
-
+      data.append("document", file);
 
       // ========================================
       // DEBUG
       // ========================================
 
-      console.log(
-        "========== UPLOAD DATA =========="
-      );
+      console.log("========== UPLOAD DATA ==========");
 
       for (const [key, value] of data.entries()) {
-
         if (value instanceof File) {
-
-          console.log(
-            key,
-            value.name,
-            value.type,
-            value.size
-          );
-
+          console.log(key, value.name, value.type, value.size);
         } else {
-
-          console.log(
-            key,
-            value
-          );
-
+          console.log(key, value);
         }
-
       }
 
-      console.log(
-        "================================="
-      );
-
+      console.log("=================================");
 
       // ========================================
       // API REQUEST
       // ========================================
 
-      const response =
-        await createDocument(data);
+      const response = await createDocument(data);
 
-
-      console.log(
-        "UPLOAD RESPONSE:",
-        response
-      );
-
+      console.log("UPLOAD RESPONSE:", response);
 
       // ========================================
       // GET CREATED DOCUMENT
@@ -278,140 +197,138 @@ const UploadDocument = () => {
         response?.document ||
         null;
 
-
       // ========================================
       // SUCCESS
       // ========================================
 
-      setSuccess(
-        "Document uploaded successfully."
-      );
-
+      setSuccess("Document uploaded successfully.");
 
       // ========================================
       // REDIRECT
       // ========================================
 
       if (document?.slug) {
-
-        navigate(
-          `/documents/${document.slug}`
-        );
-
+        navigate(`/documents/${document.slug}`);
       } else {
-
         navigate("/my-documents");
-
       }
-
     } catch (err) {
-
-      console.error(
-        "UPLOAD ERROR:",
-        err
-      );
-
+      console.error("UPLOAD ERROR:", err);
 
       setError(
         err?.response?.data?.message ||
-        err?.message ||
-        "Unable to upload the document."
+          err?.message ||
+          "Unable to upload the document."
       );
-
     } finally {
-
       setLoading(false);
-
     }
   };
-
 
   // ==========================================
   // JSX
   // ==========================================
 
   return (
-    <main className="min-h-screen bg-paper px-6 py-14 text-ink md:px-12 md:py-20">
+    <main className="min-h-screen bg-paper text-ink">
 
-      <div className="mx-auto max-w-[1000px]">
+      {/* ======================================
+          PAGE HEADER
+      ====================================== */}
 
-        {/* ====================================
-            HEADER
-        ==================================== */}
+      <section className="w-full px-6 pb-10 pt-10 sm:px-10 md:px-14 md:pb-14 md:pt-14 lg:px-20 xl:px-24">
 
-        <header className="border-b border-line pb-9">
+        <Link
+          to="/my-documents"
+          className="inline-flex items-center rounded-lg border border-line bg-white px-4 py-2.5 font-mono text-xs font-medium uppercase tracking-[0.08em] text-ink-soft transition-colors hover:border-blue hover:text-blue"
+        >
+          ← My documents
+        </Link>
 
-          <Link
-            to="/my-documents"
-            className="font-mono text-[10px] uppercase tracking-wide text-ink-faint hover:text-blue"
-          >
-            ← My documents
-          </Link>
+        <div className="mt-10">
 
+          <span className="page-eyebrow">
+            CONTRIBUTE
+          </span>
 
-          <div className="mt-9">
+          <h1 className="mt-4 font-display text-5xl font-semibold leading-[0.98] tracking-[-0.03em] sm:text-6xl md:text-7xl lg:text-[76px]">
+            Add to the archive.
+          </h1>
 
-            <span className="page-eyebrow">
-              CONTRIBUTE
-            </span>
+          <p className="mt-5 max-w-3xl text-base leading-7 text-ink-soft md:text-lg">
+            Share a document with the DocYard community.
+            Add useful context so others can discover and
+            understand your contribution.
+          </p>
 
-            <h1 className="mt-3 font-display text-5xl font-semibold leading-[1.05] md:text-6xl">
-              Add to the archive.
-            </h1>
+        </div>
 
-            <p className="mt-4 max-w-xl text-sm leading-6 text-ink-soft">
-              Share a document with the DocYard
-              community.
-            </p>
-
-          </div>
-
-        </header>
+      </section>
 
 
-        {/* ====================================
-            ERROR
-        ==================================== */}
+      {/* ======================================
+          STATUS MESSAGES
+      ====================================== */}
 
-        {error && (
+      {(error || success) && (
+        <section className="w-full px-6 sm:px-10 md:px-14 lg:px-20 xl:px-24">
 
-          <div className="mt-6 border border-line bg-paper-raised px-5 py-4 text-sm text-ink-soft">
-            {error}
-          </div>
+          {error && (
+            <div className="rounded-xl border border-line-strong bg-paper-raised px-5 py-4 text-sm font-medium text-ink md:px-6 md:py-5">
+              {error}
+            </div>
+          )}
 
-        )}
+          {success && (
+            <div className="rounded-xl border border-line-strong bg-blue-light px-5 py-4 text-sm font-medium text-blue md:px-6 md:py-5">
+              {success}
+            </div>
+          )}
 
-
-        {/* ====================================
-            SUCCESS
-        ==================================== */}
-
-        {success && (
-
-          <div className="mt-6 border border-line bg-paper-raised px-5 py-4 text-sm text-ink-soft">
-            {success}
-          </div>
-
-        )}
+        </section>
+      )}
 
 
-        {/* ====================================
-            FORM
-        ==================================== */}
+      {/* ======================================
+          MAIN FORM AREA
+      ====================================== */}
+
+      <section className="w-full px-6 pb-16 pt-8 sm:px-10 md:px-14 md:pb-24 md:pt-10 lg:px-20 xl:px-24">
 
         <form
           onSubmit={handleSubmit}
-          className="mt-10 grid gap-10 lg:grid-cols-[minmax(0,1fr)_300px]"
+          className="grid w-full gap-10 lg:grid-cols-[minmax(0,1fr)_340px] xl:grid-cols-[minmax(0,1fr)_380px]"
         >
 
           {/* ==================================
               MAIN FORM
           ================================== */}
 
-          <div className="border border-line bg-white p-6 md:p-8">
+          <div className="rounded-2xl border border-line bg-white p-6 shadow-sm sm:p-8 md:p-10 lg:p-12">
+
+            {/* FORM HEADER */}
+
+            <div className="mb-10">
+
+              <span className="font-mono text-xs font-medium uppercase tracking-[0.12em] text-blue">
+                DOCUMENT INFORMATION
+              </span>
+
+              <h2 className="mt-3 font-display text-3xl font-semibold tracking-[-0.02em] sm:text-4xl">
+                Tell us about your document.
+              </h2>
+
+              <p className="mt-3 text-sm leading-6 text-ink-soft md:text-base">
+                Provide the basic information needed to organize
+                and publish your document in the archive.
+              </p>
+
+            </div>
 
 
-            {/* TITLE */}
+            {/* ==================================
+                TITLE
+            ================================== */}
 
             <div>
 
@@ -433,12 +350,18 @@ const UploadDocument = () => {
                 required
               />
 
+              <p className="mt-2 text-xs leading-5 text-ink-faint">
+                Your slug will be generated automatically from this title.
+              </p>
+
             </div>
 
 
-            {/* DESCRIPTION */}
+            {/* ==================================
+                DESCRIPTION
+            ================================== */}
 
-            <div className="mt-7">
+            <div className="mt-8">
 
               <label
                 htmlFor="description"
@@ -453,17 +376,19 @@ const UploadDocument = () => {
                 value={formData.description}
                 onChange={handleChange}
                 placeholder="What is this document about?"
-                rows={6}
-                className="form-textarea"
+                rows={7}
+                className="form-textarea min-h-[180px]"
                 required
               />
 
             </div>
 
 
-            {/* AUTHOR */}
+            {/* ==================================
+                AUTHOR
+            ================================== */}
 
-            <div className="mt-7">
+            <div className="mt-8">
 
               <label
                 htmlFor="author"
@@ -486,9 +411,11 @@ const UploadDocument = () => {
             </div>
 
 
-            {/* CATEGORY + LANGUAGE */}
+            {/* ==================================
+                CATEGORY + LANGUAGE
+            ================================== */}
 
-            <div className="mt-7 grid gap-6 sm:grid-cols-2">
+            <div className="mt-8 grid gap-6 sm:grid-cols-2">
 
               <div>
 
@@ -537,9 +464,11 @@ const UploadDocument = () => {
             </div>
 
 
-            {/* TAGS */}
+            {/* ==================================
+                TAGS
+            ================================== */}
 
-            <div className="mt-7">
+            <div className="mt-8">
 
               <label
                 htmlFor="tags"
@@ -558,16 +487,18 @@ const UploadDocument = () => {
                 className="form-input"
               />
 
-              <p className="mt-2 text-xs text-ink-faint">
+              <p className="mt-2 text-xs leading-5 text-ink-faint">
                 Separate multiple tags with commas.
               </p>
 
             </div>
 
 
-            {/* VISIBILITY */}
+            {/* ==================================
+                VISIBILITY
+            ================================== */}
 
-            <div className="mt-7">
+            <div className="mt-8">
 
               <label
                 htmlFor="visibility"
@@ -581,9 +512,8 @@ const UploadDocument = () => {
                 name="visibility"
                 value={formData.visibility}
                 onChange={handleChange}
-                className="form-input"
+                className="form-input cursor-pointer"
               >
-
                 <option value="public">
                   Public
                 </option>
@@ -591,15 +521,20 @@ const UploadDocument = () => {
                 <option value="private">
                   Private
                 </option>
-
               </select>
+
+              <p className="mt-2 text-xs leading-5 text-ink-faint">
+                Public documents can be discovered by the DocYard community.
+              </p>
 
             </div>
 
 
-            {/* SLUG */}
+            {/* ==================================
+                SLUG
+            ================================== */}
 
-            <div className="mt-7">
+            <div className="mt-8">
 
               <label
                 htmlFor="slug"
@@ -615,63 +550,80 @@ const UploadDocument = () => {
                 value={formData.slug}
                 onChange={handleChange}
                 placeholder="document-slug"
-                className="form-input"
+                className="form-input font-mono text-sm"
                 required
               />
+
+              <p className="mt-2 text-xs leading-5 text-ink-faint">
+                This is generated automatically but can be edited before publishing.
+              </p>
 
             </div>
 
 
-            {/* FILE */}
+            {/* ==================================
+                FILE UPLOAD
+            ================================== */}
 
-            <div className="mt-7">
+            <div className="mt-8">
+
+              <div className="flex items-end justify-between gap-4">
+
+                <label
+                  htmlFor="file"
+                  className="form-label"
+                >
+                  Document file
+                </label>
+
+                <span className="font-mono text-xs uppercase tracking-[0.08em] text-ink-faint">
+                  PDF / DOC / DOCX
+                </span>
+
+              </div>
+
 
               <label
                 htmlFor="file"
-                className="form-label"
-              >
-                Document file
-              </label>
-
-
-              <label
-                htmlFor="file"
-                className="mt-2 flex min-h-[180px] cursor-pointer flex-col items-center justify-center border border-dashed border-line bg-paper-raised px-6 text-center transition-colors hover:border-ink"
+                className="mt-3 flex min-h-[220px] cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-line-strong bg-paper-raised px-6 text-center transition-all hover:border-blue hover:bg-blue-light/40"
               >
 
-                <span className="font-mono text-[10px] uppercase tracking-wide text-blue">
+                <div className="flex h-14 w-14 items-center justify-center rounded-full border border-line bg-white font-display text-2xl text-blue">
+                  ↑
+                </div>
 
+
+                <span className="mt-5 font-mono text-xs font-semibold uppercase tracking-[0.12em] text-blue">
                   {file
                     ? "FILE SELECTED"
                     : "UPLOAD DOCUMENT"}
-
                 </span>
 
 
-                <span className="mt-3 text-sm text-ink-soft">
+                <span className="mt-3 max-w-xl break-all text-sm font-medium text-ink-soft md:text-base">
 
                   {file
                     ? file.name
-                    : "Click to choose a file"}
+                    : "Click anywhere here to choose a file"}
 
                 </span>
 
 
                 {file && (
-
                   <span className="mt-2 text-xs text-ink-faint">
 
                     {(file.size / 1024 / 1024).toFixed(2)}
                     {" MB"}
 
                   </span>
-
                 )}
 
 
-                <span className="mt-2 font-mono text-[9px] uppercase text-ink-faint">
-                  PDF / DOC / DOCX
-                </span>
+                {!file && (
+                  <span className="mt-2 text-xs text-ink-faint">
+                    Select a PDF, DOC, or DOCX file from your device.
+                  </span>
+                )}
 
 
                 <input
@@ -692,11 +644,11 @@ const UploadDocument = () => {
                 ACTIONS
             ================================== */}
 
-            <div className="mt-8 flex flex-col-reverse gap-3 border-t border-line pt-7 sm:flex-row sm:justify-end">
+            <div className="mt-10 flex flex-col gap-3 border-t border-line pt-8 sm:flex-row sm:justify-end">
 
               <Link
                 to="/my-documents"
-                className="btn btn-ghost text-center"
+                className="inline-flex h-12 items-center justify-center rounded-lg border border-line-strong bg-paper px-6 text-sm font-semibold text-ink transition-all hover:border-ink hover:bg-paper-raised"
               >
                 Cancel
               </Link>
@@ -705,13 +657,11 @@ const UploadDocument = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="btn btn-primary disabled:cursor-not-allowed disabled:opacity-60"
+                className="inline-flex h-12 items-center justify-center rounded-lg border border-blue bg-blue px-7 text-sm font-semibold text-white shadow-sm transition-all hover:bg-ink hover:border-ink disabled:cursor-not-allowed disabled:opacity-60"
               >
-
                 {loading
                   ? "Uploading..."
                   : "Publish document →"}
-
               </button>
 
             </div>
@@ -723,76 +673,120 @@ const UploadDocument = () => {
               SIDEBAR
           ================================== */}
 
-          <aside>
+          <aside className="lg:sticky lg:top-6 lg:self-start">
 
-            <div className="border-t border-line">
+            <div className="rounded-2xl border border-line bg-paper-raised p-7 md:p-8">
 
-              <div className="border-b border-line py-5">
+              {/* SIDEBAR HEADER */}
 
-                <span className="page-eyebrow">
+              <div>
+
+                <span className="font-mono text-xs font-semibold uppercase tracking-[0.12em] text-blue">
                   BEFORE YOU UPLOAD
                 </span>
+
+                <h2 className="mt-3 font-display text-3xl font-semibold leading-tight">
+                  Make your contribution useful.
+                </h2>
+
+                <p className="mt-3 text-sm leading-6 text-ink-soft">
+                  A little context makes documents much easier
+                  for other people to discover and understand.
+                </p>
 
               </div>
 
 
-              <div className="space-y-6 py-6">
+              {/* GUIDELINES */}
 
+              <div className="mt-8 space-y-7">
 
-                <div>
+                {/* ITEM 01 */}
 
-                  <span className="font-mono text-[10px] text-blue">
+                <div className="flex gap-4">
+
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-line bg-white font-mono text-xs font-semibold text-blue">
                     01
                   </span>
 
-                  <h3 className="mt-2 font-display text-lg font-semibold">
-                    Give it a clear title
-                  </h3>
+                  <div>
 
-                  <p className="mt-2 text-xs leading-5 text-ink-soft">
-                    Make it easy for others to
-                    understand what your document
-                    contains.
-                  </p>
+                    <h3 className="font-display text-xl font-semibold">
+                      Give it a clear title
+                    </h3>
+
+                    <p className="mt-2 text-sm leading-6 text-ink-soft">
+                      Make it easy for others to understand
+                      what your document contains.
+                    </p>
+
+                  </div>
 
                 </div>
 
 
-                <div>
+                {/* ITEM 02 */}
 
-                  <span className="font-mono text-[10px] text-blue">
+                <div className="flex gap-4">
+
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-line bg-white font-mono text-xs font-semibold text-blue">
                     02
                   </span>
 
-                  <h3 className="mt-2 font-display text-lg font-semibold">
-                    Add context
-                  </h3>
+                  <div>
 
-                  <p className="mt-2 text-xs leading-5 text-ink-soft">
-                    A useful description helps
-                    people discover and understand
-                    your contribution.
-                  </p>
+                    <h3 className="font-display text-xl font-semibold">
+                      Add useful context
+                    </h3>
+
+                    <p className="mt-2 text-sm leading-6 text-ink-soft">
+                      A meaningful description helps people
+                      discover and understand your contribution.
+                    </p>
+
+                  </div>
 
                 </div>
 
 
-                <div>
+                {/* ITEM 03 */}
 
-                  <span className="font-mono text-[10px] text-blue">
+                <div className="flex gap-4">
+
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-line bg-white font-mono text-xs font-semibold text-blue">
                     03
                   </span>
 
-                  <h3 className="mt-2 font-display text-lg font-semibold">
-                    Upload the right file
-                  </h3>
+                  <div>
 
-                  <p className="mt-2 text-xs leading-5 text-ink-soft">
-                    Supported document formats are
-                    PDF, DOC, and DOCX.
-                  </p>
+                    <h3 className="font-display text-xl font-semibold">
+                      Upload the right file
+                    </h3>
+
+                    <p className="mt-2 text-sm leading-6 text-ink-soft">
+                      DocYard currently supports PDF, DOC,
+                      and DOCX documents.
+                    </p>
+
+                  </div>
 
                 </div>
+
+              </div>
+
+
+              {/* QUICK NOTE */}
+
+              <div className="mt-9 rounded-xl border border-line bg-white p-5">
+
+                <span className="font-mono text-xs font-semibold uppercase tracking-[0.1em] text-ink-faint">
+                  QUICK NOTE
+                </span>
+
+                <p className="mt-3 text-sm leading-6 text-ink-soft">
+                  Your title automatically creates the document
+                  slug. You can review or edit it before publishing.
+                </p>
 
               </div>
 
@@ -802,7 +796,7 @@ const UploadDocument = () => {
 
         </form>
 
-      </div>
+      </section>
 
     </main>
   );
