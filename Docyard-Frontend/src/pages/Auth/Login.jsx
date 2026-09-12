@@ -198,19 +198,7 @@ const Login = () => {
           </div>
 
 
-          {/* BOTTOM */}
-
-          <div className="flex items-center justify-between">
-
-            <p className="font-mono text-xs uppercase tracking-[0.12em] text-paper/35">
-              DOCYARD / 2026
-            </p>
-
-            <span className="font-mono text-xs text-paper/25">
-              01
-            </span>
-
-          </div>
+        
 
         </section>
 
@@ -411,16 +399,8 @@ const Login = () => {
             </div>
 
 
-            {/* =================================================
-                BACK HOME
-            ================================================= */}
 
-            <Link
-              to="/"
-              className="mt-6 inline-flex items-center font-mono text-xs font-medium uppercase tracking-[0.08em] text-ink-faint transition-colors hover:text-blue"
-            >
-              ← Back to DocYard
-            </Link>
+            
 
           </div>
 

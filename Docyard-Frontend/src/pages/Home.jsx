@@ -32,7 +32,7 @@ const Home = () => {
               <h1 className="mt-6 font-display text-5xl font-semibold leading-[0.9] tracking-[-0.035em] sm:text-6xl md:text-7xl lg:text-[7rem] xl:text-[8rem]">
                 Knowledge,
                 <br />
-                <span className="text-blue">
+                <span className="text-black">
                   kept together.
                 </span>
               </h1>
@@ -48,17 +48,21 @@ const Home = () => {
 
               <div className="mt-9 flex flex-wrap gap-3">
 
+                {/* EXPLORE DOCUMENTS */}
+
                 <Link
                   to="/documents"
-                  className="inline-flex h-12 items-center justify-center rounded-lg border border-blue bg-blue px-7 text-sm font-semibold text-white shadow-sm transition-all hover:border-ink hover:bg-ink"
+                  className="inline-flex h-12 items-center justify-center rounded-lg border border-[#0A3A63] bg-[#0A3A63] px-7 text-sm font-semibold !text-[#ffffff] shadow-sm transition-all hover:border-[#082F4F] hover:bg-[#082F4F]"
                 >
-                  Explore documents →
+                  Explore documents
                 </Link>
 
 
+                {/* CONTRIBUTE */}
+
                 <Link
                   to="/upload"
-                  className="inline-flex h-12 items-center justify-center rounded-lg border border-line-strong bg-white/90 px-7 text-sm font-semibold text-ink backdrop-blur-sm transition-all hover:border-blue hover:text-blue"
+                  className="inline-flex h-12 items-center justify-center rounded-lg border border-line-strong bg-white/90 px-7 text-sm font-semibold text-ink backdrop-blur-sm transition-all hover:border-[#0A3A63] hover:text-[#0A3A63]"
                 >
                   Contribute
                 </Link>
@@ -82,12 +86,10 @@ const Home = () => {
 
         <div className="grid gap-12 lg:grid-cols-[0.45fr_1.55fr] lg:gap-20">
 
-          <div>
-
-            <span className="page-eyebrow">
+          <div className="!text-lg">
+            <span className="page-eyebrow !text-lg">
               WHY DOCYARD
             </span>
-
           </div>
 
 
@@ -122,19 +124,19 @@ const Home = () => {
 
         <div className="grid gap-4 md:grid-cols-3">
 
-          {/* DISCOVER */}
+
+          {/* =====================================================
+              DISCOVER
+          ===================================================== */}
 
           <article className="rounded-2xl border border-line bg-white p-7 md:p-8 lg:p-10">
 
             <div className="flex items-center justify-between">
 
-              <span className="font-mono text-xs font-semibold uppercase tracking-[0.14em] text-blue">
+              <span className="font-mono text-xs font-semibold uppercase tracking-[0.14em] text-[#0A3A63]">
                 DISCOVER
               </span>
 
-              <span className="font-mono text-xs text-ink-faint">
-                01
-              </span>
 
             </div>
 
@@ -153,27 +155,26 @@ const Home = () => {
 
             <Link
               to="/documents"
-              className="mt-8 inline-flex h-10 items-center rounded-lg border border-line-strong bg-paper px-5 font-mono text-xs font-semibold uppercase tracking-[0.08em] text-ink transition-all hover:border-blue hover:text-blue"
+              className="mt-8 inline-flex h-10 items-center rounded-lg border border-line-strong bg-paper px-5 font-mono text-xs font-semibold uppercase tracking-[0.08em] text-ink transition-all hover:border-[#0A3A63] hover:text-[#0A3A63]"
             >
-              Browse archive →
+              Browse archive
             </Link>
 
           </article>
 
 
-          {/* SAVE */}
+          {/* =====================================================
+              SAVE
+          ===================================================== */}
 
           <article className="rounded-2xl border border-line bg-white p-7 md:p-8 lg:p-10">
 
             <div className="flex items-center justify-between">
 
-              <span className="font-mono text-xs font-semibold uppercase tracking-[0.14em] text-blue">
+              <span className="font-mono text-xs font-semibold uppercase tracking-[0.14em] text-[#0A3A63]">
                 SAVE
               </span>
 
-              <span className="font-mono text-xs text-ink-faint">
-                02
-              </span>
 
             </div>
 
@@ -192,27 +193,26 @@ const Home = () => {
 
             <Link
               to="/bookmarks"
-              className="mt-8 inline-flex h-10 items-center rounded-lg border border-line-strong bg-paper px-5 font-mono text-xs font-semibold uppercase tracking-[0.08em] text-ink transition-all hover:border-blue hover:text-blue"
+              className="mt-8 inline-flex h-10 items-center rounded-lg border border-line-strong bg-paper px-5 font-mono text-xs font-semibold uppercase tracking-[0.08em] text-ink transition-all hover:border-[#0A3A63] hover:text-[#0A3A63]"
             >
-              View bookmarks →
+              View bookmarks
             </Link>
 
           </article>
 
 
-          {/* CONTRIBUTE */}
+          {/* =====================================================
+              CONTRIBUTE
+          ===================================================== */}
 
           <article className="rounded-2xl border border-line bg-white p-7 md:p-8 lg:p-10">
 
             <div className="flex items-center justify-between">
 
-              <span className="font-mono text-xs font-semibold uppercase tracking-[0.14em] text-blue">
+              <span className="font-mono text-xs font-semibold uppercase tracking-[0.14em] text-[#0A3A63]">
                 CONTRIBUTE
               </span>
 
-              <span className="font-mono text-xs text-ink-faint">
-                03
-              </span>
 
             </div>
 
@@ -231,9 +231,9 @@ const Home = () => {
 
             <Link
               to="/upload"
-              className="mt-8 inline-flex h-10 items-center rounded-lg border border-line-strong bg-paper px-5 font-mono text-xs font-semibold uppercase tracking-[0.08em] text-ink transition-all hover:border-blue hover:text-blue"
+              className="mt-8 inline-flex h-10 items-center rounded-lg border border-line-strong bg-paper px-5 font-mono text-xs font-semibold uppercase tracking-[0.08em] text-ink transition-all hover:border-[#0A3A63] hover:text-[#0A3A63]"
             >
-              Upload document →
+              Upload document
             </Link>
 
           </article>
@@ -251,7 +251,10 @@ const Home = () => {
 
         <div className="grid gap-14 lg:grid-cols-[0.6fr_1.4fr] lg:gap-24">
 
-          {/* LEFT */}
+
+          {/* =====================================================
+              LEFT
+          ===================================================== */}
 
           <div>
 
@@ -275,23 +278,26 @@ const Home = () => {
 
             <Link
               to="/documents"
-              className="mt-8 inline-flex h-12 items-center justify-center rounded-lg border border-blue bg-blue px-7 text-sm font-semibold text-white shadow-sm transition-all hover:border-ink hover:bg-ink"
+              className="mt-8 inline-flex h-12 items-center justify-center rounded-lg border border-[#0A3A63] bg-[#0A3A63] px-7 text-sm font-semibold !text-[#ffffff] shadow-sm transition-all hover:border-[#082F4F] hover:bg-[#082F4F]"
             >
-              Explore the archive →
+              Explore the archive
             </Link>
 
           </div>
 
 
-          {/* RIGHT */}
+          {/* =====================================================
+              RIGHT
+          ===================================================== */}
 
           <div className="grid gap-4 md:grid-cols-2">
+
 
             {/* DOCUMENTS */}
 
             <article className="rounded-2xl border border-line bg-paper-raised p-7 md:p-8">
 
-              <span className="font-mono text-xs font-semibold uppercase tracking-[0.14em] text-blue">
+              <span className="font-mono text-xs font-semibold uppercase tracking-[0.14em] text-[#0A3A63]">
                 DOCUMENTS
               </span>
 
@@ -313,7 +319,7 @@ const Home = () => {
 
             <article className="rounded-2xl border border-line bg-paper-raised p-7 md:p-8">
 
-              <span className="font-mono text-xs font-semibold uppercase tracking-[0.14em] text-blue">
+              <span className="font-mono text-xs font-semibold uppercase tracking-[0.14em] text-[#0A3A63]">
                 BOOKMARKS
               </span>
 
@@ -335,7 +341,7 @@ const Home = () => {
 
             <article className="rounded-2xl border border-line bg-paper-raised p-7 md:p-8">
 
-              <span className="font-mono text-xs font-semibold uppercase tracking-[0.14em] text-blue">
+              <span className="font-mono text-xs font-semibold uppercase tracking-[0.14em] !text-[#ffffff]">
                 UPLOAD
               </span>
 
@@ -357,7 +363,7 @@ const Home = () => {
 
             <article className="rounded-2xl border border-line bg-paper-raised p-7 md:p-8">
 
-              <span className="font-mono text-xs font-semibold uppercase tracking-[0.14em] text-blue">
+              <span className="font-mono text-xs font-semibold uppercase tracking-[0.14em] text-[#0A3A63]">
                 ORGANIZE
               </span>
 
@@ -409,7 +415,7 @@ const Home = () => {
             to="/documents"
             className="inline-flex h-12 w-fit items-center justify-center rounded-lg border border-paper/30 px-7 text-sm font-semibold text-paper transition-all hover:bg-paper hover:text-ink"
           >
-            Enter the archive →
+            Enter the archive
           </Link>
 
         </div>

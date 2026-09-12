@@ -92,7 +92,7 @@ const Contact = () => {
             to="/"
             className="inline-flex h-11 w-fit items-center justify-center rounded-lg border border-line-strong bg-white px-5 font-mono text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft transition-all hover:border-blue hover:text-blue"
           >
-            ← Back home
+            Back home
           </Link>
 
         </div>
@@ -148,10 +148,6 @@ const Contact = () => {
                       QUESTIONS
                     </span>
 
-                    <span className="font-mono text-xs text-ink-faint">
-                      01
-                    </span>
-
                   </div>
 
 
@@ -171,10 +167,6 @@ const Contact = () => {
 
                     <span className="font-mono text-xs font-semibold uppercase tracking-[0.1em] text-blue">
                       FEEDBACK
-                    </span>
-
-                    <span className="font-mono text-xs text-ink-faint">
-                      02
                     </span>
 
                   </div>
@@ -198,9 +190,6 @@ const Contact = () => {
                       SUPPORT
                     </span>
 
-                    <span className="font-mono text-xs text-ink-faint">
-                      03
-                    </span>
 
                   </div>
 
@@ -371,11 +360,11 @@ const Contact = () => {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="inline-flex h-12 items-center justify-center rounded-lg border border-blue bg-blue px-7 text-sm font-semibold text-white shadow-sm transition-all hover:border-ink hover:bg-ink disabled:cursor-not-allowed disabled:opacity-60"
+                  className="inline-flex h-12 items-center justify-center rounded-lg border border-[#0A3A63] bg-[#0A3A63] px-7 text-sm font-semibold text-white shadow-sm transition-all hover:border-ink hover:bg-ink disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   {loading
                     ? "Sending..."
-                    : "Send message →"}
+                    : "Send message"}
                 </button>
 
               </div>
@@ -417,7 +406,7 @@ const Contact = () => {
             to="/upload"
             className="inline-flex h-12 w-fit items-center justify-center rounded-lg border border-paper/30 px-7 text-sm font-semibold text-paper transition-all hover:bg-paper hover:text-ink"
           >
-            Contribute a document →
+            Contribute a document
           </Link>
 
         </div>

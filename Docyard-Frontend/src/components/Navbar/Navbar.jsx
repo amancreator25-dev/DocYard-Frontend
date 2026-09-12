@@ -338,22 +338,22 @@ const Navbar = () => {
                   justify-center
                   rounded
                   border
-                  border-blue
-                  bg-blue
+                  border-[#0A3A63]
+                  bg-[#0A3A63]
                   px-5
                   font-mono
                   text-[13px]
                   font-medium
                   uppercase
                   tracking-[0.08em]
-                  text-white
+                  !text-[#ffffff]
                   transition-all
                   duration-150
                   hover:bg-blue-dark
                   active:scale-[0.98]
                 "
               >
-                Join →
+                Join
               </Link>
 
             </>
