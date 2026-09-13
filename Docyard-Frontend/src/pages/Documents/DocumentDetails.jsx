@@ -725,9 +725,9 @@ const DocumentDetails = () => {
 
         <Link
           to="/documents"
-          className="inline-flex items-center text-sm font-medium text-ink-soft transition-colors hover:text-blue"
+          className="inline-flex !h-12 items-center justify-center rounded-lg border border-[#0A3A63] bg-[#0A3A63] px-7 text-sm font-semibold !text-[#ffffff] shadow-sm transition-all hover:border-ink hover:bg-ink disabled:cursor-not-allowed disabled:opacity-60"
         >
-          ← Back to archive
+          Back to archive
         </Link>
 
 

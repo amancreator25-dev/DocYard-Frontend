@@ -1,96 +1,18 @@
-import { useEffect, useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import { Link } from "react-router-dom";
 
 import { getAllDocuments } from "../../services/document.service.js";
 
-const Documents = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
-
+const Document = () => {
   const [documents, setDocuments] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState("");
 
-  const initialSearch = searchParams.get("search") || "";
-  const [search, setSearch] = useState(initialSearch);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
 
-  const category = searchParams.get("category") || "";
-
-  // ==========================================
-  // LOAD DOCUMENTS
-  // ==========================================
-
-  const loadDocuments = async (params = {}) => {
-    setLoading(true);
-    setError("");
-
-    try {
-      const response = await getAllDocuments(params);
-
-      const data =
-        response?.data?.documents ||
-        response?.documents ||
-        response?.data ||
-        [];
-
-      setDocuments(Array.isArray(data) ? data : []);
-    } catch (err) {
-      setError(
-        err?.response?.data?.message ||
-          "Unable to load documents."
-      );
-
-      setDocuments([]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // ==========================================
-  // LOAD WHEN FILTERS CHANGE
-  // ==========================================
-
-  useEffect(() => {
-    const params = {};
-
-    if (initialSearch.trim()) {
-      params.search = initialSearch.trim();
-    }
-
-    if (category) {
-      params.category = category;
-    }
-
-    loadDocuments(params);
-  }, [initialSearch, category]);
-
-  // ==========================================
-  // SEARCH
-  // ==========================================
-
-  const handleSearch = (event) => {
-    event.preventDefault();
-
-    const params = {};
-
-    if (search.trim()) {
-      params.search = search.trim();
-    }
-
-    if (category) {
-      params.category = category;
-    }
-
-    setSearchParams(params);
-  };
-
-  // ==========================================
-  // CLEAR FILTERS
-  // ==========================================
-
-  const clearFilters = () => {
-    setSearch("");
-    setSearchParams({});
-  };
+  const observerRef = useRef(null);
 
   // ==========================================
   // FORMAT DATE
@@ -109,128 +31,260 @@ const Documents = () => {
   };
 
   // ==========================================
+  // GET DOCUMENT DATA
+  // ==========================================
+
+  const extractDocuments = (response) => {
+    return (
+      response?.data?.documents ||
+      response?.documents ||
+      response?.data ||
+      []
+    );
+  };
+
+  // ==========================================
+  // LOAD DOCUMENTS
+  // ==========================================
+
+  const loadDocuments = async (pageNumber = 1) => {
+    try {
+      if (pageNumber === 1) {
+        setLoading(true);
+        setError("");
+      } else {
+        setLoadingMore(true);
+      }
+
+      /*
+        We pass page and limit here.
+
+        If your backend supports pagination:
+          page=1 -> first 10 documents
+          page=2 -> next 10 documents
+          page=3 -> next 10 documents
+
+        If your current backend does not support pagination,
+        getAllDocuments() will simply return the existing
+        document list and the code will stop loading more.
+      */
+
+      const response = await getAllDocuments({
+        page: pageNumber,
+        limit: 10,
+      });
+
+      const newDocuments = extractDocuments(response);
+
+      if (!Array.isArray(newDocuments)) {
+        setHasMore(false);
+        return;
+      }
+
+      // ==========================================
+      // FIRST PAGE
+      // ==========================================
+
+      if (pageNumber === 1) {
+        setDocuments(newDocuments);
+      } else {
+        // ==========================================
+        // APPEND NEXT PAGE
+        // ==========================================
+
+        setDocuments((previousDocuments) => {
+          const existingIds = new Set(
+            previousDocuments.map((document) => document._id)
+          );
+
+          const uniqueDocuments = newDocuments.filter(
+            (document) => !existingIds.has(document._id)
+          );
+
+          return [...previousDocuments, ...uniqueDocuments];
+        });
+      }
+
+      // ==========================================
+      // CHECK IF MORE DOCUMENTS EXIST
+      // ==========================================
+
+      const pagination =
+        response?.data?.pagination ||
+        response?.pagination ||
+        response?.data?.meta ||
+        response?.meta;
+
+      if (pagination) {
+        const currentPage =
+          pagination.currentPage ||
+          pagination.page ||
+          pageNumber;
+
+        const totalPages =
+          pagination.totalPages ||
+          pagination.pages;
+
+        if (totalPages) {
+          setHasMore(currentPage < totalPages);
+        } else if (
+          pagination.hasNextPage !== undefined
+        ) {
+          setHasMore(Boolean(pagination.hasNextPage));
+        } else {
+          setHasMore(newDocuments.length === 10);
+        }
+      } else {
+        /*
+          Current backend returns all documents.
+
+          In that case there is nothing more to request.
+        */
+
+        setHasMore(false);
+      }
+    } catch (err) {
+      setError(
+        err?.response?.data?.message ||
+          "Unable to load documents."
+      );
+    } finally {
+      setLoading(false);
+      setLoadingMore(false);
+    }
+  };
+
+  // ==========================================
+  // INITIAL LOAD
+  // ==========================================
+
+  useEffect(() => {
+    loadDocuments(1);
+  }, []);
+
+  // ==========================================
+  // LOAD NEXT PAGE
+  // ==========================================
+
+  const loadMoreDocuments = () => {
+    if (
+      loading ||
+      loadingMore ||
+      !hasMore
+    ) {
+      return;
+    }
+
+    const nextPage = page + 1;
+
+    setPage(nextPage);
+
+    loadDocuments(nextPage);
+  };
+
+  // ==========================================
+  // INFINITE SCROLL
+  // ==========================================
+
+  useEffect(() => {
+    const observerTarget = observerRef.current;
+
+    if (!observerTarget) {
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const firstEntry = entries[0];
+
+        if (firstEntry.isIntersecting) {
+          loadMoreDocuments();
+        }
+      },
+      {
+        root: null,
+        rootMargin: "300px",
+        threshold: 0,
+      }
+    );
+
+    observer.observe(observerTarget);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [
+    loading,
+    loadingMore,
+    hasMore,
+    page,
+  ]);
+
+  // ==========================================
   // RENDER
   // ==========================================
 
   return (
     <main className="min-h-screen bg-paper text-ink">
+<section className="w-full px-6 pb-10 pt-12 sm:px-10 md:px-14 lg:px-20 xl:px-24">
 
-      {/* =====================================================
-          HERO / SEARCH
-      ===================================================== */}
+  <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
 
-      <section className="w-full px-6 pb-12 pt-14 sm:px-10 md:px-14 lg:px-20 xl:px-24 md:pb-14 md:pt-20">
+    <div>
+      <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.16em] text-blue">
+        DocYard Archive
+      </span>
 
-        <div className="w-full">
+      <h1 className="mt-3 font-display text-5xl font-semibold leading-none tracking-[-0.045em] text-ink sm:text-6xl">
+        Documents
+      </h1>
 
-          <span className="page-eyebrow">
-            DocYard Archive
-          </span>
+      <p className="mt-3 text-base text-ink-soft">
+        Explore documents shared by the DocYard community.
+      </p>
+    </div>
 
-          <div className="mt-5 w-full">
+    <Link
+      to="/documents/search"
+      className="inline-flex h-10 w-fit items-center gap-2 rounded-md border border-ink px-4 text-sm font-semibold text-ink transition-colors hover:bg-ink hover:text-paper"
+    >
+      Search Documents
+    </Link>
 
-            <h1 className="font-display text-5xl font-semibold leading-[1.02] tracking-[-0.035em] sm:text-6xl md:text-7xl lg:text-[80px]">
-              Browse the archive.
-            </h1>
+  </div>
 
-            <p className="mt-5 max-w-2xl text-base leading-7 text-ink-soft md:text-lg">
-              Explore documents shared by the DocYard
-              community and discover useful knowledge
-              in one place.
-            </p>
-
-          </div>
-
-
-          {/* =================================================
-              STRETCHED SEARCH
-          ================================================= */}
-
-          <form
-            onSubmit={handleSearch}
-            className="mt-10 flex w-full items-stretch gap-3"
-          >
-
-            <div className="flex-1">
-
-              <label
-                htmlFor="document-search"
-                className="sr-only"
-              >
-                Search documents
-              </label>
-
-              <input
-                id="document-search"
-                name="search"
-                type="search"
-                value={search}
-                onChange={(event) =>
-                  setSearch(event.target.value)
-                }
-                placeholder="Search documents..."
-                className="h-13 w-full rounded-md border border-line bg-paper-raised px-5 text-base text-ink outline-none transition placeholder:text-ink-faint focus:border-blue focus:ring-2 focus:ring-blue/10"
-              />
-
-            </div>
+</section>
 
 
-            <button
-              type="submit"
-              className="h-13 shrink-0 rounded-md bg-blue px-8 text-sm font-semibold text-white transition hover:-translate-y-[1px] hover:bg-[#0f3152] active:translate-y-0"
-            >
-              Search
-            </button>
-
-          </form>
-
-        </div>
-
-      </section>
-
-
-      {/* =====================================================
+      {/* ==========================================
           DOCUMENT CONTENT
-      ===================================================== */}
+      ========================================== */}
 
       <section className="w-full px-6 pb-24 sm:px-10 md:px-14 lg:px-20 xl:px-24">
 
         <div className="w-full">
 
+          {/* ==========================================
+              DOCUMENT COUNT
+          ========================================== */}
 
-          {/* =================================================
-              RESULTS BAR
-          ================================================= */}
+          {!loading && !error && (
+            <div className="pb-6">
 
-          <div className="flex items-center justify-between gap-4 pb-6">
+              <p className="text-sm font-medium text-ink-soft md:text-base">
+                {documents.length}{" "}
+                {documents.length === 1
+                  ? "document"
+                  : "documents"}
+              </p>
 
-            <p className="text-sm font-medium text-ink-soft md:text-base">
-              {loading
-                ? "Loading documents..."
-                : `${documents.length} ${
-                    documents.length === 1
-                      ? "document"
-                      : "documents"
-                  } found`}
-            </p>
-
-
-            {(search || category) && (
-              <button
-                type="button"
-                onClick={clearFilters}
-                className="inline-flex h-10 items-center rounded-md border border-line bg-paper px-4 text-sm font-medium text-ink-soft transition hover:border-ink hover:bg-paper-raised hover:text-ink"
-              >
-                Clear filters
-              </button>
-            )}
-
-          </div>
+            </div>
+          )}
 
 
-          {/* =================================================
+          {/* ==========================================
               ERROR
-          ================================================= */}
+          ========================================== */}
 
           {error && (
             <div
@@ -242,9 +296,9 @@ const Documents = () => {
           )}
 
 
-          {/* =================================================
-              LOADING
-          ================================================= */}
+          {/* ==========================================
+              INITIAL LOADING
+          ========================================== */}
 
           {loading && (
             <div className="grid w-full gap-4">
@@ -267,6 +321,8 @@ const Documents = () => {
 
                       <div className="mt-3 h-4 max-w-3xl animate-pulse rounded bg-paper" />
 
+                      <div className="mt-5 h-4 w-64 animate-pulse rounded bg-paper" />
+
                     </div>
 
                     <div className="h-11 w-full animate-pulse rounded-md bg-paper md:w-36" />
@@ -280,9 +336,9 @@ const Documents = () => {
           )}
 
 
-          {/* =================================================
-              EMPTY
-          ================================================= */}
+          {/* ==========================================
+              EMPTY STATE
+          ========================================== */}
 
           {!loading &&
             !error &&
@@ -294,35 +350,26 @@ const Documents = () => {
                 </div>
 
                 <h2 className="mt-5 font-display text-3xl font-semibold">
-                  Nothing found.
+                  No documents yet.
                 </h2>
 
                 <p className="mx-auto mt-3 max-w-md text-base leading-7 text-ink-soft">
-                  Try a different search term or clear
-                  your filters to view all documents.
+                  Documents shared with the DocYard
+                  community will appear here.
                 </p>
-
-                <button
-                  type="button"
-                  onClick={clearFilters}
-                  className="mt-7 inline-flex h-11 items-center rounded-md bg-blue px-6 text-sm font-semibold text-white transition hover:-translate-y-[1px] hover:bg-[#0f3152]"
-                >
-                  View all documents
-                  <span className="ml-2">
-                    →
-                  </span>
-                </button>
 
               </div>
             )}
 
 
-          {/* =================================================
-              DOCUMENT LIST
-          ================================================= */}
+          {/* ==========================================
+              DOCUMENT FEED
+          ========================================== */}
 
           {!loading &&
+            !error &&
             documents.length > 0 && (
+
               <div className="grid w-full gap-4">
 
                 {documents.map((document) => {
@@ -347,10 +394,9 @@ const Documents = () => {
 
                       <div className="grid gap-6 md:grid-cols-[80px_minmax(0,1fr)_180px] md:items-center">
 
-
-                        {/* =================================
+                        {/* ==================================
                             FILE TYPE
-                        ================================= */}
+                        ================================== */}
 
                         <div className="flex h-16 w-16 items-center justify-center rounded-md bg-ink text-paper">
 
@@ -364,9 +410,9 @@ const Documents = () => {
                         </div>
 
 
-                        {/* =================================
+                        {/* ==================================
                             DOCUMENT INFORMATION
-                        ================================= */}
+                        ================================== */}
 
                         <div className="min-w-0">
 
@@ -405,9 +451,9 @@ const Documents = () => {
                           </p>
 
 
-                          {/* =================================
+                          {/* ==================================
                               METADATA
-                          ================================= */}
+                          ================================== */}
 
                           <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-ink-faint">
 
@@ -418,13 +464,11 @@ const Documents = () => {
                               </span>
                             </span>
 
-
                             {document.language && (
                               <span>
                                 {document.language}
                               </span>
                             )}
-
 
                             {document.views !==
                               undefined && (
@@ -438,9 +482,9 @@ const Documents = () => {
                         </div>
 
 
-                        {/* =================================
+                        {/* ==================================
                             READ BUTTON
-                        ================================= */}
+                        ================================== */}
 
                         <div className="flex md:justify-end">
 
@@ -448,12 +492,7 @@ const Documents = () => {
                             to={documentPath}
                             className="inline-flex h-11 w-full items-center justify-center rounded-md border border-ink bg-paper px-6 text-sm font-semibold text-ink transition-all duration-200 hover:bg-ink hover:text-paper sm:w-auto"
                           >
-                            Read document
-
-                            <span className="ml-2 text-base transition-transform group-hover:translate-x-1">
-                              →
-                            </span>
-
+                            READ
                           </Link>
 
                         </div>
@@ -463,6 +502,54 @@ const Documents = () => {
                     </article>
                   );
                 })}
+
+
+                {/* ==========================================
+                    LOADING MORE
+                ========================================== */}
+
+                {loadingMore && (
+                  <div className="flex items-center justify-center py-10">
+
+                    <div className="flex items-center gap-3 text-sm text-ink-soft">
+
+                      <div className="h-5 w-5 animate-spin rounded-full border-2 border-line border-t-ink" />
+
+                      Loading more documents...
+
+                    </div>
+
+                  </div>
+                )}
+
+
+                {/* ==========================================
+                    INFINITE SCROLL TRIGGER
+                ========================================== */}
+
+                {hasMore && (
+                  <div
+                    ref={observerRef}
+                    className="h-10 w-full"
+                    aria-hidden="true"
+                  />
+                )}
+
+
+                {/* ==========================================
+                    END OF DOCUMENTS
+                ========================================== */}
+
+                {!hasMore && documents.length > 0 && (
+                  <div className="flex items-center justify-center py-10">
+
+                    <p className="text-sm text-ink-faint">
+                      You have reached the end of
+                      the archive.
+                    </p>
+
+                  </div>
+                )}
 
               </div>
             )}
@@ -475,4 +562,4 @@ const Documents = () => {
   );
 };
 
-export default Documents;
+export default Document;

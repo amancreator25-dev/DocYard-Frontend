@@ -4,7 +4,6 @@ import { useAuth } from "../../context/AuthContext.jsx";
 
 const Navbar = () => {
   const navigate = useNavigate();
-
   const { user, logout } = useAuth();
 
   const handleLogout = async () => {
@@ -63,9 +62,9 @@ const Navbar = () => {
         =================================================== */}
 
         <Link
-            to="/"
-            className="group relative !left-[-30px] flex items-center gap-0"
-          >
+          to="/"
+          className="group relative !left-[-30px] flex items-center gap-0"
+        >
           <span
             className="
               flex
@@ -90,7 +89,7 @@ const Navbar = () => {
           <span className="font-display text-2xl font-bold tracking-tight text-blue">
             DocYard<span className="italic text-ai-gold">.</span>
           </span>
-      </Link>
+        </Link>
 
         {/* ===================================================
             DESKTOP NAVIGATION
@@ -129,19 +128,66 @@ const Navbar = () => {
 
         </nav>
 
-
         {/* ===================================================
             USER ACTIONS
         =================================================== */}
 
         <div className="flex items-center gap-3">
 
+          {/* =================================================
+              SEARCH
+              Visible for both logged-in and logged-out users
+          ================================================= */}
+
+          <Link
+            to="/documents/search"
+            aria-label="Search documents"
+            title="Search documents"
+            className="
+              inline-flex
+              h-[38px]
+              w-[38px]
+              items-center
+              justify-center
+              rounded
+              border
+              border-transparent
+              text-ink-soft
+              transition-all
+              duration-200
+              hover:border-line-strong
+              hover:bg-white
+              hover:text-blue
+            "
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              className="h-[17px] w-[17px]"
+              aria-hidden="true"
+            >
+              <circle
+                cx="11"
+                cy="11"
+                r="6.5"
+              />
+
+              <path
+                d="m16 16 4 4"
+                strokeLinecap="round"
+              />
+            </svg>
+          </Link>
+
+          {/* =================================================
+              LOGGED-IN USER
+          ================================================= */}
+
           {user ? (
             <>
-
-              {/* =================================================
-                  PROFILE
-              ================================================= */}
+              {/* PROFILE */}
 
               <NavLink
                 to={
@@ -165,7 +211,6 @@ const Navbar = () => {
                   sm:flex
                 "
               >
-
                 <span
                   className="
                     flex
@@ -201,13 +246,9 @@ const Navbar = () => {
                 >
                   {user.username || "Profile"}
                 </span>
-
               </NavLink>
 
-
-              {/* =================================================
-                  LOGOUT
-              ================================================= */}
+              {/* LOGOUT */}
 
               <button
                 type="button"
@@ -236,66 +277,10 @@ const Navbar = () => {
               >
                 Logout
               </button>
-
             </>
           ) : (
             <>
-
-              {/* =================================================
-                  SEARCH ICON
-                  RIGHT BESIDE SIGN IN
-              ================================================= */}
-
-              <Link
-                to="/documents"
-                aria-label="Search documents"
-                title="Search documents"
-                className="
-                  inline-flex
-                  h-[38px]
-                  w-[38px]
-                  items-center
-                  justify-center
-                  rounded
-                  border
-                  border-transparent
-                  text-ink-soft
-                  transition-all
-                  duration-200
-                  hover:border-line-strong
-                  hover:bg-white
-                  hover:text-blue
-                "
-              >
-
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.8"
-                  className="h-[17px] w-[17px]"
-                  aria-hidden="true"
-                >
-
-                  <circle
-                    cx="11"
-                    cy="11"
-                    r="6.5"
-                  />
-
-                  <path
-                    d="m16 16 4 4"
-                    strokeLinecap="round"
-                  />
-
-                </svg>
-
-              </Link>
-
-
-              {/* =================================================
-                  SIGN IN
-              ================================================= */}
+              {/* SIGN IN */}
 
               <Link
                 to="/login"
@@ -324,10 +309,7 @@ const Navbar = () => {
                 Sign in
               </Link>
 
-
-              {/* =================================================
-                  JOIN
-              ================================================= */}
+              {/* JOIN */}
 
               <Link
                 to="/register"
@@ -355,14 +337,11 @@ const Navbar = () => {
               >
                 Join
               </Link>
-
             </>
           )}
 
         </div>
-
       </div>
-
 
       {/* =====================================================
           MOBILE NAVIGATION
@@ -401,11 +380,10 @@ const Navbar = () => {
             Contact
           </NavLink>
 
-
           {/* MOBILE SEARCH */}
 
           <Link
-            to="/documents"
+            to="/documents/search"
             aria-label="Search documents"
             title="Search documents"
             className="
@@ -426,7 +404,6 @@ const Navbar = () => {
               hover:text-blue
             "
           >
-
             <svg
               viewBox="0 0 24 24"
               fill="none"
@@ -435,7 +412,6 @@ const Navbar = () => {
               className="h-[17px] w-[17px]"
               aria-hidden="true"
             >
-
               <circle
                 cx="11"
                 cy="11"
@@ -446,11 +422,10 @@ const Navbar = () => {
                 d="m16 16 4 4"
                 strokeLinecap="round"
               />
-
             </svg>
-
           </Link>
 
+          {/* MOBILE PROFILE */}
 
           {user && (
             <NavLink
@@ -466,7 +441,6 @@ const Navbar = () => {
           )}
 
         </nav>
-
       </div>
 
     </header>

@@ -27,6 +27,7 @@ import Register from "../pages/Auth/Register.jsx";
 
 import Documents from "../pages/Documents/Documents.jsx";
 import DocumentDetails from "../pages/Documents/DocumentDetails.jsx";
+import SearchDocument from "../pages/Documents/SearchDocuments.jsx";
 
 import Profile from "../pages/Profile/Profile.jsx";
 
@@ -83,20 +84,40 @@ const AppRouter = () => {
             element={<Register />}
           />
 
+          {/* ==================================
+              DOCUMENTS
+          ================================== */}
+
+          {/* Main Documents Feed */}
           <Route
             path="/documents"
             element={<Documents />}
           />
 
+          {/* Search Documents */}
+          <Route
+            path="/documents/search"
+            element={<SearchDocument />}
+          />
+
+          {/* Individual Document */}
           <Route
             path="/documents/:slug"
             element={<DocumentDetails />}
           />
 
+          {/* ==================================
+              PROFILE
+          ================================== */}
+
           <Route
             path="/profile/:username"
             element={<Profile />}
           />
+
+          {/* ==================================
+              CONTACT
+          ================================== */}
 
           <Route
             path="/contact"

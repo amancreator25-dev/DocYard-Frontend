@@ -364,11 +364,11 @@ const Login = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="mt-8 inline-flex h-12 w-full items-center justify-center rounded-lg border border-blue bg-blue px-7 text-sm font-semibold text-white shadow-sm transition-all hover:border-ink hover:bg-ink disabled:cursor-not-allowed disabled:opacity-60"
+                className="mt-8 inline-flex h-12 w-full items-center justify-center rounded-lg border border-blue bg-[#0A3A63] px-7 text-sm font-semibold text-white shadow-sm transition-all hover:border-ink hover:bg-ink disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {loading
                   ? "Signing in..."
-                  : "Sign in →"}
+                  : "Sign in"}
               </button>
 
             </form>
@@ -391,7 +391,7 @@ const Login = () => {
                   to="/register"
                   className="inline-flex h-10 w-fit items-center justify-center rounded-lg border border-line-strong bg-white px-5 font-mono text-xs font-semibold uppercase tracking-[0.08em] text-blue transition-all hover:border-blue hover:bg-blue-light"
                 >
-                  Create an account →
+                  Create an account
                 </Link>
 
               </div>
