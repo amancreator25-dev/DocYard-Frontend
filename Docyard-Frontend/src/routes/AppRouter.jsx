@@ -24,6 +24,8 @@ import MainLayout from "../layouts/MainLayout.jsx";
 import Home from "../pages/Home.jsx";
 import Login from "../pages/Auth/Login.jsx";
 import Register from "../pages/Auth/Register.jsx";
+import About from "../pages/About/About.jsx";
+
 
 import Documents from "../pages/Documents/Documents.jsx";
 import DocumentDetails from "../pages/Documents/DocumentDetails.jsx";
@@ -72,6 +74,11 @@ const AppRouter = () => {
           <Route
             path="/"
             element={<Home />}
+          />
+
+          <Route
+            path="/about"
+            element={<About />}
           />
 
           <Route

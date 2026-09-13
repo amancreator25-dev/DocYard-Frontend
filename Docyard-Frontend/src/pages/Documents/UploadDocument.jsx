@@ -238,12 +238,12 @@ const UploadDocument = () => {
 
       <section className="w-full px-6 pb-10 pt-10 sm:px-10 md:px-14 md:pb-14 md:pt-14 lg:px-20 xl:px-24">
 
-        <Link
-          to="/my-documents"
-          className="inline-flex items-center rounded-lg border border-line bg-white px-4 py-2.5 font-mono text-xs font-medium uppercase tracking-[0.08em] text-ink-soft transition-colors hover:border-blue hover:text-blue"
-        >
-          ← My documents
-        </Link>
+       <Link
+        to="/my-documents"
+        className="inline-flex items-center justify-center rounded-lg border border-[#0A3A63] bg-[#0A3A63] px-5 py-2.5 !text-[#ffffff] text-xs font-semibold uppercase tracking-[0.08em] text-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#082F50] hover:shadow-md"
+      >
+        My documents
+      </Link>
 
         <div className="mt-10">
 
@@ -657,11 +657,11 @@ const UploadDocument = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="inline-flex h-12 items-center justify-center rounded-lg border border-blue bg-blue px-7 text-sm font-semibold text-white shadow-sm transition-all hover:bg-ink hover:border-ink disabled:cursor-not-allowed disabled:opacity-60"
+                className="inline-flex h-12 items-center justify-center rounded-lg border border-blue bg-[#0A3A63] px-7 text-sm font-semibold text-white shadow-sm transition-all hover:bg-ink hover:border-ink disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {loading
                   ? "Uploading..."
-                  : "Publish document →"}
+                  : "Publish Document"}
               </button>
 
             </div>
@@ -705,9 +705,7 @@ const UploadDocument = () => {
 
                 <div className="flex gap-4">
 
-                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-line bg-white font-mono text-xs font-semibold text-blue">
-                    01
-                  </span>
+               
 
                   <div>
 
@@ -729,10 +727,6 @@ const UploadDocument = () => {
 
                 <div className="flex gap-4">
 
-                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-line bg-white font-mono text-xs font-semibold text-blue">
-                    02
-                  </span>
-
                   <div>
 
                     <h3 className="font-display text-xl font-semibold">
@@ -753,9 +747,6 @@ const UploadDocument = () => {
 
                 <div className="flex gap-4">
 
-                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-line bg-white font-mono text-xs font-semibold text-blue">
-                    03
-                  </span>
 
                   <div>
 

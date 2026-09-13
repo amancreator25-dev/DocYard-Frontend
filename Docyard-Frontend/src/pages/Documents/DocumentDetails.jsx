@@ -1155,13 +1155,13 @@ const DocumentDetails = () => {
               type="button"
               onClick={handleSummarize}
               disabled={aiLoading}
-              className="mt-6 inline-flex h-11 items-center rounded-md bg-blue px-6 text-sm font-semibold text-white transition hover:-translate-y-[1px] hover:bg-[#0f3152] disabled:cursor-not-allowed disabled:opacity-60"
+              className="mt-6 inline-flex h-11 items-center rounded-md bg-[#0A3A63] px-6 text-sm font-semibold !text-[#ffffff] transition hover:-translate-y-[1px] hover:bg-[#0f3152] disabled:cursor-not-allowed disabled:opacity-60"
             >
               {aiLoading
                 ? "Generating..."
                 : aiSummary
-                  ? "Regenerate summary"
-                  : "Summarize document"}
+                  ? "Regenerate Summary"
+                  : "Summarize Document"}
             </button>
 
 
@@ -1192,7 +1192,7 @@ const DocumentDetails = () => {
 
               <div>
 
-                <span className="text-xs font-semibold uppercase tracking-wide text-blue">
+                <span className="text-xs font-semibold uppercase tracking-wide !text-[#0A3A63]">
                   Translation
                 </span>
 
@@ -1238,7 +1238,7 @@ const DocumentDetails = () => {
                   translationLoading ||
                   !translationLanguage.trim()
                 }
-                className="inline-flex h-11 items-center justify-center rounded-md bg-blue px-6 text-sm font-semibold text-white transition hover:-translate-y-[1px] hover:bg-[#0f3152] disabled:cursor-not-allowed disabled:opacity-60"
+                className="inline-flex h-11 items-center justify-center rounded-md bg-[#0A3A63] px-6 text-sm font-semibold !text-[#ffffff] transition hover:-translate-y-[1px] hover:bg-[#0f3152] disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {translationLoading
                   ? "Translating..."
@@ -1345,13 +1345,9 @@ const DocumentDetails = () => {
 
             <button
               type="submit"
-              className="inline-flex h-11 items-center rounded-md bg-blue px-6 text-sm font-semibold text-white transition hover:-translate-y-[1px] hover:bg-[#0f3152] active:translate-y-0"
+              className="inline-flex h-11 items-center rounded-md bg-[#0A3A63] px-6 text-sm font-semibold text-[#ffffff] transition hover:-translate-y-[1px] hover:bg-[#0f3152] active:translate-y-0"
             >
-              Post comment
-
-              <span className="ml-2 text-base">
-                →
-              </span>
+              Post Comment
 
             </button>
 
@@ -1471,7 +1467,7 @@ const DocumentDetails = () => {
                             )
                           }
                           rows={3}
-                          className="w-full resize-y rounded-md border border-line bg-paper px-4 py-3 text-base leading-7 outline-none transition focus:border-blue focus:ring-2 focus:ring-blue/10"
+                          className="w-full resize-y rounded-md border border-line bg-[#0A3A63] px-4 py-3 text-base leading-7 outline-none transition focus:border-blue focus:ring-2 focus:ring-blue/10"
                         />
 
 
@@ -1484,7 +1480,7 @@ const DocumentDetails = () => {
                                 item._id
                               )
                             }
-                            className="inline-flex h-10 items-center rounded-md bg-blue px-5 text-sm font-semibold text-white transition hover:bg-[#0f3152]"
+                            className="inline-flex h-10 items-center rounded-md bg-[#0A3A63] px-5 text-sm font-semibold text-[#ffffff] transition hover:bg-[#0f3152]"
                           >
                             Save changes
                           </button>
@@ -1528,7 +1524,7 @@ const DocumentDetails = () => {
                                 item.content || ""
                               );
                             }}
-                            className="inline-flex h-9 items-center rounded-md border border-line bg-paper px-4 text-sm font-medium text-ink-soft transition hover:border-ink hover:text-ink"
+                            className="inline-flex h-9 items-center rounded-md border border-line bg-[#0A3A63] !text-[#ffffff] px-4 text-sm font-medium text-ink-soft transition hover:border-ink hover:text-ink"
                           >
                             Edit
                           </button>
@@ -1541,7 +1537,7 @@ const DocumentDetails = () => {
                                 item._id
                               )
                             }
-                            className="inline-flex h-9 items-center rounded-md border border-line bg-paper px-4 text-sm font-medium text-ink-soft transition hover:border-red-300 hover:text-red-600"
+                            className="inline-flex h-9 items-center rounded-md border border-line bg-[#0A3A63] !text-[#ffffff] px-4 text-sm font-medium text-ink-soft transition hover:border-red-300 hover:text-red-600"
                           >
                             Delete
                           </button>
