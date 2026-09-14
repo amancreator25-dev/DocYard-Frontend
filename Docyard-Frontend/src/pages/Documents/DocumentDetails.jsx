@@ -1416,8 +1416,8 @@ const DocumentDetails = () => {
                     <div className="flex items-start justify-between gap-4">
 
                       <div className="flex items-center gap-3">
-
-                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-ink text-sm font-semibold uppercase text-paper">
+  {/*The user icon who commented*/}
+                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#0A3A63] text-sm font-semibold uppercase !text-[#ffffff]">
                           {commenter
                             .charAt(0)
                             .toUpperCase()}
