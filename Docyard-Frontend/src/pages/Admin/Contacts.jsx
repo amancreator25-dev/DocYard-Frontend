@@ -10,7 +10,7 @@ import {
 import Loader from "../../components/Common/Loader.jsx";
 import EmptyState from "../../components/Common/EmptyState.jsx";
 
-const Contacts = () => {
+const AdminContacts = () => {
   const [contacts, setContacts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -344,4 +344,4 @@ const Contacts = () => {
   );
 };
 
-export default Contacts;
+export default AdminContacts;

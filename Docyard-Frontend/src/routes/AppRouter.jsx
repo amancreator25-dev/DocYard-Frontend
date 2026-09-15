@@ -4,72 +4,41 @@ import {
   Route,
 } from "react-router-dom";
 
-// ======================================
-// ROUTE GUARDS
-// ======================================
-
 import ProtectedRoute from "./ProtectedRoute.jsx";
 import AdminRoute from "./AdminRoute.jsx";
 
-// ======================================
-// LAYOUT
-// ======================================
-
 import MainLayout from "../layouts/MainLayout.jsx";
-
-// ======================================
-// PUBLIC PAGES
-// ======================================
 
 import Home from "../pages/Home.jsx";
 import Login from "../pages/Auth/Login.jsx";
 import Register from "../pages/Auth/Register.jsx";
 import About from "../pages/About/About.jsx";
 
-
 import Documents from "../pages/Documents/Documents.jsx";
 import DocumentDetails from "../pages/Documents/DocumentDetails.jsx";
 import SearchDocument from "../pages/Documents/SearchDocuments.jsx";
 
 import Profile from "../pages/Profile/Profile.jsx";
-
 import Contact from "../pages/Contact/Contact.jsx";
-
-import PageNotFound from "../pages/PageNotFound/PageNotFound.jsx";
-
-// ======================================
-// PROTECTED PAGES
-// ======================================
 
 import MyDocuments from "../pages/Documents/MyDocuments.jsx";
 import Bookmarks from "../pages/Documents/Bookmarks.jsx";
 import UploadDocument from "../pages/Documents/UploadDocument.jsx";
 
-// ======================================
-// ADMIN PAGES
-// ======================================
-
 import AdminDashboard from "../pages/Admin/Dashboard.jsx";
+import AdminUsers from "../pages/Admin/Users.jsx";
+import AdminDocuments from "../pages/Admin/Documents.jsx";
+import AdminContacts from "../pages/Admin/Contacts.jsx";
 
-// ======================================
-// APP ROUTER
-// ======================================
+import PageNotFound from "../pages/PageNotFound/PageNotFound.jsx";
 
 const AppRouter = () => {
   return (
     <BrowserRouter>
-
       <Routes>
-
-        {/* ==================================
-            MAIN LAYOUT
-        ================================== */}
-
         <Route element={<MainLayout />}>
 
-          {/* ==================================
-              PUBLIC ROUTES
-          ================================== */}
+          {/* Public Routes */}
 
           <Route
             path="/"
@@ -91,94 +60,81 @@ const AppRouter = () => {
             element={<Register />}
           />
 
-          {/* ==================================
-              DOCUMENTS
-          ================================== */}
+          {/* Documents */}
 
-          {/* Main Documents Feed */}
           <Route
             path="/documents"
             element={<Documents />}
           />
 
-          {/* Search Documents */}
           <Route
             path="/documents/search"
             element={<SearchDocument />}
           />
 
-          {/* Individual Document */}
           <Route
             path="/documents/:slug"
             element={<DocumentDetails />}
           />
 
-          {/* ==================================
-              PROFILE
-          ================================== */}
+          {/* Profile */}
 
           <Route
             path="/profile/:username"
             element={<Profile />}
           />
 
-          {/* ==================================
-              CONTACT
-          ================================== */}
+          {/* Contact */}
 
           <Route
             path="/contact"
             element={<Contact />}
           />
 
-
-          {/* ==================================
-              PROTECTED ROUTES
-          ================================== */}
+          {/* Protected Routes */}
 
           <Route element={<ProtectedRoute />}>
-
-            {/* MY DOCUMENTS */}
-
             <Route
               path="/my-documents"
               element={<MyDocuments />}
             />
-
-            {/* BOOKMARKS */}
 
             <Route
               path="/bookmarks"
               element={<Bookmarks />}
             />
 
-            {/* UPLOAD */}
-
             <Route
               path="/upload"
               element={<UploadDocument />}
             />
-
           </Route>
 
-
-          {/* ==================================
-              ADMIN ROUTES
-          ================================== */}
+          {/* Admin Routes */}
 
           <Route element={<AdminRoute />}>
-
             <Route
               path="/admin"
               element={<AdminDashboard />}
             />
 
+            <Route
+              path="/admin/users"
+              element={<AdminUsers />}
+            />
+
+            <Route
+              path="/admin/documents"
+              element={<AdminDocuments />}
+            />
+
+            <Route
+              path="/admin/contacts"
+              element={<AdminContacts />}
+            />
           </Route>
 
-
-          {/* ==================================
-              404
-          ================================== */}
+          {/* 404 */}
 
           <Route
             path="*"
@@ -186,9 +142,7 @@ const AppRouter = () => {
           />
 
         </Route>
-
       </Routes>
-
     </BrowserRouter>
   );
 };

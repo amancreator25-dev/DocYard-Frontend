@@ -1,15 +1,19 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 
 import {
-  getAllDocuments,
-  deleteDocument,
-} from "../../services/document.service.js";
+  getAllDocumentsAdmin,
+  adminDeleteDocument,
+} from "../../services/admin.service.js";
 
 import Loader from "../../components/Common/Loader.jsx";
 import EmptyState from "../../components/Common/EmptyState.jsx";
 
-const Documents = () => {
+const AdminDocuments = () => {
+  const [searchParams] = useSearchParams();
+
+  const visibility = searchParams.get("visibility") || "";
+
   const [documents, setDocuments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -20,12 +24,12 @@ const Documents = () => {
       setLoading(true);
       setError("");
 
-      const response = await getAllDocuments();
+      const response = await getAllDocumentsAdmin(visibility);
 
       const data =
+        response?.data?.data?.documents ||
         response?.data?.documents ||
         response?.documents ||
-        response?.data ||
         [];
 
       setDocuments(Array.isArray(data) ? data : []);
@@ -41,7 +45,7 @@ const Documents = () => {
 
   useEffect(() => {
     loadDocuments();
-  }, []);
+  }, [visibility]);
 
   const handleDelete = async (documentId) => {
     const confirmed = window.confirm(
@@ -54,13 +58,12 @@ const Documents = () => {
       setDeletingId(documentId);
       setError("");
 
-      await deleteDocument(documentId);
+      await adminDeleteDocument(documentId);
 
       setDocuments((previous) =>
         previous.filter(
           (document) =>
-            document._id !== documentId &&
-            document.id !== documentId
+            (document._id || document.id) !== documentId
         )
       );
     } catch (err) {
@@ -73,208 +76,226 @@ const Documents = () => {
     }
   };
 
+  const formatDate = (date) => {
+    if (!date) return "—";
+
+    return new Date(date).toLocaleDateString();
+  };
+
+  const pageTitle =
+    visibility === "public"
+      ? "Public documents."
+      : visibility === "private"
+        ? "Private documents."
+        : "Documents.";
+
+  const pageDescription =
+    visibility === "public"
+      ? "Review and manage documents currently visible in the public archive."
+      : visibility === "private"
+        ? "Review and manage documents currently restricted to private access."
+        : "Review and manage documents across the DocYard archive.";
+
+  const countLabel =
+    visibility === "public"
+      ? "PUBLIC DOCUMENTS"
+      : visibility === "private"
+        ? "PRIVATE DOCUMENTS"
+        : "DOCUMENTS";
+
   return (
-    <main className="min-h-screen bg-paper px-6 py-14 text-ink md:px-12 md:py-20">
-      <div className="mx-auto max-w-[1200px]">
+    <main className="min-h-screen border-t border-ink bg-paper text-ink">
+      {/* HEADER */}
 
-        {/* HEADER */}
-
-        <header className="border-b border-line pb-10">
-          <Link
-            to="/admin"
-            className="font-mono text-[10px] uppercase tracking-wide text-ink-faint hover:text-blue"
-          >
-            ← Admin dashboard
-          </Link>
-
-          <div className="mt-9">
+      <section className="px-6 pb-10 pt-12 md:px-10 md:pb-12 lg:px-16">
+        <div className="flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
+          <div>
             <span className="page-eyebrow">
               ADMIN / DOCUMENTS
             </span>
 
-            <div className="mt-3 flex flex-col justify-between gap-5 md:flex-row md:items-end">
-              <div>
-                <h1 className="font-display text-5xl font-semibold leading-[1.05] md:text-6xl">
-                  Documents.
-                </h1>
+            <h1 className="mt-3 font-display text-5xl font-semibold leading-[0.95] tracking-[-0.04em] md:text-6xl lg:text-7xl">
+              {pageTitle}
+            </h1>
 
-                <p className="mt-4 max-w-xl text-sm leading-6 text-ink-soft">
-                  Review and manage documents
-                  published to the DocYard archive.
-                </p>
-              </div>
-
-              <span className="font-mono text-[9px] uppercase tracking-wide text-ink-faint">
-                {documents.length} DOCUMENTS
-              </span>
-            </div>
+            <p className="mt-5 max-w-2xl text-sm leading-7 text-ink-soft md:text-base">
+              {pageDescription}
+            </p>
           </div>
-        </header>
 
-        {/* ERROR */}
+          <div className="flex items-center gap-4">
+            <span className="font-mono text-[10px] uppercase tracking-[0.12em] text-ink-faint">
+              {documents.length} {countLabel}
+            </span>
 
-        {error && (
-          <div className="mt-6 border border-line bg-paper-raised px-5 py-4 text-sm text-ink-soft">
+            <Link
+              to="/admin"
+              className="inline-flex items-center justify-center rounded-md border border-line bg-white px-5 py-2.5 font-mono text-xs font-semibold uppercase tracking-[0.08em] text-ink transition-all duration-200 hover:-translate-y-0.5 hover:border-ink"
+            >
+              Dashboard
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ERROR */}
+
+      {error && (
+        <section className="px-6 pb-8 md:px-10 lg:px-16">
+          <div
+            className="rounded-md border border-line bg-paper-raised px-5 py-4 text-sm text-ink-soft"
+            role="alert"
+          >
             {error}
           </div>
-        )}
-
-        {/* CONTENT */}
-
-        <section className="py-10">
-
-          {loading ? (
-            <div className="flex min-h-[260px] items-center justify-center border border-line bg-white">
-              <Loader />
-            </div>
-          ) : documents.length === 0 ? (
-            <div className="border border-line bg-white px-6 py-16 text-center">
-              <EmptyState
-                title="No documents found."
-                message="There are currently no documents available to manage."
-              />
-            </div>
-          ) : (
-            <div className="border border-line bg-white">
-
-              {/* TABLE HEADER */}
-
-              <div className="hidden border-b border-line bg-paper-raised px-6 py-4 md:grid md:grid-cols-[1fr_180px_150px_100px] md:gap-6">
-                <span className="table-heading">
-                  DOCUMENT
-                </span>
-
-                <span className="table-heading">
-                  AUTHOR
-                </span>
-
-                <span className="table-heading">
-                  CREATED
-                </span>
-
-                <span className="table-heading text-right">
-                  ACTION
-                </span>
-              </div>
-
-              {/* DOCUMENTS */}
-
-              {documents.map((document) => {
-                const documentId =
-                  document._id || document.id;
-
-                const title =
-                  document.title ||
-                  "Untitled document";
-
-                const author =
-                  document.author?.username ||
-                  document.user?.username ||
-                  document.createdBy?.username ||
-                  "Unknown";
-
-                const date = document.createdAt
-                  ? new Date(
-                      document.createdAt
-                    ).toLocaleDateString()
-                  : "—";
-
-                const slug = document.slug;
-
-                const isDeleting =
-                  deletingId === documentId;
-
-                return (
-                  <div
-                    key={documentId}
-                    className="grid gap-5 border-b border-line px-6 py-6 last:border-b-0 md:grid-cols-[1fr_180px_150px_100px] md:items-center md:gap-6"
-                  >
-
-                    {/* DOCUMENT */}
-
-                    <div className="min-w-0">
-                      <div className="flex items-start gap-3">
-
-                        <span className="mt-1 font-mono text-[9px] text-blue">
-                          DOC
-                        </span>
-
-                        <div className="min-w-0">
-                          {slug ? (
-                            <Link
-                              to={`/documents/${slug}`}
-                              className="block truncate font-display text-lg font-semibold hover:text-blue"
-                            >
-                              {title}
-                            </Link>
-                          ) : (
-                            <h2 className="truncate font-display text-lg font-semibold">
-                              {title}
-                            </h2>
-                          )}
-
-                          {document.category && (
-                            <span className="mt-1 block font-mono text-[9px] uppercase tracking-wide text-ink-faint">
-                              {document.category}
-                            </span>
-                          )}
-                        </div>
-
-                      </div>
-                    </div>
-
-                    {/* AUTHOR */}
-
-                    <div>
-                      <span className="table-heading md:hidden">
-                        AUTHOR
-                      </span>
-
-                      <p className="mt-1 text-sm text-ink-soft md:mt-0">
-                        {author}
-                      </p>
-                    </div>
-
-                    {/* DATE */}
-
-                    <div>
-                      <span className="table-heading md:hidden">
-                        CREATED
-                      </span>
-
-                      <p className="mt-1 font-mono text-[10px] text-ink-faint md:mt-0">
-                        {date}
-                      </p>
-                    </div>
-
-                    {/* ACTION */}
-
-                    <div className="flex justify-start md:justify-end">
-                      <button
-                        type="button"
-                        onClick={() =>
-                          handleDelete(documentId)
-                        }
-                        disabled={isDeleting}
-                        className="font-mono text-[9px] uppercase tracking-wide text-ink-faint transition-colors hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-50"
-                      >
-                        {isDeleting
-                          ? "Deleting..."
-                          : "Delete"}
-                      </button>
-                    </div>
-
-                  </div>
-                );
-              })}
-
-            </div>
-          )}
-
         </section>
-      </div>
+      )}
+
+      {/* DOCUMENTS */}
+
+      <section className="px-6 pb-16 md:px-10 lg:px-16">
+        {loading ? (
+          <div className="flex min-h-[260px] items-center justify-center rounded-md border border-line bg-white">
+            <Loader />
+          </div>
+        ) : documents.length === 0 ? (
+          <div className="rounded-md border border-line bg-white px-6 py-16 text-center">
+            <EmptyState
+              title={
+                visibility
+                  ? `No ${visibility} documents found.`
+                  : "No documents found."
+              }
+              message={
+                visibility
+                  ? `There are currently no ${visibility} documents available to manage.`
+                  : "There are currently no documents available to manage."
+              }
+            />
+          </div>
+        ) : (
+          <div className="overflow-hidden rounded-md border border-line bg-white">
+            {/* TABLE HEADER */}
+
+            <div className="hidden border-b border-line bg-paper-raised px-6 py-4 md:grid md:grid-cols-[1fr_190px_140px_100px] md:gap-6">
+              <span className="table-heading">
+                DOCUMENT
+              </span>
+
+              <span className="table-heading">
+                AUTHOR
+              </span>
+
+              <span className="table-heading">
+                CREATED
+              </span>
+
+              <span className="table-heading text-right">
+                ACTION
+              </span>
+            </div>
+
+            {/* DOCUMENT ROWS */}
+
+            {documents.map((document) => {
+              const documentId =
+                document._id || document.id;
+
+              const title =
+                document.title || "Untitled document";
+
+              const author =
+                document.createdBy?.username ||
+                document.createdBy?.fullname ||
+                document.author?.username ||
+                document.user?.username ||
+                "Unknown";
+
+              const slug = document.slug;
+
+              const isDeleting =
+                deletingId === documentId;
+
+              return (
+                <article
+                  key={documentId}
+                  className="grid gap-5 border-b border-line px-6 py-7 last:border-b-0 md:grid-cols-[1fr_190px_140px_100px] md:items-center md:gap-6"
+                >
+                  {/* DOCUMENT */}
+
+                  <div className="min-w-0">
+                    <span className="font-mono text-[10px] uppercase tracking-[0.12em] text-blue">
+                      {document.visibility || "DOCUMENT"}
+                    </span>
+
+                    {slug ? (
+                      <Link
+                        to={`/documents/${slug}`}
+                        className="mt-2 block truncate font-display text-xl font-semibold tracking-tight transition-colors hover:text-blue"
+                      >
+                        {title}
+                      </Link>
+                    ) : (
+                      <h2 className="mt-2 truncate font-display text-xl font-semibold tracking-tight">
+                        {title}
+                      </h2>
+                    )}
+
+                    {document.category && (
+                      <p className="mt-2 font-mono text-[10px] uppercase tracking-[0.1em] text-ink-faint">
+                        {document.category}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* AUTHOR */}
+
+                  <div>
+                    <span className="table-heading md:hidden">
+                      AUTHOR
+                    </span>
+
+                    <p className="mt-1 text-sm text-ink-soft md:mt-0">
+                      {author}
+                    </p>
+                  </div>
+
+                  {/* CREATED */}
+
+                  <div>
+                    <span className="table-heading md:hidden">
+                      CREATED
+                    </span>
+
+                    <p className="mt-1 font-mono text-[10px] text-ink-faint md:mt-0">
+                      {formatDate(document.createdAt)}
+                    </p>
+                  </div>
+
+                  {/* ACTION */}
+
+                  <div className="flex justify-start md:justify-end">
+                    <button
+                      type="button"
+                      onClick={() =>
+                        handleDelete(documentId)
+                      }
+                      disabled={isDeleting}
+                      className="inline-flex rounded-md border border-line px-4 py-2 font-mono text-[10px] font-semibold uppercase tracking-[0.08em] text-ink transition-all duration-200 hover:border-red-500 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      {isDeleting
+                        ? "Deleting"
+                        : "Delete"}
+                    </button>
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+        )}
+      </section>
     </main>
   );
 };
 
-export default Documents;
+export default AdminDocuments;
