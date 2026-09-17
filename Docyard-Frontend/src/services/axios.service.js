@@ -4,7 +4,6 @@ import {
   removeSession,
 } from "../utils/storage.js";
 
-
 // ======================================
 // API BASE URL
 // ======================================
@@ -13,34 +12,17 @@ const API_BASE_URL =
   import.meta.env.VITE_API_URL ||
   "http://localhost:8000/api";
 
-
 // ======================================
 // AXIOS INSTANCE
 // ======================================
 
 const api = axios.create({
   baseURL: API_BASE_URL,
-
-  // IMPORTANT:
-  // Allows browser to send HttpOnly
-  // accessToken and refreshToken cookies.
   withCredentials: true,
 });
 
-
 // ======================================
 // REQUEST INTERCEPTOR
-// ======================================
-//
-// DO NOT manually attach Authorization.
-//
-// We are using:
-//
-// HttpOnly accessToken cookie
-//
-// instead of:
-//
-// Authorization: Bearer <token>
 // ======================================
 
 api.interceptors.request.use(
@@ -53,31 +35,17 @@ api.interceptors.request.use(
   }
 );
 
-
 // ======================================
 // RESPONSE INTERCEPTOR
 // ======================================
 
 api.interceptors.response.use(
-
-  // ------------------------------------
-  // SUCCESS
-  // ------------------------------------
-
   (response) => {
     return response;
   },
 
-
-  // ------------------------------------
-  // ERROR
-  // ------------------------------------
-
   async (error) => {
-
-    const originalRequest =
-      error.config;
-
+    const originalRequest = error.config;
 
     // ==================================
     // NO SERVER RESPONSE
@@ -87,6 +55,30 @@ api.interceptors.response.use(
       return Promise.reject(error);
     }
 
+    // ==================================
+    // AUTHENTICATION ROUTES
+    // ==================================
+    //
+    // These routes must NEVER trigger
+    // automatic access-token refresh.
+    // ==================================
+
+    const authRoutes = [
+      "/users/login",
+      "/users/register",
+      "/users/verify-registration-otp",
+      "/users/forgot-password",
+      "/users/verify-forgot-password-otp",
+      "/users/reset-password",
+      "/users/refresh-token",
+      "/admin/login",
+      "/admin/verify-admin-otp",
+    ];
+
+    const isAuthRoute =
+      authRoutes.some((route) =>
+        originalRequest?.url?.includes(route)
+      );
 
     // ==================================
     // ACCESS TOKEN EXPIRED / 401
@@ -96,34 +88,13 @@ api.interceptors.response.use(
       error.response.status === 401 &&
       originalRequest &&
       !originalRequest._retry &&
-
-      // Don't refresh after login
-      !originalRequest.url?.includes(
-        "/users/login"
-      ) &&
-
-      // Don't refresh after register
-      !originalRequest.url?.includes(
-        "/users/register"
-      ) &&
-
-      // Don't refresh the refresh request
-      !originalRequest.url?.includes(
-        "/users/refresh-token"
-      )
+      !isAuthRoute
     ) {
-
       originalRequest._retry = true;
 
-
       try {
-
         // =================================
         // REQUEST NEW ACCESS TOKEN
-        // =================================
-        //
-        // Browser automatically sends the
-        // HttpOnly refreshToken cookie.
         // =================================
 
         await axios.post(
@@ -134,42 +105,29 @@ api.interceptors.response.use(
           }
         );
 
-
         // =================================
         // RETRY ORIGINAL REQUEST
         // =================================
-        //
-        // Backend has now replaced the
-        // accessToken cookie.
-        //
-        // Browser automatically sends it.
-        // =================================
 
-        return api(
-          originalRequest
-        );
+        return api(originalRequest);
 
       } catch (refreshError) {
-
         console.error(
           "Token refresh failed:",
           refreshError
         );
 
-
         // =================================
-        // SESSION IS INVALID
+        // INVALID SESSION
         // =================================
 
         removeSession();
-
 
         return Promise.reject(
           refreshError
         );
       }
     }
-
 
     // ==================================
     // NORMAL ERROR
@@ -178,6 +136,5 @@ api.interceptors.response.use(
     return Promise.reject(error);
   }
 );
-
 
 export default api;

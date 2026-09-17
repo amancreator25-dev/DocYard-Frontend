@@ -99,6 +99,44 @@ const loginUser = async (credentials) => {
 };
 
 // ======================================
+// ADMIN LOGIN OTP
+// ======================================
+
+const sendAdminLoginOTP = async (
+  email,
+  password
+) => {
+  const response = await api.post(
+    "/admin/login",
+    {
+      email,
+      password,
+    }
+  );
+
+  return response.data;
+};
+
+// ======================================
+// VERIFY ADMIN LOGIN OTP
+// ======================================
+
+const verifyAdminOTP = async (
+  email,
+  otp
+) => {
+  const response = await api.post(
+    "/admin/verify-admin-otp",
+    {
+      email,
+      otp,
+    }
+  );
+
+  return response.data;
+};
+
+// ======================================
 // LOGOUT USER
 // ======================================
 
@@ -191,6 +229,10 @@ export {
   resetPassword,
 
   loginUser,
+
+  sendAdminLoginOTP,
+  verifyAdminOTP,
+
   logoutUser,
   refreshAccessToken,
   getCurrentUser,

@@ -12,17 +12,16 @@ import {
 } from "../services/auth.service.js";
 
 import {
-  getToken,
-  removeToken,
+  hasSession,
+  setSession,
+  removeSession,
 } from "../utils/storage.js";
-
 
 // ======================================
 // CREATE CONTEXT
 // ======================================
 
 const AuthContext = createContext(null);
-
 
 // ======================================
 // AUTH PROVIDER
@@ -31,12 +30,10 @@ const AuthContext = createContext(null);
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
-  const [loading, setLoading] =
-    useState(true);
+  const [loading, setLoading] = useState(true);
 
   const [isAuthenticated, setIsAuthenticated] =
     useState(false);
-
 
   // ====================================
   // LOAD CURRENT USER
@@ -46,16 +43,24 @@ const AuthProvider = ({ children }) => {
     try {
       setLoading(true);
 
-      const token = getToken();
+      // --------------------------------
+      // No frontend session flag
+      // means there is no login session
+      // to restore.
+      // --------------------------------
 
-      if (!token) {
+      if (!hasSession()) {
         setUser(null);
         setIsAuthenticated(false);
         return;
       }
 
-      const response =
-        await getCurrentUser();
+      // --------------------------------
+      // Check current access token
+      // through the HttpOnly cookie.
+      // --------------------------------
+
+      const response = await getCurrentUser();
 
       const currentUser =
         response?.data?.user ||
@@ -65,10 +70,17 @@ const AuthProvider = ({ children }) => {
       if (currentUser) {
         setUser(currentUser);
         setIsAuthenticated(true);
-      } else {
-        setUser(null);
-        setIsAuthenticated(false);
+        return;
       }
+
+      // --------------------------------
+      // Invalid session
+      // --------------------------------
+
+      removeSession();
+
+      setUser(null);
+      setIsAuthenticated(false);
 
     } catch (error) {
       console.error(
@@ -77,7 +89,8 @@ const AuthProvider = ({ children }) => {
       );
 
       // --------------------------------
-      // Try refreshing the token
+      // Access token may have expired.
+      // Try refresh token.
       // --------------------------------
 
       try {
@@ -92,10 +105,13 @@ const AuthProvider = ({ children }) => {
           response?.user;
 
         if (currentUser) {
+          setSession();
+
           setUser(currentUser);
           setIsAuthenticated(true);
         } else {
-          removeToken();
+          removeSession();
+
           setUser(null);
           setIsAuthenticated(false);
         }
@@ -106,7 +122,11 @@ const AuthProvider = ({ children }) => {
           refreshError
         );
 
-        removeToken();
+        // --------------------------------
+        // Refresh token is invalid/expired.
+        // --------------------------------
+
+        removeSession();
 
         setUser(null);
         setIsAuthenticated(false);
@@ -117,7 +137,6 @@ const AuthProvider = ({ children }) => {
     }
   };
 
-
   // ====================================
   // LOGIN
   // ====================================
@@ -127,10 +146,14 @@ const AuthProvider = ({ children }) => {
       return;
     }
 
+    // Only the session flag is stored
+    // locally. JWTs remain HttpOnly cookies.
+
+    setSession();
+
     setUser(userData);
     setIsAuthenticated(true);
   };
-
 
   // ====================================
   // LOGOUT
@@ -139,19 +162,23 @@ const AuthProvider = ({ children }) => {
   const logout = async () => {
     try {
       await logoutUser();
+
     } catch (error) {
       console.error(
         "Logout Error:",
         error
       );
+
     } finally {
-      removeToken();
+      // Backend clears HttpOnly cookies.
+      // Frontend clears only session flag.
+
+      removeSession();
 
       setUser(null);
       setIsAuthenticated(false);
     }
   };
-
 
   // ====================================
   // UPDATE USER
@@ -168,7 +195,6 @@ const AuthProvider = ({ children }) => {
     }));
   };
 
-
   // ====================================
   // INITIAL AUTH CHECK
   // ====================================
@@ -176,7 +202,6 @@ const AuthProvider = ({ children }) => {
   useEffect(() => {
     loadUser();
   }, []);
-
 
   // ====================================
   // CONTEXT VALUE
@@ -200,14 +225,12 @@ const AuthProvider = ({ children }) => {
     loadUser,
   };
 
-
   return (
     <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   );
 };
-
 
 // ======================================
 // CUSTOM HOOK
@@ -225,7 +248,6 @@ const useAuth = () => {
 
   return context;
 };
-
 
 // ======================================
 // EXPORT

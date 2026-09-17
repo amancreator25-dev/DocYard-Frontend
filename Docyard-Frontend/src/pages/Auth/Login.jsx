@@ -5,7 +5,11 @@ import {
   useLocation,
 } from "react-router-dom";
 
-import { loginUser } from "../../services/auth.service.js";
+import {
+  loginUser,
+  sendAdminLoginOTP,
+} from "../../services/auth.service.js";
+
 import { useAuth } from "../../context/AuthContext.jsx";
 
 const Login = () => {
@@ -40,23 +44,60 @@ const Login = () => {
     setLoading(true);
     setError("");
 
+    const email = formData.email.trim().toLowerCase();
+    const password = formData.password;
+
     try {
       const response = await loginUser({
-        email: formData.email.trim(),
-        password: formData.password,
+        email,
+        password,
       });
 
-      console.log("LOGIN RESPONSE:", response);
+      const responseData =
+        response?.data?.data ||
+        response?.data ||
+        response;
+
+      // ======================================
+      // ADMIN LOGIN
+      // ======================================
+
+      if (responseData?.requiresAdminOTP) {
+        const adminResponse =
+          await sendAdminLoginOTP(
+            email,
+            password
+          );
+
+        const adminData =
+          adminResponse?.data?.data ||
+          adminResponse?.data ||
+          adminResponse;
+
+        if (!adminData?.requiresAdminOTP) {
+          throw new Error(
+            "Unable to start admin verification."
+          );
+        }
+
+        sessionStorage.setItem(
+          "adminLoginEmail",
+          email
+        );
+
+        navigate("/verifyAdminOtp", {
+          replace: true,
+        });
+
+        return;
+      }
+
+      // ======================================
+      // NORMAL USER LOGIN
+      // ======================================
 
       const loggedInUser =
-        response?.data?.data?.user ||
-        response?.data?.user ||
-        response?.user;
-
-      console.log(
-        "LOGGED IN USER:",
-        loggedInUser
-      );
+        responseData?.user;
 
       if (!loggedInUser) {
         throw new Error(
@@ -66,15 +107,10 @@ const Login = () => {
 
       login(loggedInUser);
 
-      if (loggedInUser.role === "admin") {
-        navigate("/admin", {
-          replace: true,
-        });
-      } else {
-        navigate(from, {
-          replace: true,
-        });
-      }
+      navigate(from, {
+        replace: true,
+      });
+
     } catch (err) {
       console.error(
         "Login Error:",

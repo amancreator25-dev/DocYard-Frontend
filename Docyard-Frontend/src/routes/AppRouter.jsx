@@ -33,6 +33,8 @@ import AdminContacts from "../pages/Admin/Contacts.jsx";
 import VerifyOTP from "../pages/verifyOtp/verifyOtp.jsx";
 import ForgotPassword from "../pages/ForgotPassword/ForgotPassword.jsx"
 import ForgotPasswordVerify from "../pages/ForgotPassword/ForgotPasswordVerify.jsx";
+import ResetPassword from "../pages/ForgotPassword/ResetPassword.jsx";
+import VerifyAdminOTP from "../pages/AdminOtp/VerifyAdminOtp.jsx";
 
 import PageNotFound from "../pages/PageNotFound/PageNotFound.jsx";
 
@@ -65,6 +67,11 @@ const AppRouter = () => {
           />
 
           <Route
+            path="/verifyAdminOtp"
+            element={<VerifyAdminOTP />}
+          />
+
+          <Route
             path="/verifyOtp"
             element={<VerifyOTP />}
           />
@@ -75,8 +82,13 @@ const AppRouter = () => {
           />
 
           <Route
-            path="/forgotPasswordVerify"
+            path="/forgotPassword/forgotPasswordVerify"
             element={<ForgotPasswordVerify />}
+          />
+
+          <Route
+            path="/forgotPassword/resetPassword"
+            element={<ResetPassword />}
           />
 
           {/* Documents */}

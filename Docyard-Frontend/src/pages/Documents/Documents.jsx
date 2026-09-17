@@ -558,6 +558,15 @@ const Document = () => {
 
       </section>
 
+      <Link
+        to="/upload"
+        aria-label="Upload document"
+        title="Upload document"
+        className="fixed bottom-7 right-7 z-50 flex h-12 w-12 items-center justify-center rounded-full border border-white/20 bg-[#0A3A63] text-2xl font-light leading-none !text-[#ffffff] shadow-lg shadow-black/10 transition-all duration-200 hover:scale-105 hover:bg-[#082F50] hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-[#0A3A63] focus:ring-offset-2"
+      >
+        +
+      </Link>
+
     </main>
   );
 };

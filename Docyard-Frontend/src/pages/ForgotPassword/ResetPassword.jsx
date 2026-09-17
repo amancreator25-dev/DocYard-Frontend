@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { sendForgotPasswordOTP } from "../../services/auth.service.js";
+import { resetPassword } from "../../services/auth.service.js";
 
-const ForgotPassword = () => {
+const ResetPassword = () => {
   const navigate = useNavigate();
 
-  const [email, setEmail] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -17,32 +18,59 @@ const ForgotPassword = () => {
     setError("");
     setSuccess("");
 
-    const normalizedEmail = email.trim().toLowerCase();
+    const resetToken = sessionStorage.getItem(
+      "passwordResetToken"
+    );
 
-    if (!normalizedEmail) {
-      setError("Please enter your email address.");
+    if (!resetToken) {
+      setError(
+        "Your password reset session has expired. Please start again."
+      );
+      return;
+    }
+
+    if (!newPassword || !confirmPassword) {
+      setError("Please enter and confirm your new password.");
+      return;
+    }
+
+    if (newPassword.length < 8) {
+      setError("Password must be at least 8 characters.");
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      setError("Passwords do not match.");
       return;
     }
 
     try {
       setLoading(true);
 
-      await sendForgotPasswordOTP(normalizedEmail);
-
-      sessionStorage.setItem(
-        "forgotPasswordEmail",
-        normalizedEmail
+      await resetPassword(
+        resetToken,
+        newPassword
       );
 
-      setSuccess("Verification code sent successfully.");
+      sessionStorage.removeItem(
+        "passwordResetToken"
+      );
+
+      sessionStorage.removeItem(
+        "forgotPasswordEmail"
+      );
+
+      setSuccess(
+        "Password reset successfully."
+      );
 
       setTimeout(() => {
-        navigate("/forgotPassword/forgotPasswordVerify");
-      }, 800);
+        navigate("/login");
+      }, 1000);
     } catch (error) {
       setError(
         error.response?.data?.message ||
-          "Unable to send verification code. Please try again."
+          "Unable to reset your password. Please try again."
       );
     } finally {
       setLoading(false);
@@ -53,6 +81,7 @@ const ForgotPassword = () => {
     <main className="min-h-[calc(100vh-78px)] bg-paper text-ink">
       <section className="grid min-h-[calc(100vh-78px)] grid-cols-1 lg:grid-cols-2">
 
+        {/* LEFT PANEL */}
         <div className="flex flex-col justify-between border-b border-line px-8 py-12 sm:px-12 lg:border-b-0 lg:border-r lg:px-16 xl:px-24">
 
           <div />
@@ -63,15 +92,15 @@ const ForgotPassword = () => {
             </p>
 
             <h1 className="mt-5 max-w-lg font-display text-5xl leading-[0.95] sm:text-6xl xl:text-7xl">
-              Your account,
+              Create a new
               <br />
-              restored.
+              password.
             </h1>
 
             <p className="mt-8 max-w-lg text-sm leading-7 text-ink/60">
-              Reset your DocYard password securely and
-              continue accessing your saved documents,
-              research, and contributions.
+              Choose a new password for your DocYard
+              account. Once updated, you can sign in
+              normally with your new credentials.
             </p>
 
             <div className="mt-10 flex gap-3">
@@ -80,7 +109,7 @@ const ForgotPassword = () => {
               </span>
 
               <span className="rounded-md border border-ink bg-paper px-4 py-2 font-mono text-[10px] font-semibold uppercase tracking-wider">
-                Verified
+                Final step
               </span>
             </div>
           </div>
@@ -92,54 +121,81 @@ const ForgotPassword = () => {
           </div>
         </div>
 
+        {/* RIGHT PANEL */}
         <div className="flex items-center px-8 py-12 sm:px-12 lg:px-16 xl:px-24">
           <div className="w-full max-w-xl">
 
             <div className="mb-8">
               <p className="page-eyebrow">
-                Account recovery
+                New password
               </p>
 
               <h2 className="mt-3 font-display text-4xl leading-tight sm:text-5xl">
-                Reset your password.
+                Set your password.
               </h2>
 
               <p className="mt-4 text-sm leading-6 text-ink/60">
-                Enter your email address to receive a
-                verification code.
+                Enter a new password below to secure
+                your account.
               </p>
             </div>
 
+            {/* FORM CARD */}
             <form
               onSubmit={handleSubmit}
               className="rounded-md border border-ink bg-white p-6 sm:p-8"
             >
               <div className="mb-7">
                 <p className="font-mono text-xs font-semibold uppercase tracking-wider">
-                  Account recovery
+                  Account security
                 </p>
 
                 <p className="mt-2 text-sm text-ink/60">
-                  Enter your registered email below.
+                  Use at least 8 characters.
                 </p>
               </div>
 
+              {/* NEW PASSWORD */}
               <div>
                 <label
-                  htmlFor="email"
+                  htmlFor="newPassword"
                   className="mb-2 block font-mono text-xs font-semibold uppercase tracking-wider"
                 >
-                  Email
+                  New password
                 </label>
 
                 <input
-                  id="email"
-                  type="email"
-                  autoComplete="email"
+                  id="newPassword"
+                  type="password"
+                  autoComplete="new-password"
                   autoFocus
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="you@example.com"
+                  value={newPassword}
+                  onChange={(e) =>
+                    setNewPassword(e.target.value)
+                  }
+                  placeholder="Enter new password"
+                  className="w-full rounded-md border border-line bg-paper px-4 py-3.5 text-sm outline-none transition placeholder:text-ink/30 focus:border-[#0A3A63] focus:ring-1 focus:ring-[#0A3A63]/10"
+                />
+              </div>
+
+              {/* CONFIRM PASSWORD */}
+              <div className="mt-5">
+                <label
+                  htmlFor="confirmPassword"
+                  className="mb-2 block font-mono text-xs font-semibold uppercase tracking-wider"
+                >
+                  Confirm password
+                </label>
+
+                <input
+                  id="confirmPassword"
+                  type="password"
+                  autoComplete="new-password"
+                  value={confirmPassword}
+                  onChange={(e) =>
+                    setConfirmPassword(e.target.value)
+                  }
+                  placeholder="Confirm new password"
                   className="w-full rounded-md border border-line bg-paper px-4 py-3.5 text-sm outline-none transition placeholder:text-ink/30 focus:border-[#0A3A63] focus:ring-1 focus:ring-[#0A3A63]/10"
                 />
               </div>
@@ -162,13 +218,20 @@ const ForgotPassword = () => {
 
               <button
                 type="submit"
-                disabled={loading || !email.trim()}
-                className="mt-6 w-full rounded-md bg-[#0A3A63] px-5 py-3.5 font-mono text-xs font-semibold uppercase tracking-wider text-white transition hover:bg-[#082F50] disabled:cursor-not-allowed disabled:opacity-50"
+                disabled={
+                  loading ||
+                  !newPassword ||
+                  !confirmPassword
+                }
+                className="mt-6 w-full rounded-md bg-[#0A3A63] px-5 py-3.5 font-mono text-xs font-semibold uppercase tracking-wider text-[#ffffff] transition hover:bg-[#082F50] disabled:cursor-not-allowed disabled:opacity-50"
               >
-                {loading ? "Sending code..." : "Continue"}
+                {loading
+                  ? "Updating password..."
+                  : "Reset password"}
               </button>
             </form>
 
+            {/* BOTTOM ACTION */}
             <div className="mt-6 flex items-center justify-between rounded-md border border-line px-5 py-4">
               <p className="text-sm text-ink/60">
                 Remember your password?
@@ -191,4 +254,4 @@ const ForgotPassword = () => {
   );
 };
 
-export default ForgotPassword;
+export default ResetPassword;
