@@ -341,7 +341,7 @@ const Home = () => {
 
             <article className="rounded-2xl border border-line bg-paper-raised p-7 md:p-8">
 
-              <span className="font-mono text-xs font-semibold uppercase tracking-[0.14em] !text-[#ffffff]">
+              <span className="font-mono text-xs font-semibold uppercase tracking-[0.14em] text-[#0A3A63]">
                 UPLOAD
               </span>
 

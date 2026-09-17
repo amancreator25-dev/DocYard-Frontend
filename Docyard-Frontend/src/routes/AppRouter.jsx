@@ -30,6 +30,10 @@ import AdminUsers from "../pages/Admin/Users.jsx";
 import AdminDocuments from "../pages/Admin/Documents.jsx";
 import AdminContacts from "../pages/Admin/Contacts.jsx";
 
+import VerifyOTP from "../pages/verifyOtp/verifyOtp.jsx";
+import ForgotPassword from "../pages/ForgotPassword/ForgotPassword.jsx"
+import ForgotPasswordVerify from "../pages/ForgotPassword/ForgotPasswordVerify.jsx";
+
 import PageNotFound from "../pages/PageNotFound/PageNotFound.jsx";
 
 const AppRouter = () => {
@@ -58,6 +62,21 @@ const AppRouter = () => {
           <Route
             path="/register"
             element={<Register />}
+          />
+
+          <Route
+            path="/verifyOtp"
+            element={<VerifyOTP />}
+          />
+
+          <Route
+            path="/forgotPassword"
+            element={<ForgotPassword />}
+          />
+
+          <Route
+            path="/forgotPasswordVerify"
+            element={<ForgotPasswordVerify />}
           />
 
           {/* Documents */}

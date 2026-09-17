@@ -1,6 +1,5 @@
 import api from "./axios.service.js";
 
-
 // ======================================
 // REGISTER USER
 // ======================================
@@ -14,17 +13,80 @@ const registerUser = async (userData) => {
   return response.data;
 };
 
+// ======================================
+// VERIFY REGISTRATION OTP
+// ======================================
+
+const verifyRegistrationOTP = async (
+  email,
+  otp
+) => {
+  const response = await api.post(
+    "/users/verify-registration-otp",
+    {
+      email,
+      otp,
+    }
+  );
+
+  return response.data;
+};
+
+// ======================================
+// FORGOT PASSWORD
+// ======================================
+
+const sendForgotPasswordOTP = async (email) => {
+  const response = await api.post(
+    "/users/forgot-password",
+    {
+      email,
+    }
+  );
+
+  return response.data;
+};
+
+// ======================================
+// VERIFY FORGOT PASSWORD OTP
+// ======================================
+
+const verifyForgotPasswordOTP = async (
+  email,
+  otp
+) => {
+  const response = await api.post(
+    "/users/verify-forgot-password-otp",
+    {
+      email,
+      otp,
+    }
+  );
+
+  return response.data;
+};
+
+// ======================================
+// RESET PASSWORD
+// ======================================
+
+const resetPassword = async (
+  resetToken,
+  newPassword
+) => {
+  const response = await api.post(
+    "/users/reset-password",
+    {
+      resetToken,
+      newPassword,
+    }
+  );
+
+  return response.data;
+};
 
 // ======================================
 // LOGIN USER
-// ======================================
-//
-// Backend sets:
-//
-// accessToken     -> HttpOnly cookie
-// refreshToken    -> HttpOnly cookie
-//
-// We DO NOT save either token manually.
 // ======================================
 
 const loginUser = async (credentials) => {
@@ -36,12 +98,8 @@ const loginUser = async (credentials) => {
   return response.data;
 };
 
-
 // ======================================
 // LOGOUT USER
-// ======================================
-//
-// Backend clears the HttpOnly cookies.
 // ======================================
 
 const logoutUser = async () => {
@@ -52,14 +110,8 @@ const logoutUser = async () => {
   return response.data;
 };
 
-
 // ======================================
 // REFRESH ACCESS TOKEN
-// ======================================
-//
-// Backend reads the refreshToken
-// HttpOnly cookie and creates a new
-// accessToken cookie.
 // ======================================
 
 const refreshAccessToken = async () => {
@@ -69,7 +121,6 @@ const refreshAccessToken = async () => {
 
   return response.data;
 };
-
 
 // ======================================
 // GET CURRENT USER
@@ -82,7 +133,6 @@ const getCurrentUser = async () => {
 
   return response.data;
 };
-
 
 // ======================================
 // CHANGE PASSWORD
@@ -99,7 +149,6 @@ const changePassword = async (
   return response.data;
 };
 
-
 // ======================================
 // UPDATE PROFILE
 // ======================================
@@ -115,7 +164,6 @@ const updateProfile = async (
   return response.data;
 };
 
-
 // ======================================
 // GET PUBLIC USER PROFILE
 // ======================================
@@ -130,13 +178,18 @@ const getUserProfile = async (
   return response.data;
 };
 
-
 // ======================================
 // EXPORT
 // ======================================
 
 export {
   registerUser,
+  verifyRegistrationOTP,
+
+  sendForgotPasswordOTP,
+  verifyForgotPasswordOTP,
+  resetPassword,
+
   loginUser,
   logoutUser,
   refreshAccessToken,
