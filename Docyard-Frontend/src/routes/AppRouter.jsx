@@ -30,7 +30,7 @@ import AdminUsers from "../pages/Admin/Users.jsx";
 import AdminDocuments from "../pages/Admin/Documents.jsx";
 import AdminContacts from "../pages/Admin/Contacts.jsx";
 
-import VerifyOTP from "../pages/verifyOtp/verifyOtp.jsx";
+import VerifyOTP from "../pages/verifyOtp/VerifyOtp.jsx";
 import ForgotPassword from "../pages/ForgotPassword/ForgotPassword.jsx"
 import ForgotPasswordVerify from "../pages/ForgotPassword/ForgotPasswordVerify.jsx";
 import ResetPassword from "../pages/ForgotPassword/ResetPassword.jsx";
