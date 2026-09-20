@@ -432,7 +432,7 @@ const UploadDocument = () => {
                   type="text"
                   value={formData.category}
                   onChange={handleChange}
-                  placeholder="e.g. Technology"
+                  placeholder="e.g. History"
                   className="form-input"
                   required
                 />
@@ -483,7 +483,7 @@ const UploadDocument = () => {
                 type="text"
                 value={formData.tags}
                 onChange={handleChange}
-                placeholder="e.g. react, javascript, web"
+                placeholder="e.g. History, Politics, Geography"
                 className="form-input"
               />
 
