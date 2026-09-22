@@ -8,7 +8,6 @@ import {
 import {
   getCurrentUser,
   logoutUser,
-  refreshAccessToken,
 } from "../services/auth.service.js";
 
 import {
@@ -44,9 +43,7 @@ const AuthProvider = ({ children }) => {
       setLoading(true);
 
       // --------------------------------
-      // No frontend session flag
-      // means there is no login session
-      // to restore.
+      // No frontend session
       // --------------------------------
 
       if (!hasSession()) {
@@ -56,8 +53,10 @@ const AuthProvider = ({ children }) => {
       }
 
       // --------------------------------
-      // Check current access token
-      // through the HttpOnly cookie.
+      // Get current user
+      //
+      // Axios interceptor automatically
+      // handles 401 + refresh token.
       // --------------------------------
 
       const response = await getCurrentUser();
@@ -68,8 +67,11 @@ const AuthProvider = ({ children }) => {
         response?.user;
 
       if (currentUser) {
+        setSession();
+
         setUser(currentUser);
         setIsAuthenticated(true);
+
         return;
       }
 
@@ -89,48 +91,17 @@ const AuthProvider = ({ children }) => {
       );
 
       // --------------------------------
-      // Access token may have expired.
-      // Try refresh token.
+      // Axios interceptor already tried
+      // refreshing the access token.
+      //
+      // If we reach here, the session
+      // could not be restored.
       // --------------------------------
 
-      try {
-        await refreshAccessToken();
+      removeSession();
 
-        const response =
-          await getCurrentUser();
-
-        const currentUser =
-          response?.data?.user ||
-          response?.data ||
-          response?.user;
-
-        if (currentUser) {
-          setSession();
-
-          setUser(currentUser);
-          setIsAuthenticated(true);
-        } else {
-          removeSession();
-
-          setUser(null);
-          setIsAuthenticated(false);
-        }
-
-      } catch (refreshError) {
-        console.error(
-          "Refresh Token Error:",
-          refreshError
-        );
-
-        // --------------------------------
-        // Refresh token is invalid/expired.
-        // --------------------------------
-
-        removeSession();
-
-        setUser(null);
-        setIsAuthenticated(false);
-      }
+      setUser(null);
+      setIsAuthenticated(false);
 
     } finally {
       setLoading(false);
@@ -146,8 +117,8 @@ const AuthProvider = ({ children }) => {
       return;
     }
 
-    // Only the session flag is stored
-    // locally. JWTs remain HttpOnly cookies.
+    // JWTs remain inside HttpOnly cookies.
+    // Only the session flag is stored locally.
 
     setSession();
 
@@ -171,7 +142,7 @@ const AuthProvider = ({ children }) => {
 
     } finally {
       // Backend clears HttpOnly cookies.
-      // Frontend clears only session flag.
+      // Frontend clears session flag.
 
       removeSession();
 
@@ -209,19 +180,12 @@ const AuthProvider = ({ children }) => {
 
   const value = {
     user,
-
     setUser,
-
     loading,
-
     isAuthenticated,
-
     login,
-
     logout,
-
     updateUser,
-
     loadUser,
   };
 
@@ -237,8 +201,7 @@ const AuthProvider = ({ children }) => {
 // ======================================
 
 const useAuth = () => {
-  const context =
-    useContext(AuthContext);
+  const context = useContext(AuthContext);
 
   if (!context) {
     throw new Error(
