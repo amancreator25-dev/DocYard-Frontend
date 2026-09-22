@@ -1,8 +1,6 @@
 import axios from "axios";
 
-import {
-  removeSession,
-} from "../utils/storage.js";
+import { removeSession } from "../utils/storage.js";
 
 // ======================================
 // API BASE URL
@@ -22,6 +20,28 @@ const api = axios.create({
 });
 
 // ======================================
+// REFRESH STATE
+// ======================================
+
+let refreshPromise = null;
+
+// ======================================
+// AUTHENTICATION ROUTES
+// ======================================
+
+const authRoutes = [
+  "/users/login",
+  "/users/register",
+  "/users/verify-registration-otp",
+  "/users/forgot-password",
+  "/users/verify-forgot-password-otp",
+  "/users/reset-password",
+  "/users/refresh-token",
+  "/admin/login",
+  "/admin/verify-admin-otp",
+];
+
+// ======================================
 // REQUEST INTERCEPTOR
 // ======================================
 
@@ -29,7 +49,6 @@ api.interceptors.request.use(
   (config) => {
     return config;
   },
-
   (error) => {
     return Promise.reject(error);
   }
@@ -56,32 +75,15 @@ api.interceptors.response.use(
     }
 
     // ==================================
-    // AUTHENTICATION ROUTES
-    // ==================================
-    //
-    // These routes must NEVER trigger
-    // automatic access-token refresh.
+    // CHECK AUTH ROUTE
     // ==================================
 
-    const authRoutes = [
-      "/users/login",
-      "/users/register",
-      "/users/verify-registration-otp",
-      "/users/forgot-password",
-      "/users/verify-forgot-password-otp",
-      "/users/reset-password",
-      "/users/refresh-token",
-      "/admin/login",
-      "/admin/verify-admin-otp",
-    ];
-
-    const isAuthRoute =
-      authRoutes.some((route) =>
-        originalRequest?.url?.includes(route)
-      );
+    const isAuthRoute = authRoutes.some((route) =>
+      originalRequest?.url?.includes(route)
+    );
 
     // ==================================
-    // ACCESS TOKEN EXPIRED / 401
+    // ACCESS TOKEN EXPIRED
     // ==================================
 
     if (
@@ -93,39 +95,41 @@ api.interceptors.response.use(
       originalRequest._retry = true;
 
       try {
-        // =================================
-        // REQUEST NEW ACCESS TOKEN
-        // =================================
+        // ==================================
+        // ONLY ONE REFRESH REQUEST AT A TIME
+        // ==================================
 
-        await axios.post(
-          `${API_BASE_URL}/users/refresh-token`,
-          {},
-          {
-            withCredentials: true,
-          }
-        );
+        if (!refreshPromise) {
+          refreshPromise = axios
+            .post(
+              `${API_BASE_URL}/users/refresh-token`,
+              {},
+              {
+                withCredentials: true,
+              }
+            )
+            .finally(() => {
+              refreshPromise = null;
+            });
+        }
 
-        // =================================
+        // Wait for existing refresh request
+        await refreshPromise;
+
+        // ==================================
         // RETRY ORIGINAL REQUEST
-        // =================================
+        // ==================================
 
         return api(originalRequest);
-
       } catch (refreshError) {
         console.error(
           "Token refresh failed:",
           refreshError
         );
 
-        // =================================
-        // INVALID SESSION
-        // =================================
-
         removeSession();
 
-        return Promise.reject(
-          refreshError
-        );
+        return Promise.reject(refreshError);
       }
     }
 
