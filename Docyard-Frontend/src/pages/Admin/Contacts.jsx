@@ -16,6 +16,10 @@ const AdminContacts = () => {
   const [error, setError] = useState("");
   const [actionLoading, setActionLoading] = useState(null);
 
+  // ======================================
+  // LOAD CONTACTS
+  // ======================================
+
   const loadContacts = async () => {
     try {
       setLoading(true);
@@ -44,6 +48,10 @@ const AdminContacts = () => {
     loadContacts();
   }, []);
 
+  // ======================================
+  // UPDATE STATUS
+  // ======================================
+
   const handleStatusChange = async (contactId, status) => {
     try {
       setActionLoading(contactId);
@@ -55,14 +63,9 @@ const AdminContacts = () => {
         previous.map((contact) => {
           const id = contact._id || contact.id;
 
-          if (id !== contactId) {
-            return contact;
-          }
-
-          return {
-            ...contact,
-            status,
-          };
+          return id === contactId
+            ? { ...contact, status }
+            : contact;
         })
       );
     } catch (err) {
@@ -74,6 +77,10 @@ const AdminContacts = () => {
       setActionLoading(null);
     }
   };
+
+  // ======================================
+  // DELETE
+  // ======================================
 
   const handleDelete = async (contactId) => {
     const confirmed = window.confirm(
@@ -104,242 +111,300 @@ const AdminContacts = () => {
     }
   };
 
+  // ======================================
+  // FORMAT DATE
+  // ======================================
+
   const formatDate = (date) => {
     if (!date) return "—";
 
-    return new Date(date).toLocaleDateString();
+    return new Date(date).toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
   };
 
-  const getStatusClass = (status) => {
+  // ======================================
+  // STATUS
+  // ======================================
+
+  const getStatusStyle = (status) => {
     if (status === "resolved") {
-      return "text-green-700";
+      return "border-green-200 bg-green-50 text-green-700";
     }
 
     if (status === "in-progress") {
-      return "text-blue";
+      return "border-blue-200 bg-blue-50 text-[#0A3A63]";
     }
 
-    return "text-ink-faint";
+    return "border-line bg-paper text-ink-faint";
   };
 
+  // ======================================
+  // RENDER
+  // ======================================
+
   return (
-    <main className="min-h-screen bg-paper px-6 py-14 text-ink md:px-12 md:py-20">
-      <div className="mx-auto max-w-[1200px]">
+    <main className="min-h-screen bg-paper text-ink">
 
-        {/* HEADER */}
+      {/* ==================================
+          HEADER
+      ================================== */}
 
-        <header className="border-b border-line pb-10">
-          <Link
-            to="/admin"
-            className="font-mono text-[10px] uppercase tracking-wide text-ink-faint hover:text-blue"
-          >
-            ← Admin dashboard
-          </Link>
+      <section className="border-b border-line">
+        <div className="w-full px-6 pb-10 pt-12 sm:px-10 md:px-14 lg:px-20 xl:px-24">
 
-          <div className="mt-9">
-            <span className="page-eyebrow">
-              ADMIN / CONTACTS
-            </span>
+          <div className="flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
 
-            <div className="mt-3 flex flex-col justify-between gap-5 md:flex-row md:items-end">
-              <div>
-                <h1 className="font-display text-5xl font-semibold leading-[1.05] md:text-6xl">
-                  Contacts.
+            <div>
+              <Link
+                to="/admin"
+                className="font-mono text-[10px] font-semibold uppercase tracking-[0.12em] text-ink-faint transition hover:text-[#0A3A63]"
+              >
+                Admin Dashboard
+              </Link>
+
+              <div className="mt-7">
+                <span className="page-eyebrow">
+                  Admin / Contacts
+                </span>
+
+                <h1 className="mt-3 font-display text-4xl font-semibold tracking-[-0.035em] sm:text-5xl">
+                  Contact messages
                 </h1>
 
-                <p className="mt-4 max-w-xl text-sm leading-6 text-ink-soft">
-                  Review enquiries, feedback, and
-                  support messages from the DocYard
-                  community.
+                <p className="mt-3 max-w-xl text-sm leading-6 text-ink-soft">
+                  Review and manage enquiries, feedback,
+                  and support messages from the DocYard community.
                 </p>
               </div>
-
-              <span className="font-mono text-[9px] uppercase tracking-wide text-ink-faint">
-                {contacts.length} MESSAGES
-              </span>
             </div>
+
+            {/* COUNT */}
+
+            <div className="border-l-2 border-[#0A3A63] pl-4 md:min-w-[120px]">
+              <p className="font-display text-3xl font-semibold">
+                {contacts.length}
+              </p>
+
+              <p className="mt-1 font-mono text-[9px] font-semibold uppercase tracking-[0.14em] text-ink-faint">
+                Total messages
+              </p>
+            </div>
+
           </div>
-        </header>
+
+        </div>
+      </section>
+
+      {/* ==================================
+          CONTENT
+      ================================== */}
+
+      <section className="w-full px-6 py-8 sm:px-10 md:px-14 lg:px-20 xl:px-24">
 
         {/* ERROR */}
 
         {error && (
-          <div className="mt-6 border border-line bg-paper-raised px-5 py-4 text-sm text-ink-soft">
+          <div
+            className="mb-6 border border-red-200 bg-red-50 px-5 py-4 text-sm text-red-700"
+            role="alert"
+          >
             {error}
           </div>
         )}
 
-        {/* CONTACTS */}
+        {/* LOADING */}
 
-        <section className="py-10">
+        {loading ? (
+          <div className="flex min-h-[260px] items-center justify-center border-y border-line bg-paper-raised">
+            <Loader />
+          </div>
+        ) : contacts.length === 0 ? (
+          <div className="border-y border-line bg-paper-raised px-6 py-20 text-center">
+            <EmptyState
+              title="No messages found."
+              message="There are currently no contact messages to review."
+            />
+          </div>
+        ) : (
+          <div className="border-y border-line bg-white">
 
-          {loading ? (
-            <div className="flex min-h-[240px] items-center justify-center border border-line bg-white">
-              <Loader />
+            {/* ==================================
+                TABLE HEADER
+            ================================== */}
+
+            <div className="hidden grid-cols-[minmax(0,1fr)_150px_150px_90px] gap-6 border-b border-line bg-paper-raised px-6 py-3 md:grid lg:px-7">
+
+              <span className="font-mono text-[9px] font-semibold uppercase tracking-[0.14em] text-ink-faint">
+                Message
+              </span>
+
+              <span className="font-mono text-[9px] font-semibold uppercase tracking-[0.14em] text-ink-faint">
+                Date
+              </span>
+
+              <span className="font-mono text-[9px] font-semibold uppercase tracking-[0.14em] text-ink-faint">
+                Status
+              </span>
+
+              <span className="text-right font-mono text-[9px] font-semibold uppercase tracking-[0.14em] text-ink-faint">
+                Action
+              </span>
+
             </div>
-          ) : contacts.length === 0 ? (
-            <div className="border border-line bg-white px-6 py-16 text-center">
-              <EmptyState
-                title="No messages found."
-                message="There are currently no contact messages to review."
-              />
-            </div>
-          ) : (
-            <div className="border border-line bg-white">
 
-              {/* TABLE HEADER */}
+            {/* ==================================
+                CONTACTS
+            ================================== */}
 
-              <div className="hidden border-b border-line bg-paper-raised px-6 py-4 md:grid md:grid-cols-[1fr_170px_130px_150px] md:gap-6">
-                <span className="table-heading">
-                  MESSAGE
-                </span>
+            {contacts.map((contact) => {
+              const contactId =
+                contact._id || contact.id;
 
-                <span className="table-heading">
-                  DATE
-                </span>
+              const name =
+                contact.name ||
+                contact.username ||
+                "Unknown";
 
-                <span className="table-heading">
-                  STATUS
-                </span>
+              const email =
+                contact.email ||
+                "No email";
 
-                <span className="table-heading text-right">
-                  ACTION
-                </span>
-              </div>
+              const subject =
+                contact.subject ||
+                "No subject";
 
-              {/* CONTACT ITEMS */}
+              const message =
+                contact.message || "";
 
-              {contacts.map((contact) => {
-                const contactId =
-                  contact._id || contact.id;
+              const status =
+                contact.status || "pending";
 
-                const name =
-                  contact.name ||
-                  contact.username ||
-                  "Unknown";
+              const date =
+                contact.createdAt ||
+                contact.created_at;
 
-                const email =
-                  contact.email ||
-                  "No email";
+              const isLoading =
+                actionLoading === contactId;
 
-                const subject =
-                  contact.subject ||
-                  "No subject";
+              return (
+                <article
+                  key={contactId}
+                  className="grid gap-6 border-b border-line px-5 py-6 last:border-b-0 transition-colors hover:bg-paper-raised/50 md:grid-cols-[minmax(0,1fr)_150px_150px_90px] md:items-center md:px-6 lg:px-7"
+                >
 
-                const message =
-                  contact.message || "";
+                  {/* MESSAGE */}
 
-                const status =
-                  contact.status || "pending";
+                  <div className="min-w-0">
 
-                const date =
-                  contact.createdAt ||
-                  contact.created_at;
+                    <div className="flex items-start gap-4">
 
-                const isLoading =
-                  actionLoading === contactId;
-
-                return (
-                  <article
-                    key={contactId}
-                    className="grid gap-5 border-b border-line px-6 py-7 last:border-b-0 md:grid-cols-[1fr_170px_130px_150px] md:items-center md:gap-6"
-                  >
-
-                    {/* MESSAGE */}
-
-                    <div className="min-w-0">
-                      <div className="flex items-start gap-3">
-                        <span className="mt-1 font-mono text-[9px] text-blue">
+                      <div className="hidden h-9 w-9 shrink-0 items-center justify-center rounded-md bg-[#0A3A63] text-white sm:flex">
+                        <span className="font-mono text-[9px] font-semibold">
                           MSG
                         </span>
+                      </div>
 
-                        <div className="min-w-0">
-                          <h2 className="font-display text-lg font-semibold">
-                            {subject}
-                          </h2>
+                      <div className="min-w-0">
 
-                          <p className="mt-1 text-xs text-ink-soft">
-                            {name} · {email}
-                          </p>
+                        <h2 className="truncate font-display text-lg font-semibold tracking-[-0.015em]">
+                          {subject}
+                        </h2>
 
-                          <p className="mt-3 line-clamp-2 text-sm leading-6 text-ink-soft">
-                            {message}
-                          </p>
+                        <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-ink-soft">
+                          <span className="font-medium text-ink">
+                            {name}
+                          </span>
+
+                          <span className="text-ink-faint">
+                            {email}
+                          </span>
                         </div>
+
+                        <p className="mt-3 line-clamp-2 max-w-3xl text-sm leading-6 text-ink-soft">
+                          {message}
+                        </p>
+
                       </div>
                     </div>
 
-                    {/* DATE */}
+                  </div>
 
-                    <div>
-                      <span className="table-heading md:hidden">
-                        DATE
-                      </span>
+                  {/* DATE */}
 
-                      <p className="mt-1 font-mono text-[10px] text-ink-faint md:mt-0">
-                        {formatDate(date)}
-                      </p>
-                    </div>
+                  <div>
+                    <span className="mb-1 block font-mono text-[9px] font-semibold uppercase tracking-[0.12em] text-ink-faint md:hidden">
+                      Date
+                    </span>
 
-                    {/* STATUS */}
+                    <p className="font-mono text-[10px] text-ink-soft">
+                      {formatDate(date)}
+                    </p>
+                  </div>
 
-                    <div>
-                      <span className="table-heading md:hidden">
-                        STATUS
-                      </span>
+                  {/* STATUS */}
 
-                      <select
-                        value={status}
-                        onChange={(event) =>
-                          handleStatusChange(
-                            contactId,
-                            event.target.value
-                          )
-                        }
-                        disabled={isLoading}
-                        className={`mt-2 border border-line bg-paper px-3 py-2 font-mono text-[9px] uppercase tracking-wide outline-none focus:border-ink md:mt-0 ${getStatusClass(
-                          status
-                        )}`}
-                      >
-                        <option value="pending">
-                          Pending
-                        </option>
+                  <div>
+                    <span className="mb-1 block font-mono text-[9px] font-semibold uppercase tracking-[0.12em] text-ink-faint md:hidden">
+                      Status
+                    </span>
 
-                        <option value="in-progress">
-                          In Progress
-                        </option>
+                    <select
+                      value={status}
+                      onChange={(event) =>
+                        handleStatusChange(
+                          contactId,
+                          event.target.value
+                        )
+                      }
+                      disabled={isLoading}
+                      className={`h-9 rounded-md border px-3 font-mono text-[9px] font-semibold uppercase tracking-[0.08em] outline-none transition focus:border-[#0A3A63] ${getStatusStyle(
+                        status
+                      )}`}
+                    >
+                      <option value="pending">
+                        Pending
+                      </option>
 
-                        <option value="resolved">
-                          Resolved
-                        </option>
-                      </select>
-                    </div>
+                      <option value="in-progress">
+                        In Progress
+                      </option>
 
-                    {/* ACTION */}
+                      <option value="resolved">
+                        Resolved
+                      </option>
+                    </select>
+                  </div>
 
-                    <div className="flex justify-start md:justify-end">
-                      <button
-                        type="button"
-                        onClick={() =>
-                          handleDelete(contactId)
-                        }
-                        disabled={isLoading}
-                        className="font-mono text-[9px] uppercase tracking-wide text-ink-faint transition-colors hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-50"
-                      >
-                        {isLoading
-                          ? "Processing..."
-                          : "Delete"}
-                      </button>
-                    </div>
+                  {/* DELETE */}
 
-                  </article>
-                );
-              })}
-            </div>
-          )}
+                  <div className="md:text-right">
 
-        </section>
-      </div>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        handleDelete(contactId)
+                      }
+                      disabled={isLoading}
+                      className="font-mono text-[9px] font-semibold uppercase tracking-[0.12em] text-ink-faint transition hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-40"
+                    >
+                      {isLoading
+                        ? "Processing"
+                        : "Delete"}
+                    </button>
+
+                  </div>
+
+                </article>
+              );
+            })}
+
+          </div>
+        )}
+
+      </section>
     </main>
   );
 };
