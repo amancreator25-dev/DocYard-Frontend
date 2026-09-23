@@ -27,16 +27,37 @@ let refreshPromise = null;
 
 // ======================================
 // AUTHENTICATION ROUTES
+// These routes must not trigger
+// automatic token refresh.
 // ======================================
 
 const authRoutes = [
+  // ------------------------------
+  // USER AUTH
+  // ------------------------------
+
   "/users/login",
   "/users/register",
   "/users/verify-registration-otp",
+
+  // ------------------------------
+  // FORGOT PASSWORD
+  // ------------------------------
+
   "/users/forgot-password",
   "/users/verify-forgot-password-otp",
   "/users/reset-password",
+
+  // ------------------------------
+  // TOKEN
+  // ------------------------------
+
   "/users/refresh-token",
+
+  // ------------------------------
+  // ADMIN AUTH
+  // ------------------------------
+
   "/admin/login",
   "/admin/verify-admin-otp",
 ];
@@ -47,8 +68,12 @@ const authRoutes = [
 
 api.interceptors.request.use(
   (config) => {
+    // JWT authentication is handled
+    // through HttpOnly cookies.
+
     return config;
   },
+
   (error) => {
     return Promise.reject(error);
   }
@@ -75,69 +100,83 @@ api.interceptors.response.use(
     }
 
     // ==================================
+    // INVALID REQUEST
+    // ==================================
+
+    if (!originalRequest) {
+      return Promise.reject(error);
+    }
+
+    // ==================================
     // CHECK AUTH ROUTE
     // ==================================
 
     const isAuthRoute = authRoutes.some((route) =>
-      originalRequest?.url?.includes(route)
+      originalRequest.url?.includes(route)
     );
 
     // ==================================
-    // ACCESS TOKEN EXPIRED
+    // HANDLE EXPIRED ACCESS TOKEN
     // ==================================
 
     if (
-      error.response.status === 401 &&
-      originalRequest &&
-      !originalRequest._retry &&
-      !isAuthRoute
+      error.response.status !== 401 ||
+      isAuthRoute ||
+      originalRequest._retry
     ) {
-      originalRequest._retry = true;
-
-      try {
-        // ==================================
-        // ONLY ONE REFRESH REQUEST AT A TIME
-        // ==================================
-
-        if (!refreshPromise) {
-          refreshPromise = axios
-            .post(
-              `${API_BASE_URL}/users/refresh-token`,
-              {},
-              {
-                withCredentials: true,
-              }
-            )
-            .finally(() => {
-              refreshPromise = null;
-            });
-        }
-
-        // Wait for existing refresh request
-        await refreshPromise;
-
-        // ==================================
-        // RETRY ORIGINAL REQUEST
-        // ==================================
-
-        return api(originalRequest);
-      } catch (refreshError) {
-        console.error(
-          "Token refresh failed:",
-          refreshError
-        );
-
-        removeSession();
-
-        return Promise.reject(refreshError);
-      }
+      return Promise.reject(error);
     }
 
     // ==================================
-    // NORMAL ERROR
+    // PREVENT INFINITE RETRIES
     // ==================================
 
-    return Promise.reject(error);
+    originalRequest._retry = true;
+
+    try {
+      // ==================================
+      // ONLY ONE REFRESH REQUEST
+      // ==================================
+
+      if (!refreshPromise) {
+        refreshPromise = axios
+          .post(
+            `${API_BASE_URL}/users/refresh-token`,
+            {},
+            {
+              withCredentials: true,
+            }
+          )
+          .finally(() => {
+            refreshPromise = null;
+          });
+      }
+
+      // ==================================
+      // WAIT FOR TOKEN REFRESH
+      // ==================================
+
+      await refreshPromise;
+
+      // ==================================
+      // RETRY ORIGINAL REQUEST
+      // ==================================
+
+      return api(originalRequest);
+    } catch (refreshError) {
+      console.error(
+        "Token refresh failed:",
+        refreshError
+      );
+
+      // ==================================
+      // SESSION NO LONGER VALID
+      // ==================================
+
+      removeSession();
+
+      return Promise.reject(refreshError);
+    }
   }
 );
 
