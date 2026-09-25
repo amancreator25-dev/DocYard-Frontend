@@ -5,19 +5,13 @@ import { getAllDocuments } from "../../services/document.service.js";
 
 const SearchDocuments = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-
   const [documents, setDocuments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   const initialSearch = searchParams.get("search") || "";
   const category = searchParams.get("category") || "";
-
   const [search, setSearch] = useState(initialSearch);
-
-  // ======================================
-  // LOAD DOCUMENTS
-  // ======================================
 
   const loadDocuments = async (params = {}) => {
     setLoading(true);
@@ -38,16 +32,11 @@ const SearchDocuments = () => {
         err?.response?.data?.message ||
           "Unable to load documents."
       );
-
       setDocuments([]);
     } finally {
       setLoading(false);
     }
   };
-
-  // ======================================
-  // LOAD WHEN FILTERS CHANGE
-  // ======================================
 
   useEffect(() => {
     const params = {};
@@ -62,10 +51,6 @@ const SearchDocuments = () => {
 
     loadDocuments(params);
   }, [initialSearch, category]);
-
-  // ======================================
-  // SEARCH
-  // ======================================
 
   const handleSearch = (event) => {
     event.preventDefault();
@@ -83,18 +68,10 @@ const SearchDocuments = () => {
     setSearchParams(params);
   };
 
-  // ======================================
-  // CLEAR FILTERS
-  // ======================================
-
   const clearFilters = () => {
     setSearch("");
     setSearchParams({});
   };
-
-  // ======================================
-  // FORMAT DATE
-  // ======================================
 
   const formatDate = (date) => {
     if (!date) return "—";
@@ -106,22 +83,11 @@ const SearchDocuments = () => {
     });
   };
 
-  // ======================================
-  // RENDER
-  // ======================================
-
   return (
     <main className="min-h-screen bg-paper text-ink">
-
-      {/* ==================================
-          SEARCH HEADER
-      ================================== */}
-
       <section className="border-b border-line">
         <div className="w-full px-6 pb-12 pt-14 sm:px-10 md:px-14 lg:px-20 xl:px-24">
-
           <div className="max-w-5xl">
-
             <span className="page-eyebrow">
               DocYard Archive
             </span>
@@ -134,8 +100,6 @@ const SearchDocuments = () => {
               Find historical documents, research, papers,
               records and other resources preserved in DocYard.
             </p>
-
-            {/* SEARCH */}
 
             <form
               onSubmit={handleSearch}
@@ -167,21 +131,12 @@ const SearchDocuments = () => {
                 Search
               </button>
             </form>
-
           </div>
         </div>
       </section>
 
-      {/* ==================================
-          RESULTS
-      ================================== */}
-
       <section className="w-full px-6 py-10 sm:px-10 md:px-14 lg:px-20 xl:px-24">
-
-        {/* RESULTS HEADER */}
-
         <div className="flex flex-col gap-4 border-b border-line pb-5 sm:flex-row sm:items-end sm:justify-between">
-
           <div>
             <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.16em] text-ink-faint">
               Archive results
@@ -207,14 +162,10 @@ const SearchDocuments = () => {
               Clear filters
             </button>
           )}
-
         </div>
-
-        {/* ACTIVE FILTERS */}
 
         {(search || category) && !loading && (
           <div className="flex flex-wrap gap-2 py-5">
-
             {search && (
               <span className="rounded-md bg-[#0A3A63]/5 px-3 py-1.5 font-mono text-[10px] font-semibold uppercase tracking-wide text-[#0A3A63]">
                 Search: {search}
@@ -226,11 +177,8 @@ const SearchDocuments = () => {
                 Category: {category}
               </span>
             )}
-
           </div>
         )}
-
-        {/* ERROR */}
 
         {error && (
           <div
@@ -241,13 +189,8 @@ const SearchDocuments = () => {
           </div>
         )}
 
-        {/* ==================================
-            LOADING
-        ================================== */}
-
         {loading && (
           <div className="mt-6 divide-y divide-line border-y border-line">
-
             {[1, 2, 3, 4].map((item) => (
               <div
                 key={item}
@@ -264,19 +207,13 @@ const SearchDocuments = () => {
                 <div className="h-10 w-24 animate-pulse rounded-md bg-paper-raised" />
               </div>
             ))}
-
           </div>
         )}
-
-        {/* ==================================
-            EMPTY
-        ================================== */}
 
         {!loading &&
           !error &&
           documents.length === 0 && (
             <div className="border-b border-line py-20">
-
               <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.16em] text-ink-faint">
                 No results
               </span>
@@ -297,17 +234,11 @@ const SearchDocuments = () => {
               >
                 View all documents
               </button>
-
             </div>
           )}
 
-        {/* ==================================
-            DOCUMENT LIST
-        ================================== */}
-
         {!loading && documents.length > 0 && (
           <div className="divide-y divide-line border-b border-line">
-
             {documents.map((document) => {
               const author =
                 document.author?.username ||
@@ -325,9 +256,6 @@ const SearchDocuments = () => {
                   key={document._id}
                   className="group grid gap-6 py-7 transition-colors hover:bg-paper-raised/60 md:grid-cols-[72px_minmax(0,1fr)_100px] md:items-center"
                 >
-
-                  {/* FILE TYPE */}
-
                   <div className="flex h-14 w-14 items-center justify-center rounded-md border border-line bg-paper-raised text-ink-soft">
                     <span className="font-mono text-[10px] font-semibold uppercase">
                       {(document.fileType || "DOC").replace(
@@ -337,12 +265,8 @@ const SearchDocuments = () => {
                     </span>
                   </div>
 
-                  {/* DOCUMENT INFO */}
-
                   <div className="min-w-0">
-
                     <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
-
                       <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.12em] text-[#0A3A63]">
                         {document.category || "Archive"}
                       </span>
@@ -350,7 +274,6 @@ const SearchDocuments = () => {
                       <span className="text-xs text-ink-faint">
                         {formatDate(document.createdAt)}
                       </span>
-
                     </div>
 
                     <h2 className="mt-2 font-display text-2xl font-semibold leading-tight tracking-[-0.02em]">
@@ -358,7 +281,8 @@ const SearchDocuments = () => {
                         to={documentPath}
                         className="transition-colors hover:text-[#0A3A63]"
                       >
-                        {document.title || "Untitled document"}
+                        {document.title ||
+                          "Untitled document"}
                       </Link>
                     </h2>
 
@@ -368,7 +292,6 @@ const SearchDocuments = () => {
                     </p>
 
                     <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-1 text-xs text-ink-faint">
-
                       <span>
                         By{" "}
                         <span className="font-medium text-ink-soft">
@@ -377,9 +300,7 @@ const SearchDocuments = () => {
                       </span>
 
                       {document.language && (
-                        <span>
-                          {document.language}
-                        </span>
+                        <span>{document.language}</span>
                       )}
 
                       {document.views !== undefined && (
@@ -387,33 +308,23 @@ const SearchDocuments = () => {
                           {document.views} views
                         </span>
                       )}
-
                     </div>
-
                   </div>
 
-                  {/* ACTION */}
-
                   <div className="md:text-right">
-
                     <Link
                       to={documentPath}
                       className="inline-flex h-10 w-full items-center justify-center rounded-md border border-ink px-5 font-mono text-[10px] font-semibold uppercase tracking-wide text-ink transition hover:bg-ink hover:text-paper sm:w-auto"
                     >
                       Read
                     </Link>
-
                   </div>
-
                 </article>
               );
             })}
-
           </div>
         )}
-
       </section>
-
     </main>
   );
 };
