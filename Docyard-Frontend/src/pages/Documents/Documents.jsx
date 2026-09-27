@@ -256,17 +256,12 @@ const Document = () => {
 </section>
 
 
-      {/* ==========================================
-          DOCUMENT CONTENT
-      ========================================== */}
 
       <section className="w-full px-6 pb-24 sm:px-10 md:px-14 lg:px-20 xl:px-24">
 
         <div className="w-full">
 
-          {/* ==========================================
-              DOCUMENT COUNT
-          ========================================== */}
+          
 
           {!loading && !error && (
             <div className="pb-6">
@@ -296,9 +291,6 @@ const Document = () => {
           )}
 
 
-          {/* ==========================================
-              INITIAL LOADING
-          ========================================== */}
 
           {loading && (
             <div className="grid w-full gap-4">
@@ -335,10 +327,6 @@ const Document = () => {
             </div>
           )}
 
-
-          {/* ==========================================
-              EMPTY STATE
-          ========================================== */}
 
           {!loading &&
             !error &&
@@ -400,7 +388,7 @@ const Document = () => {
 
                         <div className="flex h-16 w-16 items-center justify-center rounded-md bg-ink text-paper">
 
-                          <span className="font-mono text-xs font-medium uppercase">
+                          <span className="font-mono text-m font-medium uppercase">
                             {(
                               document.fileType ||
                               "DOC"
