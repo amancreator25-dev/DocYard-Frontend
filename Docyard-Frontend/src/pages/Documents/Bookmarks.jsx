@@ -311,7 +311,6 @@ const Bookmarks = () => {
 
                   <div className="min-w-0">
 
-                    {/* CATEGORY + DATE */}
 
                     <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
 
@@ -332,7 +331,6 @@ const Bookmarks = () => {
                     </div>
 
 
-                    {/* TITLE */}
 
                     <h2 className="mt-3 font-display text-3xl font-semibold leading-tight tracking-[-0.02em] md:text-4xl">
 
@@ -347,7 +345,6 @@ const Bookmarks = () => {
                     </h2>
 
 
-                    {/* DESCRIPTION */}
 
                     <p className="mt-3 line-clamp-2 max-w-4xl text-sm leading-6 text-ink-soft md:text-base">
                       {document.description ||
@@ -355,7 +352,7 @@ const Bookmarks = () => {
                     </p>
 
 
-                    {/* METADATA */}
+
 
                     <div className="mt-5 flex flex-wrap gap-x-6 gap-y-2">
 
