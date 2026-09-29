@@ -120,7 +120,6 @@ const VerifyOTP = () => {
               </p>
             )}
 
-            {/* SUCCESS */}
 
             {success && (
               <p className="mt-3 text-sm leading-6 text-green-700">
@@ -128,7 +127,6 @@ const VerifyOTP = () => {
               </p>
             )}
 
-            {/* VERIFY */}
 
             <button
               type="submit"
@@ -138,7 +136,6 @@ const VerifyOTP = () => {
               {loading ? "Verifying..." : "Verify email"}
             </button>
 
-            {/* RESEND */}
 
             <div className="mt-8 text-center">
 
