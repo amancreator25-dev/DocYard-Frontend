@@ -148,7 +148,7 @@ const VerifyOTP = () => {
 
               <button
                 type="button"
-                className="mt-2 font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-[#0A3A63] transition-colors hover:text-[#082F50] hover:underline"
+                className="mt-2 font-mono text-[11px] font-semibold uppercase tracking-[0.12em] !text-[#0A3A63] transition-colors hover:text-[#082F50] hover:underline"
               >
                 Resend code
               </button>
