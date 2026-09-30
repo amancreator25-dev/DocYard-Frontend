@@ -677,7 +677,6 @@ const UploadDocument = () => {
 
             <div className="rounded-2xl border border-line bg-paper-raised p-7 md:p-8">
 
-              {/* SIDEBAR HEADER */}
 
               <div>
 
@@ -701,7 +700,6 @@ const UploadDocument = () => {
 
               <div className="mt-8 space-y-7">
 
-                {/* ITEM 01 */}
 
                 <div className="flex gap-4">
 
@@ -723,7 +721,6 @@ const UploadDocument = () => {
                 </div>
 
 
-                {/* ITEM 02 */}
 
                 <div className="flex gap-4">
 
@@ -743,7 +740,6 @@ const UploadDocument = () => {
                 </div>
 
 
-                {/* ITEM 03 */}
 
                 <div className="flex gap-4">
 
