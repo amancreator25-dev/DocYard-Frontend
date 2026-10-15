@@ -397,7 +397,7 @@ const Bookmarks = () => {
                       to={`/documents/${slug}`}
                       className="inline-flex h-11 items-center justify-center rounded-lg border border-blue bg-blue px-5 text-sm font-semibold text-white transition-all hover:border-ink hover:bg-ink"
                     >
-                      Read document →
+                      READ
                     </Link>
 
 
