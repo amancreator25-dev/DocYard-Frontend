@@ -198,17 +198,6 @@ const MyDocuments = () => {
                 </h2>
               </div>
 
-              <button
-                type="button"
-                onClick={() => {
-                  setEditingDocument(null);
-                  setError("");
-                }}
-                disabled={updating}
-                className="rounded-md border border-line px-4 py-2 text-sm transition hover:bg-paper disabled:opacity-50"
-              >
-                Cancel
-              </button>
             </div>
 
             <form
