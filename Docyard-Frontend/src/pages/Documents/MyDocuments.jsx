@@ -21,7 +21,6 @@ const MyDocuments = () => {
     category: "",
   });
 
-  // LOAD DOCUMENTS
   const loadDocuments = async () => {
     try {
       setLoading(true);
