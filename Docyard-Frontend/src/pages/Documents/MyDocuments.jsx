@@ -279,7 +279,7 @@ const MyDocuments = () => {
                     setError("");
                   }}
                   disabled={updating}
-                  className="inline-flex h-11 items-center justify-center rounded-md border border-line px-6 text-sm font-medium transition bg-[#0A3A63] hover:bg-paper disabled:opacity-50"
+                  className="inline-flex h-11 items-center justify-center rounded-md border border-line px-6 text-sm font-medium transition !bg-[#ffffff] hover:bg-paper disabled:opacity-50"
                 >
                   Cancel
                 </button>
